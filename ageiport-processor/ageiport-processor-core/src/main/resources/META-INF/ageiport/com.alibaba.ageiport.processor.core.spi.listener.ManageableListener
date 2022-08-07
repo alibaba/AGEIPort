@@ -1,0 +1,4 @@
+WaitDispatchMainTaskPrepareEventListener=com.alibaba.ageiport.processor.core.task.event.WaitDispatchMainTaskPrepareEventListener
+WaitDispatchSubTaskEventListener=com.alibaba.ageiport.processor.core.task.event.WaitDispatchSubTaskEventListener
+WaitDispatchMainTaskReduceEventListener=com.alibaba.ageiport.processor.core.task.event.WaitDispatchMainTaskReduceEventListener
+TaskStageEventListener=com.alibaba.ageiport.processor.core.spi.task.monitor.TaskStageEventListener

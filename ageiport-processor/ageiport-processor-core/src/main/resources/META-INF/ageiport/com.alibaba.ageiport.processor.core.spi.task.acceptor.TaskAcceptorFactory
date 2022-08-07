@@ -1,0 +1,1 @@
+DefaultTaskAcceptorFactory=com.alibaba.ageiport.processor.core.task.acceptor.DefaultTaskAcceptorFactory

@@ -1,0 +1,2 @@
+ExportSubTaskWorkerFactory=com.alibaba.ageiport.processor.core.task.exporter.worker.ExportSubTaskWorkerFactory
+ImportSubTaskWorkerFactory=com.alibaba.ageiport.processor.core.task.importer.worker.ImportSubTaskWorkerFactory

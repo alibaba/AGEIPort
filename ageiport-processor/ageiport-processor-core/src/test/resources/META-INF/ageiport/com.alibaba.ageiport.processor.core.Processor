@@ -1,0 +1,4 @@
+StandaloneExportProcessor=com.alibaba.ageiport.processor.core.test.processor.exporter.StandaloneExportProcessor
+StandaloneImportProcessor=com.alibaba.ageiport.processor.core.test.processor.importer.StandaloneImportProcessor
+ClusterExportProcessor=com.alibaba.ageiport.processor.core.test.processor.exporter.ClusterExportProcessor
+ClusterImportProcessor=com.alibaba.ageiport.processor.core.test.processor.importer.ClusterImportProcessor

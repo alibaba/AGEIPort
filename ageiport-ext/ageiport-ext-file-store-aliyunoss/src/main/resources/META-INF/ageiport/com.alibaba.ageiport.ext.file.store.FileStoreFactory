@@ -1,0 +1,1 @@
+AliyunOssFileStore=com.alibaba.ageiport.ext.file.store.aliyunoss.AliyunOssFileStoreFactory

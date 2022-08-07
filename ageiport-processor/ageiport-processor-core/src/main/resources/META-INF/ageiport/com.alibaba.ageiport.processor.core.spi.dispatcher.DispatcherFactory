@@ -1,0 +1,2 @@
+LocalDispatcherFactory=com.alibaba.ageiport.processor.core.dispatcher.local.LocalDispatcherFactory
+HttpDispatcherFactory=com.alibaba.ageiport.processor.core.dispatcher.http.HttpDispatcherFactory

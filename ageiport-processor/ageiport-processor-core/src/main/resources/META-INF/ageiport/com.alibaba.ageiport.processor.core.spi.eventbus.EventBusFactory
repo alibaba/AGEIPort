@@ -1,0 +1,2 @@
+HttpEventBusFactory=com.alibaba.ageiport.processor.core.eventbus.http.HttpEventBusFactory
+LocalEventBusFactory=com.alibaba.ageiport.processor.core.eventbus.local.LocalEventBusFactory

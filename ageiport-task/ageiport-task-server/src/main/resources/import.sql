@@ -1,0 +1,17 @@
+INSERT INTO `quarkus_test`.`agei_main_task_instance` (`id`, `app`, `biz_key`, `biz_query`, `biz_task_name`,
+                                                      `biz_user_feature`, `biz_user_id`, `biz_user_key`,
+                                                      `biz_user_name`, `biz_user_org`, `biz_user_tenant`, `code`,
+                                                      `data_failed_count`, `data_processed_count`, `data_success_count`,
+                                                      `data_total_count`, `env`, `execute_type`, `feature`,
+                                                      `flow_order`, `flow_task_id`, `gmt_create`, `gmt_dispatch`,
+                                                      `gmt_execute`, `gmt_expired`, `gmt_finished`, `gmt_modified`,
+                                                      `gmt_start`, `host`, `log`, `main_task_id`, `name`, `namespace`,
+                                                      `result_code`, `result_message`, `retry_times`, `row_status`,
+                                                      `row_version`, `runtime_param`, `status`, `sub_failed_count`,
+                                                      `sub_finished_count`, `sub_success_count`, `sub_total_count`,
+                                                      `tenant`, `trace_id`, `type`)
+VALUES (1, 'app', 'Eh6VEF', '{}', 'HzloC5G', 'owhAFMy3M', 'uCX', '6sjYvt', 'WJ9msi', 'vrasg', 'kiNN9zEPr', 'TaskCode',
+        NULL, NULL, NULL, NULL, 'PRODUCTION', 'SHARDING', NULL, NULL, NULL, '2022-06-16 17:00:08.280000', NULL, NULL,
+        NULL, NULL, '2022-06-16 17:00:08.280000', NULL, '127.0.0.1', NULL, '20220616170008-f253', 'TaskName',
+        'com.alibaba', NULL, NULL, 0, 'VALID', 1, '{}', 'NEW', NULL, NULL, NULL, NULL, 'TenantTest',
+        'edea3bab-75b2-4c86-b379-61763426c326', 'EXPORT');

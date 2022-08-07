@@ -1,0 +1,3 @@
+adaptive=com.alibaba.ageiport.ext.arch.factory.AdaptiveExtensionFactory
+spi=com.alibaba.ageiport.ext.arch.factory.SpiExtensionFactory
+spring=com.alibaba.ageiport.ext.arch.factory.SpringExtensionFactory

@@ -1,0 +1,2 @@
+ExportMainTaskStageProvider=com.alibaba.ageiport.processor.core.task.exporter.stage.ExportMainTaskStageProvider
+ImportMainTaskStageProvider=com.alibaba.ageiport.processor.core.task.importer.stage.ImportMainTaskStageProvider

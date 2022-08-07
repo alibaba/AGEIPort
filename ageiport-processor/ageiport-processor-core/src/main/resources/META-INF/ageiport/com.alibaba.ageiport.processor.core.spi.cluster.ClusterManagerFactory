@@ -1,0 +1,1 @@
+DefaultClusterManagerFactory=com.alibaba.ageiport.processor.core.cluster.DefaultClusterManagerFactory

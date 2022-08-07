@@ -1,0 +1,3 @@
+adaptive=com.alibaba.ageiport.ext.arch.compiler.support.AdaptiveCompiler
+jdk=com.alibaba.ageiport.ext.arch.compiler.support.JdkCompiler
+javassist=com.alibaba.ageiport.ext.arch.compiler.support.JavassistCompiler

@@ -1,0 +1,2 @@
+AvgExportSliceStrategy=com.alibaba.ageiport.processor.core.task.exporter.slice.AvgExportSliceStrategy
+AvgImportSliceStrategy=com.alibaba.ageiport.processor.core.task.importer.slice.AvgImportSliceStrategy

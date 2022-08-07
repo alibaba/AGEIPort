@@ -1,0 +1,2 @@
+ExportSpecificationResolver=com.alibaba.ageiport.processor.core.task.exporter.ExportSpecificationResolver
+ImportSpecificationResolver=com.alibaba.ageiport.processor.core.task.importer.ImportSpecificationResolver

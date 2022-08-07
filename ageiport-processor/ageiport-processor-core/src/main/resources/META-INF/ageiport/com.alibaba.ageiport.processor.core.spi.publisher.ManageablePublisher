@@ -1,0 +1,3 @@
+WaitDispatchMainTaskPrepareEventPublisher=com.alibaba.ageiport.processor.core.task.event.WaitDispatchMainTaskPrepareEventPublisher
+WaitDispatchMainTaskReduceEventPublisher=com.alibaba.ageiport.processor.core.task.event.WaitDispatchMainTaskReduceEventPublisher
+WaitDispatchSubTaskEventPublisher=com.alibaba.ageiport.processor.core.task.event.WaitDispatchSubTaskEventPublisher

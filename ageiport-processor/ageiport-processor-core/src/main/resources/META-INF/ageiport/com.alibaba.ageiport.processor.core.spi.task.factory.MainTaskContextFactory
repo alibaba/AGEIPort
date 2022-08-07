@@ -1,0 +1,2 @@
+ExportMainTaskContextFactory=com.alibaba.ageiport.processor.core.task.exporter.context.ExportMainTaskContextFactory
+ImportMainTaskContextFactory=com.alibaba.ageiport.processor.core.task.importer.context.ImportMainTaskContextFactory

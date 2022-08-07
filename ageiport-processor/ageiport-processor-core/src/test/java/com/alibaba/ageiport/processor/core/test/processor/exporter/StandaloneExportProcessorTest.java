@@ -1,0 +1,41 @@
+package com.alibaba.ageiport.processor.core.test.processor.exporter;
+
+import com.alibaba.ageiport.common.utils.JsonUtil;
+import com.alibaba.ageiport.processor.core.AgeiPort;
+import com.alibaba.ageiport.processor.core.AgeiPortOptions;
+import com.alibaba.ageiport.processor.core.spi.service.TaskExecuteParam;
+import com.alibaba.ageiport.processor.core.spi.service.TaskExecuteResult;
+import com.alibaba.ageiport.processor.core.test.model.Query;
+import com.alibaba.ageiport.processor.core.test.TestHelper;
+import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+
+@Slf4j
+public class StandaloneExportProcessorTest {
+
+    @SneakyThrows
+    @Test
+    public void test() {
+        AgeiPortOptions options = new AgeiPortOptions();
+        AgeiPortOptions.Debug debug = new AgeiPortOptions.Debug();
+        options.setDebug(debug);
+        AgeiPort ageiPort = AgeiPort.ageiPort(options);
+
+        Query query = new Query();
+        query.setTotalCount(100);
+
+        TaskExecuteParam request = new TaskExecuteParam();
+        request.setTaskSpecificationCode(StandaloneExportProcessor.class.getSimpleName());
+        request.setBizUserId("userId");
+        request.setBizQuery(JsonUtil.toJsonString(query));
+        TaskExecuteResult response = ageiPort.getTaskService().executeTask(request);
+        Assertions.assertTrue(response.getSuccess());
+
+        TestHelper testHelper = new TestHelper(ageiPort);
+        testHelper.assertWithFile(response.getMainTaskId(), query.getTotalCount());
+    }
+
+
+}

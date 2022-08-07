@@ -1,0 +1,1 @@
+LocalFileStore=com.alibaba.ageiport.processor.core.file.store.LocalFileStoreFactory

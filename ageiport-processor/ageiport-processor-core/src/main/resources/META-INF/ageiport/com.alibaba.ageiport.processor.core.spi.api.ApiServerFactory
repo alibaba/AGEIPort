@@ -1,0 +1,1 @@
+HttpApiServerFactory=com.alibaba.ageiport.processor.core.api.http.HttpApiServerFactory

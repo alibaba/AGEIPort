@@ -1,0 +1,2 @@
+LocalMemoryBigDataCache=com.alibaba.ageiport.processor.core.cache.LocalMemoryBigDataCache
+FileStoreBigDataCache=com.alibaba.ageiport.processor.core.cache.FileStoreBigDataCache

@@ -1,0 +1,2 @@
+StandardExportProcessorAdapter=com.alibaba.ageiport.processor.core.task.exporter.adapter.StandardExportProcessorAdapter
+StandardImportProcessorAdapter=com.alibaba.ageiport.processor.core.task.importer.adapter.StandardImportProcessorAdapter

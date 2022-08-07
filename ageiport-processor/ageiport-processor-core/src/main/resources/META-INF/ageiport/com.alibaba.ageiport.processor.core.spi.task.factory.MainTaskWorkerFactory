@@ -1,0 +1,2 @@
+ExportMainTaskWorkerFactory=com.alibaba.ageiport.processor.core.task.exporter.worker.ExportMainTaskWorkerFactory
+ImportMainTaskWorkerFactory=com.alibaba.ageiport.processor.core.task.importer.worker.ImportMainTaskWorkerFactory
