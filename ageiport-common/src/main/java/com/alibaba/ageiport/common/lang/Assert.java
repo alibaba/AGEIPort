@@ -285,7 +285,6 @@ public class Assert {
         throw new NotFoundException(bizCode, null, userMessageParams);
     }
 
-
     /*** StandardBusinessException 400 ***/
 
     /**
@@ -375,7 +374,6 @@ public class Assert {
     public static void justFailed(BizCode bizCode, Object... userMessageParams) {
         throw new StandardBusinessException(bizCode, null, userMessageParams);
     }
-
 
     /*** UnauthorizedException 400 ***/
 
