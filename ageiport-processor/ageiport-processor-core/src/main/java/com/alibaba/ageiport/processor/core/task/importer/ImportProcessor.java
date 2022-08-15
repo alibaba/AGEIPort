@@ -23,6 +23,11 @@ import java.util.Map;
  * @author lingyi
  */
 public interface ImportProcessor<QUERY, DATA, VIEW> extends Processor {
+
+    default String resolver() {
+        return "ImportSpecificationResolver";
+    }
+
     default Adapter getConcreteAdapter() {
         String name = StandardImportProcessorAdapter.class.getSimpleName();
         return ExtensionLoader.getExtensionLoader(Adapter.class).getExtension(name);
@@ -126,8 +131,5 @@ public interface ImportProcessor<QUERY, DATA, VIEW> extends Processor {
         return dataGroup;
     }
 
-    default String resolver() {
-        return "ImportSpecificationResolver";
-    }
 
 }

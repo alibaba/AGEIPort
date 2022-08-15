@@ -15,6 +15,7 @@
         <module>ageiport-sdk</module>
         <module>ageiport-processor</module>
         <module>ageiport-web</module>
+        <module>ageiport-test</module>
     </modules>
 
     <properties>

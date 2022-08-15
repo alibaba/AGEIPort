@@ -19,16 +19,25 @@ import java.util.Map;
  * @author lingyi
  */
 public interface ExportProcessor<QUERY, DATA, VIEW> extends Processor {
-    
+
+    default String resolver() {
+        return "ExportSpecificationResolver";
+    }
 
     default Adapter getConcreteAdapter() {
         String name = StandardExportProcessorAdapter.class.getSimpleName();
         return ExtensionLoader.getExtensionLoader(Adapter.class).getExtension(name);
     }
 
+    default BizExportTaskRuntimeConfig taskRuntimeConfig(BizUser user, QUERY query) throws BizException {
+        return null;
+    }
+
     default QUERY resetQuery(BizUser bizUser, QUERY query) throws BizException {
         return null;
     }
+
+    Integer totalCount(BizUser bizUser, QUERY query) throws BizException;
 
     default BizColumnHeaders getHeaders(BizUser user, QUERY query) throws BizException {
         return null;
@@ -37,8 +46,6 @@ public interface ExportProcessor<QUERY, DATA, VIEW> extends Processor {
     default BizDynamicColumnHeaders getDynamicHeaders(BizUser user, QUERY query) throws BizException {
         return null;
     }
-
-    Integer totalCount(BizUser bizUser, QUERY query) throws BizException;
 
     List<DATA> queryData(BizUser user, QUERY query, BizExportPage bizExportPage) throws BizException;
 
@@ -80,13 +87,5 @@ public interface ExportProcessor<QUERY, DATA, VIEW> extends Processor {
             }
         }
         return dataGroup;
-    }
-
-    default BizExportTaskRuntimeConfig taskRuntimeConfig(BizUser user, QUERY query) throws BizException {
-        return null;
-    }
-
-    default String resolver() {
-        return "ExportSpecificationResolver";
     }
 }

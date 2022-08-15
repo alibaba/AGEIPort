@@ -19,4 +19,6 @@ public class BizExportTaskRuntimeConfigImpl implements BizExportTaskRuntimeConfi
     private String taskSliceStrategy;
 
     private String fileType;
+
+
 }
