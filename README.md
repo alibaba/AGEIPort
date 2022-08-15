@@ -71,23 +71,23 @@ DataObject，映射到实际写入数据源或接口的类型，一般是ViewObj
 Maven依赖
 
 ```
-				<dependency>
-            <groupId>com.alibaba</groupId>
-            <artifactId>ageiport-processor-core</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter</artifactId>
-            <version>5.8.2</version>
-            <scope>test</scope>
-        </dependency>
-           <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-            <version>1.18.22</version>
-        </dependency>
+<dependency>
+    <groupId>com.alibaba</groupId>
+    <artifactId>ageiport-processor-core</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+    <scope>compile</scope>
+</dependency>
+<dependency>
+    <groupId>org.junit.jupiter</groupId>
+    <artifactId>junit-jupiter</artifactId>
+    <version>5.8.2</version>
+    <scope>test</scope>
+</dependency>
+   <dependency>
+    <groupId>org.projectlombok</groupId>
+    <artifactId>lombok</artifactId>
+    <version>1.18.22</version>
+</dependency>
 ```
 
 定义几个导入导出用到的POJO分别对应QUERY/VIEW/DATA三个泛型
