@@ -21,8 +21,7 @@ AGEIPort 基于事件驱动架构设计整体框架，并遵循先进的设计�
 
 GEI整体架构如图所示
 
-
-<img width="2751" alt="architechture" src="https://user-images.githubusercontent.com/32028545/184583092-b0883a9e-4311-4d49-b301-fa8ea3bd294b.png">
+![image](./docs/zh/img/architechture.jpg)
 
 
 代码层面主要主要分为3个模块
