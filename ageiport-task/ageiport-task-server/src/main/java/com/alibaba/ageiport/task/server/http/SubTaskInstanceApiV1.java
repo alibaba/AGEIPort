@@ -7,6 +7,7 @@ import com.alibaba.ageiport.common.utils.JsonUtil;
 import com.alibaba.ageiport.common.utils.TaskIdUtil;
 import com.alibaba.ageiport.task.server.config.TaskServerConfig;
 import com.alibaba.ageiport.task.server.entity.SubTaskInstanceEntity;
+import com.alibaba.ageiport.task.server.oauth.Oauth;
 import com.alibaba.ageiport.task.server.repository.MainTaskInstanceRepository;
 import com.alibaba.ageiport.task.server.repository.SubTaskInstanceRepository;
 import com.alibaba.ageiport.task.server.repository.query.TenantAppQuery;
@@ -28,6 +29,7 @@ import java.util.List;
 @Path("/v1")
 @Produces("application/json")
 @Consumes("application/json")
+@Oauth
 public class SubTaskInstanceApiV1 {
 
     private TaskServerConfig config;

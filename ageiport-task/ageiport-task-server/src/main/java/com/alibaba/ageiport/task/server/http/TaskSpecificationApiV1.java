@@ -9,6 +9,7 @@ import com.alibaba.ageiport.task.server.model.CreateTaskSpecificationRequest;
 import com.alibaba.ageiport.task.server.model.CreateTaskSpecificationResponse;
 import com.alibaba.ageiport.task.server.model.GetTaskSpecificationRequest;
 import com.alibaba.ageiport.task.server.model.GetTaskSpecificationResponse;
+import com.alibaba.ageiport.task.server.oauth.Oauth;
 import com.alibaba.ageiport.task.server.repository.TaskSpecificationRepository;
 import com.alibaba.ageiport.task.server.repository.query.TenantAppQuery;
 import io.quarkus.hibernate.reactive.panache.Panache;
@@ -27,6 +28,7 @@ import java.util.Date;
 @Path("/v1")
 @Produces("application/json")
 @Consumes("application/json")
+@Oauth
 public class TaskSpecificationApiV1 {
 
     private TaskServerConfig config;

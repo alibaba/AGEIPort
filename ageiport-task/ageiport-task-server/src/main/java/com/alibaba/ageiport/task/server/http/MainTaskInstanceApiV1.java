@@ -28,6 +28,7 @@ import java.util.Date;
 @Path("/v1")
 @Produces("application/json")
 @Consumes("application/json")
+@Oauth
 public class MainTaskInstanceApiV1 {
 
     private TaskServerConfig config;
@@ -41,7 +42,6 @@ public class MainTaskInstanceApiV1 {
 
     @Path("/CreateMainTaskInstance")
     @POST
-    @Oauth
     public Uni<CreateMainTaskInstanceResponse> createMainTaskInstance(CreateMainTaskInstanceRequest request) {
         if (request == null) {
             throw new WebApplicationException("invalid param", 422);
