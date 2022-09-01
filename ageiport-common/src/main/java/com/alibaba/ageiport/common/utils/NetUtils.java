@@ -4,6 +4,7 @@ package com.alibaba.ageiport.common.utils;
 import com.alibaba.ageiport.common.exception.UtilException;
 import com.alibaba.ageiport.common.function.Filter;
 
+import java.io.IOException;
 import java.net.*;
 import java.util.*;
 
@@ -191,6 +192,15 @@ public class NetUtils {
             return InetAddress.getLocalHost().getCanonicalHostName();
         } catch (Throwable e) {
             return null;
+        }
+    }
+
+    public static boolean isPortAvailable(int port) {
+        try {
+            ServerSocket server = new ServerSocket(port);
+            return true;
+        } catch (IOException ignored) {
+            return false;
         }
     }
 }

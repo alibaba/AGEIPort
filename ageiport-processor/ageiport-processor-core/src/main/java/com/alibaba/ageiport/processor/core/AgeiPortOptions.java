@@ -1,5 +1,6 @@
 package com.alibaba.ageiport.processor.core;
 
+import com.alibaba.ageiport.common.utils.NetUtils;
 import com.alibaba.ageiport.ext.file.store.FileStoreOptions;
 import com.alibaba.ageiport.processor.core.api.http.HttpApiServerOptions;
 import com.alibaba.ageiport.processor.core.client.http.HttpTaskServerClientOptions;
@@ -16,6 +17,7 @@ import com.alibaba.ageiport.processor.core.spi.client.TaskServerClientOptions;
 import com.alibaba.ageiport.processor.core.spi.cluster.ClusterOptions;
 import com.alibaba.ageiport.processor.core.spi.dispatcher.DispatcherOptions;
 import com.alibaba.ageiport.processor.core.spi.eventbus.EventBusOptions;
+import io.netty.util.NetUtil;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -32,8 +34,6 @@ import java.util.Map;
 public class AgeiPortOptions {
 
     private String factory = "AgeiPortFactoryImpl";
-
-    private Debug debug;
 
     private String namespace;
 
@@ -155,7 +155,7 @@ public class AgeiPortOptions {
     @Getter
     @Setter
     @ToString
-    public static class Debug {
+    private static class Debug {
 
         private String namespace = "namespace";
 
@@ -168,5 +168,35 @@ public class AgeiPortOptions {
         private FileStoreOptions fileStoreOptions = new LocalFileStoreOptions();
 
         private TaskServerClientOptions taskServerClientOptions = new MemoryTaskServerClientOptions();
+    }
+
+    public static AgeiPortOptions debug() {
+        AgeiPortOptions options = new AgeiPortOptions();
+        Debug debug = new AgeiPortOptions.Debug();
+        if (debug.getNamespace() != null) {
+            options.setNamespace(debug.getNamespace());
+        }
+        if (debug.getApp() != null) {
+            options.setApp(debug.getApp());
+        }
+        if (debug.getAccessKeyId() != null) {
+            options.setAccessKeyId(debug.getAccessKeyId());
+        }
+        if (debug.getAccessKeySecret() != null) {
+            options.setAccessKeySecret(debug.getAccessKeySecret());
+        }
+        if (debug.getFileStoreOptions() != null) {
+            options.setFileStoreOptions(debug.getFileStoreOptions());
+        }
+        if (debug.getTaskServerClientOptions() != null) {
+            if (NetUtils.isPortAvailable(9821)) {
+                HttpTaskServerClientOptions clientOptions = new HttpTaskServerClientOptions();
+                clientOptions.setEndpoint("localhost");
+                options.setTaskServerClientOptions(clientOptions);
+            } else {
+                options.setTaskServerClientOptions(debug.getTaskServerClientOptions());
+            }
+        }
+        return options;
     }
 }

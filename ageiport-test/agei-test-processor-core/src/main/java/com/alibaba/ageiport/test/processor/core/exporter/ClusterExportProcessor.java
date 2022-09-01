@@ -16,8 +16,7 @@ import com.alibaba.ageiport.test.processor.core.model.View;
 import java.util.ArrayList;
 import java.util.List;
 
-
-@ExportSpecification(code = "ClusterExportProcessor", name = "StandaloneExportProcessor", executeType = ExecuteType.CLUSTER)
+@ExportSpecification(code = "ClusterExportProcessor", name = "ClusterExportProcessor", executeType = ExecuteType.CLUSTER)
 public class ClusterExportProcessor implements ExportProcessor<Query, Data, View> {
     @Override
     public Integer totalCount(BizUser bizUser, Query query) throws BizException {

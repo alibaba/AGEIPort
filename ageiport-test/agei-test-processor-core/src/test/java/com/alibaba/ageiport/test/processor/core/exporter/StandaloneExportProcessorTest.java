@@ -19,9 +19,8 @@ public class StandaloneExportProcessorTest {
     @Test
     public void test() {
         //1.初始化AgeiPort实例
-        AgeiPortOptions options = new AgeiPortOptions();
-        AgeiPortOptions.Debug debug = new AgeiPortOptions.Debug();
-        options.setDebug(debug);
+        AgeiPortOptions options = AgeiPortOptions.debug();
+
         AgeiPort ageiPort = AgeiPort.ageiPort(options);
 
         //2.构造查询参数TaskExecuteParam

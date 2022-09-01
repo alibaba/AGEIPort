@@ -24,9 +24,7 @@ public class ClusterImportProcessorTest {
     @SneakyThrows
     @Test
     public void test() {
-        AgeiPortOptions options = new AgeiPortOptions();
-        AgeiPortOptions.Debug debug = new AgeiPortOptions.Debug();
-        options.setDebug(debug);
+        AgeiPortOptions options = AgeiPortOptions.debug();
         AgeiPort ageiPort = AgeiPort.ageiPort(options);
 
         String taskCode = ClusterImportProcessor.class.getSimpleName();
@@ -52,9 +50,7 @@ public class ClusterImportProcessorTest {
     @SneakyThrows
     @Test
     public void testHasCheckError() {
-        AgeiPortOptions options = new AgeiPortOptions();
-        AgeiPortOptions.Debug debug = new AgeiPortOptions.Debug();
-        options.setDebug(debug);
+        AgeiPortOptions options = AgeiPortOptions.debug();
         AgeiPort ageiPort = AgeiPort.ageiPort(options);
 
         String taskCode = StandaloneImportProcessor.class.getSimpleName();

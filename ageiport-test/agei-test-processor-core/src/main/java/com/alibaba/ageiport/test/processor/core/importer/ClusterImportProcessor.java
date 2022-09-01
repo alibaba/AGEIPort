@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-@ImportSpecification(code = "ClusterImportProcessor", name = "StandaloneImportProcessor", executeType = ExecuteType.CLUSTER)
+@ImportSpecification(code = "ClusterImportProcessor", name = "ClusterImportProcessor", executeType = ExecuteType.CLUSTER)
 public class ClusterImportProcessor implements ImportProcessor<Query, Data, View> {
 
     Logger logger = LoggerFactory.getLogger(ClusterImportProcessor.class);

@@ -24,7 +24,7 @@ public class HttpTaskServerClientOptions implements TaskServerClientOptions {
 
     private String endpoint = "agei-server-task";
 
-    private Integer port = 8710;
+    private Integer port = 9821;
 
     private Integer timeoutMs = 3000;
 }

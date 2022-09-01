@@ -9,6 +9,7 @@ import com.alibaba.ageiport.common.utils.TaskIdUtil;
 import com.alibaba.ageiport.task.server.config.TaskServerConfig;
 import com.alibaba.ageiport.task.server.entity.MainTaskInstanceEntity;
 import com.alibaba.ageiport.task.server.model.*;
+import com.alibaba.ageiport.task.server.oauth.Oauth;
 import com.alibaba.ageiport.task.server.repository.MainTaskInstanceRepository;
 import com.alibaba.ageiport.task.server.repository.query.TenantAppQuery;
 import io.quarkus.hibernate.reactive.panache.Panache;
@@ -40,6 +41,7 @@ public class MainTaskInstanceApiV1 {
 
     @Path("/CreateMainTaskInstance")
     @POST
+    @Oauth
     public Uni<CreateMainTaskInstanceResponse> createMainTaskInstance(CreateMainTaskInstanceRequest request) {
         if (request == null) {
             throw new WebApplicationException("invalid param", 422);

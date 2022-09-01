@@ -26,9 +26,7 @@ public class StandaloneImportProcessorTest {
     @Test
     public void test() {
         //1.初始化AgeiPort实例
-        AgeiPortOptions options = new AgeiPortOptions();
-        AgeiPortOptions.Debug debug = new AgeiPortOptions.Debug();
-        options.setDebug(debug);
+        AgeiPortOptions options = AgeiPortOptions.debug();
         AgeiPort ageiPort = AgeiPort.ageiPort(options);
 
         //2.读取文件，并上传到文件存储中
@@ -61,9 +59,7 @@ public class StandaloneImportProcessorTest {
     @Test
     public void testHasCheckError() {
         //1.初始化AgeiPort实例
-        AgeiPortOptions options = new AgeiPortOptions();
-        AgeiPortOptions.Debug debug = new AgeiPortOptions.Debug();
-        options.setDebug(debug);
+        AgeiPortOptions options = AgeiPortOptions.debug();
         AgeiPort ageiPort = AgeiPort.ageiPort(options);
 
         //2.读取文件，并上传到文件存储中

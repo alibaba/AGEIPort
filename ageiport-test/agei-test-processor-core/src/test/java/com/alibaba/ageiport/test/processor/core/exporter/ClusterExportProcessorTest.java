@@ -18,9 +18,7 @@ public class ClusterExportProcessorTest {
     @SneakyThrows
     @Test
     public void test() {
-        AgeiPortOptions options = new AgeiPortOptions();
-        AgeiPortOptions.Debug debug = new AgeiPortOptions.Debug();
-        options.setDebug(debug);
+        AgeiPortOptions options = AgeiPortOptions.debug();
         AgeiPort ageiPort = AgeiPort.ageiPort(options);
 
         Query query = new Query();
@@ -37,6 +35,4 @@ public class ClusterExportProcessorTest {
         TestHelper testHelper = new TestHelper(ageiPort);
         testHelper.assertWithFile(response.getMainTaskId(), query.getTotalCount());
     }
-
-
 }

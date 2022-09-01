@@ -14,4 +14,6 @@ import javax.enterprise.context.ApplicationScoped;
 public class TaskServerConfig {
     @ConfigProperty(name = "ageiport.env", defaultValue = "PRODUCTION")
     protected String env;
+    @ConfigProperty(name = "ageiport.task.server.oauth2.enable", defaultValue = "false")
+    protected boolean enableOauth2;
 }

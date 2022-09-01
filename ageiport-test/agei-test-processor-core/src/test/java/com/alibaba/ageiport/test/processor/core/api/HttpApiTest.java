@@ -1,4 +1,4 @@
-package com.alibaba.ageiport.processor.core.test.api;
+package com.alibaba.ageiport.test.processor.core.api;
 
 import com.alibaba.ageiport.common.utils.JsonUtil;
 import com.alibaba.ageiport.processor.core.AgeiPort;
@@ -9,9 +9,9 @@ import com.alibaba.ageiport.processor.core.spi.api.model.ExecuteMainTaskRequest;
 import com.alibaba.ageiport.processor.core.spi.api.model.ExecuteMainTaskResponse;
 import com.alibaba.ageiport.processor.core.spi.api.model.GetMainTaskProgressRequest;
 import com.alibaba.ageiport.processor.core.spi.api.model.GetMainTaskProgressResponse;
-import com.alibaba.ageiport.processor.core.test.TestHelper;
-import com.alibaba.ageiport.processor.core.test.model.Query;
-import com.alibaba.ageiport.processor.core.test.processor.exporter.StandaloneExportProcessor;
+import com.alibaba.ageiport.test.processor.core.TestHelper;
+import com.alibaba.ageiport.test.processor.core.exporter.StandaloneExportProcessor;
+import com.alibaba.ageiport.test.processor.core.model.Query;
 import io.vertx.core.Vertx;
 import io.vertx.core.http.HttpClientRequest;
 import io.vertx.core.http.HttpClientResponse;
@@ -31,8 +31,6 @@ public class HttpApiTest {
     @SneakyThrows
     public void test() {
         AgeiPortOptions options = new AgeiPortOptions();
-        AgeiPortOptions.Debug debug = new AgeiPortOptions.Debug();
-        options.setDebug(debug);
         AgeiPort ageiPort = AgeiPort.ageiPort(options);
 
         Query query = new Query();
