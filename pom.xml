@@ -7,7 +7,12 @@
     <groupId>com.alibaba</groupId>
     <artifactId>ageiport-parent</artifactId>
     <packaging>pom</packaging>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>0.0.1</version>
+    <name>AGEIPort</name>
+    <description>AGEIPort is alibaba generic export import framework in Java</description>
+    <url>https://github.com/alibaba/AGEIPort</url>
+    <inceptionYear>2022</inceptionYear>
+
     <modules>
         <module>ageiport-common</module>
         <module>ageiport-ext</module>
@@ -52,8 +57,9 @@
     </licenses>
 
     <properties>
-        <maven.compiler.source>8</maven.compiler.source>
-        <maven.compiler.target>8</maven.compiler.target>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <fastjson.version>1.2.76</fastjson.version>
         <mapstruct.version>1.4.2.Final</mapstruct.version>
         <log4j-api.version>2.14.1</log4j-api.version>
