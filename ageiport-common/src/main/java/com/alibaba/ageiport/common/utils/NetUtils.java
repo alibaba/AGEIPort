@@ -196,11 +196,15 @@ public class NetUtils {
     }
 
     public static boolean isPortAvailable(int port) {
+        Socket socket;
+        String host = "localhost";
         try {
-            ServerSocket server = new ServerSocket(port);
+            socket = new Socket(host, port);
             return true;
-        } catch (IOException ignored) {
+        } catch (IOException e) {
             return false;
         }
+
+
     }
 }

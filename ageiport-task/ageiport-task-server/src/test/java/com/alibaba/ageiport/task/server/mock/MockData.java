@@ -5,6 +5,7 @@ import com.alibaba.ageiport.task.server.model.CreateSubTaskInstancesRequest;
 import com.alibaba.ageiport.task.server.model.CreateTaskSpecificationRequest;
 import com.alibaba.fastjson.JSONObject;
 import com.github.jsonzou.jmockdata.JMockData;
+import com.github.jsonzou.jmockdata.MockConfig;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,7 +32,9 @@ public class MockData {
     public static final String HANDLER = "handler";
 
     public static CreateTaskSpecificationRequest createTaskSpecificationRequest() {
-        CreateTaskSpecificationRequest request = JMockData.mock(CreateTaskSpecificationRequest.class);
+        MockConfig mockConfig = MockConfig.newInstance().excludes("serialVersionUID");
+
+        CreateTaskSpecificationRequest request = JMockData.mock(CreateTaskSpecificationRequest.class, mockConfig);
         request.setTenant(TENANT_CODE);
         request.setNamespace(NAMESPACE);
         request.setApp(APP);
@@ -43,7 +46,8 @@ public class MockData {
     }
 
     public static CreateMainTaskInstanceRequest createMainTaskInstanceRequest() {
-        CreateMainTaskInstanceRequest request = JMockData.mock(CreateMainTaskInstanceRequest.class);
+        MockConfig mockConfig = MockConfig.newInstance().excludes("serialVersionUID");
+        CreateMainTaskInstanceRequest request = JMockData.mock(CreateMainTaskInstanceRequest.class, mockConfig);
 
         request.setTenant(TENANT_CODE);
         request.setNamespace(NAMESPACE);
@@ -61,7 +65,8 @@ public class MockData {
     }
 
     public static CreateSubTaskInstancesRequest createSubTaskInstanceRequest(String mainTaskId) {
-        CreateSubTaskInstancesRequest request = JMockData.mock(CreateSubTaskInstancesRequest.class);
+        MockConfig mockConfig = MockConfig.newInstance().excludes("serialVersionUID");
+        CreateSubTaskInstancesRequest request = JMockData.mock(CreateSubTaskInstancesRequest.class,mockConfig);
 
         request.setTenant(TENANT_CODE);
         request.setNamespace(NAMESPACE);

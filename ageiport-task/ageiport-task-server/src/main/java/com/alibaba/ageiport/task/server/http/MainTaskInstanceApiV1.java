@@ -214,8 +214,8 @@ public class MainTaskInstanceApiV1 {
         }
 
         if (JsonUtil.isJson(request.getFeature())) {
-            String runtimeParam = JsonUtil.merge(entity.getFeature(), request.getFeature());
-            entity.setRuntimeParam(runtimeParam);
+            String feature = JsonUtil.merge(entity.getFeature(), request.getFeature());
+            entity.setFeature(feature);
         }
         entity.setRowVersion(entity.getRowVersion() + 1);
     }

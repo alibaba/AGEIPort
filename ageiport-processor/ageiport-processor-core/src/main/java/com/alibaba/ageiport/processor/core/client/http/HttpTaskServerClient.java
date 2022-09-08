@@ -75,7 +75,8 @@ public class HttpTaskServerClient implements TaskServerClient {
         if (!response.getSuccess()) {
             throw new IllegalArgumentException("GetMainTaskInstanceRequest failed:" + response);
         }
-        MainTask mainTask = BeanUtils.cloneProp(response, MainTask.class);
+        GetMainTaskInstanceResponse.Data responseData = response.getData();
+        MainTask mainTask = BeanUtils.cloneProp(responseData, MainTask.class);
         return mainTask;
     }
 
@@ -106,7 +107,8 @@ public class HttpTaskServerClient implements TaskServerClient {
         if (!response.getSuccess()) {
             throw new IllegalArgumentException("GetSubTaskInstanceRequest failed:" + response);
         }
-        SubTask subTask = BeanUtils.cloneProp(response.getData(), SubTask.class);
+        GetSubTaskInstanceResponse.Data responseData = response.getData();
+        SubTask subTask = BeanUtils.cloneProp(responseData, SubTask.class);
         return subTask;
     }
 
@@ -118,7 +120,8 @@ public class HttpTaskServerClient implements TaskServerClient {
         if (!response.getSuccess()) {
             throw new IllegalArgumentException("GetSubTaskInstanceRequest failed:" + response);
         }
-        TaskSpecification taskSpecification = BeanUtils.cloneProp(response.getData(), TaskSpecification.class);
+        GetTaskSpecificationResponse.Data responseData = response.getData();
+        TaskSpecification taskSpecification = BeanUtils.cloneProp(responseData, TaskSpecification.class);
         return taskSpecification;
     }
 

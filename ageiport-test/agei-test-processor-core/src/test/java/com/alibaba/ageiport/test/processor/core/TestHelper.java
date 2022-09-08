@@ -89,6 +89,7 @@ public class TestHelper {
         //4.任务完成后，查询任务实例信息，任务输出的文件信息
         MainTask mainTask = ageiPort.getTaskServerClient().getMainTask(taskProgress.getMainTaskId());
         String fileKey = FeatureUtils.getFeature(mainTask.getFeature(), MainTaskFeatureKeys.OUTPUT_FILE_KEY);
+        Assertions.assertNotNull(fileKey);
         boolean exists = ageiPort.getFileStore().exists(fileKey, new HashMap<>());
         Assertions.assertTrue(exists);
 
