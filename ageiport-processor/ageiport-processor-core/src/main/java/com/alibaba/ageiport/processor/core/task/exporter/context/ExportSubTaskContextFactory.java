@@ -48,7 +48,7 @@ public class ExportSubTaskContextFactory<QUERY, DATA, VIEW> implements SubTaskCo
         QUERY query = JsonUtil.toObject(subTask.getBizQuery(), taskSpec.getQueryClass());
         context.setQuery(query);
 
-        String runtimeParamString = mainTask.getRuntimeParam();
+        String runtimeParamString = subTask.getRuntimeParam();
         if (JsonUtil.isJson(runtimeParamString)) {
             ExportTaskRuntimeConfigImpl runtimeConfig = JsonUtil.toObject(runtimeParamString, ExportTaskRuntimeConfigImpl.class);
             context.setExportTaskRuntimeConfig(runtimeConfig);

@@ -31,11 +31,13 @@ public class StandaloneExportProcessor implements ExportProcessor<Query, Data, V
     public List<Data> queryData(BizUser user, Query query, BizExportPage bizExportPage) throws BizException {
         List<Data> dataList = new ArrayList<>();
 
-        Integer totalCount = query.getTotalCount();
-        for (int i = 1; i <= totalCount; i++) {
+        Integer offset = bizExportPage.getOffset();
+        Integer size = bizExportPage.getSize();
+        for (int i = 1; i <= size; i++) {
+            int index = offset + i;
             final Data data = new Data();
-            data.setId(i);
-            data.setName("name" + i);
+            data.setId(index);
+            data.setName("name" + index);
             dataList.add(data);
         }
         return dataList;

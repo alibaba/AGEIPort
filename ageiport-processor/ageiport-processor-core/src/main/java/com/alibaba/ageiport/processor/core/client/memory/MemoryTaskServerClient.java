@@ -73,6 +73,8 @@ public class MemoryTaskServerClient implements TaskServerClient {
             SubTask subTask = BeanUtils.cloneProp(mainTask, SubTask.class);
             subTask.setSubTaskId(TaskIdUtil.genSubTaskId(mainTaskId, subTaskInstance.getSubTaskNo()));
             subTask.setMainTaskId(mainTaskId);
+            subTask.setRuntimeParam(subTaskInstance.getRuntimeParam());
+            subTask.setBizQuery(subTaskInstance.getBizQuery());
             this.subTaskMap.put(subTask.getSubTaskId(), subTask);
             subTaskIds.add(subTask.getSubTaskId());
         }
