@@ -11,7 +11,8 @@
     <packaging>pom</packaging>
 
     <modules>
-        <module>agei-test-processor-core</module>
+        <module>ageiport-test-processor-core</module>
+        <module>ageiport-test-ext-file-store-aliyunoss</module>
     </modules>
 
     <artifactId>ageiport-test</artifactId>

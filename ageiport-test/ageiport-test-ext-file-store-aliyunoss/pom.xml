@@ -9,7 +9,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>agei-test-processor-core</artifactId>
+    <artifactId>ageiport-test-ext-file-store-aliyunoss</artifactId>
 
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
@@ -19,18 +19,21 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
+            <groupId>com.alibaba</groupId>
+            <artifactId>ageiport-test-processor-core</artifactId>
+            <version>0.0.2-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>com.alibaba</groupId>
-            <artifactId>ageiport-processor-core</artifactId>
+            <artifactId>ageiport-ext-file-store-aliyunoss</artifactId>
             <version>0.0.2-SNAPSHOT</version>
-            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter</artifactId>
+            <artifactId>junit-jupiter-api</artifactId>
+            <version>5.9.0-M1</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
+
 </project>
