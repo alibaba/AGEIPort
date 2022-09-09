@@ -37,7 +37,7 @@ public class HttpTaskServerClient implements TaskServerClient {
 
     public HttpTaskServerClient(AgeiPort ageiPort, HttpTaskServerClientOptions options) {
         this.ageiPort = ageiPort;
-        this.domain = options.getSchema() + "://" + options.getEndpoint() + ":" + options.getPort() + "/";
+        this.domain = options.getSchema() + "://" + options.getEndpoint() + ":" + options.getPort();
         this.timeoutMs = options.getTimeoutMs();
         this.client = new OkHttpClient().newBuilder()
                 .callTimeout(timeoutMs, TimeUnit.MILLISECONDS)
