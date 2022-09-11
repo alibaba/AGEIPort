@@ -1,0 +1,1 @@
+DefaultMainTaskCallback=com.alibaba.ageiport.processor.core.task.callback.DefaultMainTaskCallback

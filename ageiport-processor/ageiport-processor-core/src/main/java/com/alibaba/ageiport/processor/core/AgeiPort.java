@@ -17,6 +17,7 @@ import com.alibaba.ageiport.processor.core.spi.listener.ListenerManager;
 import com.alibaba.ageiport.processor.core.spi.publisher.PublisherManager;
 import com.alibaba.ageiport.processor.core.spi.service.TaskService;
 import com.alibaba.ageiport.processor.core.spi.task.acceptor.TaskAcceptor;
+import com.alibaba.ageiport.processor.core.spi.task.callback.MainTaskCallback;
 import com.alibaba.ageiport.processor.core.spi.task.monitor.TaskProgressMonitor;
 import com.alibaba.ageiport.processor.core.spi.task.monitor.TaskProgressService;
 import com.alibaba.ageiport.processor.core.spi.task.selector.TaskSpiSelector;
@@ -78,6 +79,8 @@ public interface AgeiPort {
     TaskAcceptor getTaskAcceptor();
 
     ClusterManager getClusterManager();
+
+    MainTaskCallback getMainTaskCallback();
 
     <T, P> T getBean(Class<T> clazz, Builder<T, P> builder, P param);
 

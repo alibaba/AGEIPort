@@ -9,6 +9,7 @@ import com.alibaba.ageiport.common.utils.JsonUtil;
 import com.alibaba.ageiport.processor.core.AgeiPort;
 import com.alibaba.ageiport.processor.core.TaskSpec;
 import com.alibaba.ageiport.processor.core.constants.MainTaskFeatureKeys;
+import com.alibaba.ageiport.processor.core.model.core.impl.MainTask;
 import com.alibaba.ageiport.processor.core.spi.client.CreateMainTaskRequest;
 import com.alibaba.ageiport.processor.core.spi.client.TaskServerClient;
 import com.alibaba.ageiport.processor.core.spi.task.factory.TaskContext;
@@ -40,8 +41,6 @@ public class TaskServiceImpl implements TaskService {
             TaskSpec taskSpec = registry.get(code);
             String executeType = taskSpec.getExecuteType();
             String taskType = taskSpec.getTaskType();
-            TaskSpiSelector spiSelector = ageiPort.getTaskSpiSelector();
-            MainTaskStageProvider stageProvider = spiSelector.selectExtension(executeType, taskType, code, MainTaskStageProvider.class);
 
             CreateMainTaskRequest createMainTaskRequest = BeanUtils.cloneProp(param, CreateMainTaskRequest.class);
             createMainTaskRequest.setCode(param.getTaskSpecificationCode());
@@ -54,10 +53,13 @@ public class TaskServiceImpl implements TaskService {
             feature = FeatureUtils.putFeature(feature, MainTaskFeatureKeys.LABELS, JsonUtil.toJsonString(param.getLabels()));
             feature = FeatureUtils.putFeature(feature, MainTaskFeatureKeys.INPUT_FILE_KEY, param.getInputFileKey());
             createMainTaskRequest.setFeature(feature);
+
             TaskServerClient taskServerClient = ageiPort.getTaskServerClient();
             String mainTaskId = taskServerClient.createMainTask(createMainTaskRequest);
+            MainTask mainTask = taskServerClient.getMainTask(mainTaskId);
 
-            ageiPort.getLocalEventBus().post(TaskStageEvent.mainTaskEvent(mainTaskId, stageProvider.mainTaskCreated()));
+            ageiPort.getMainTaskCallback().afterCreated(mainTask);
+            ageiPort.getTaskAcceptor().accept(mainTask);
 
             TaskExecuteResult response = new TaskExecuteResult();
             response.setSuccess(true);

@@ -37,8 +37,6 @@ public interface TaskContext extends Context {
 
     void setStage(Stage stage);
 
-    StageProvider getStageProvider();
-
     default Stage goNextStage() {
         Stage current = getStage();
         Stage next = current.next();
@@ -48,23 +46,6 @@ public interface TaskContext extends Context {
     }
 
     Long getStageTimestamp(String code);
-
-
-    default void goNextStageEventOld() {
-        MainTask mainTask = getMainTask();
-        String executeType = mainTask.getExecuteType();
-        EventBus eventBus = getAgeiPort().getEventBusManager().getEventBus(executeType);
-
-        Stage oldStage = goNextStage();
-        Stage newStage = getStage();
-        Long oldStageTimestamp = getStageTimestamp(oldStage.getCode());
-        Long newStageTimestamp = getStageTimestamp(newStage.getCode());
-        Long cost = null;
-        if (oldStageTimestamp != null && newStageTimestamp != null) {
-            cost = System.currentTimeMillis() - oldStageTimestamp;
-        }
-        eventBus.post(TaskStageEvent.mainTaskEvent(mainTask.getMainTaskId(), oldStage, cost, mainTask.getSubTotalCount()));
-    }
 
     default void goNextStageEventNew() {
         MainTask mainTask = getMainTask();
@@ -112,12 +93,5 @@ public interface TaskContext extends Context {
         assertCurrentStage(stage.getCode());
     }
 
-    default void setSubTaskCount(Integer count) {
-        MainTask mainTask = getMainTask();
-        mainTask.setSubTotalCount(count);
-        mainTask.setSubFinishedCount(0);
-        mainTask.setSubFailedCount(0);
-        mainTask.setSubSuccessCount(0);
-    }
 
 }

@@ -61,7 +61,7 @@ public class ExportMainTaskWorker<QUERY, DATA, VIEW> extends AbstractMainTaskWor
 
     @Override
     public void doPrepare() {
-        AgeiPort ageiPort = getAgei();
+        AgeiPort ageiPort = getAgeiPort();
         String mainTaskId = mainTask.getMainTaskId();
         String executeType = mainTask.getExecuteType();
         String taskType = mainTask.getType();
@@ -153,10 +153,7 @@ public class ExportMainTaskWorker<QUERY, DATA, VIEW> extends AbstractMainTaskWor
             context.assertCurrentStage(stageProvider.mainTaskSaveSliceEnd());
         } catch (Throwable e) {
             log.error("StandaloneExportMainTaskWorker#doPrepare failed, main:{}", mainTaskId, e);
-            mainTask.setResultMessage(e.getMessage());
-            mainTask.setGmtFinished(new Date());
-            ageiPort.getTaskServerClient().updateMainTask(mainTask);
-            ageiPort.getLocalEventBus().post(TaskStageEvent.mainTaskEvent(mainTaskId, CommonStage.ERROR));
+            onError(e);
         }
 
     }
@@ -197,26 +194,19 @@ public class ExportMainTaskWorker<QUERY, DATA, VIEW> extends AbstractMainTaskWor
             FileStore fileStore = ageiPort.getFileStore();
             String key = mainTask.getMainTaskId() + "." + runtimeConfig.getFileType();
             fileStore.save(key, fileStream, new HashMap<>());
-            context.goNextStageEventNew();
-
             MainTask contextMainTask = context.getMainTask();
-            contextMainTask.setStatus(TaskStatus.FINISHED);
-            contextMainTask.setSubSuccessCount(contextMainTask.getSubTotalCount());
-            contextMainTask.setGmtFinished(new Date());
-            contextMainTask.setDataSuccessCount(contextMainTask.getDataTotalCount());
-            contextMainTask.setDataProcessedCount(contextMainTask.getDataTotalCount());
+
             String feature = FeatureUtils.putFeature(contextMainTask.getFeature(), MainTaskFeatureKeys.OUTPUT_FILE_KEY, key);
             contextMainTask.setFeature(feature);
-            context.save();
+            context.goNextStageEventNew();
+
+            onFinished(context);
 
             context.goNextStageEventNew();
             context.assertCurrentStage(stageProvider.mainTaskFinished());
         } catch (Throwable e) {
             log.error("StandaloneExportMainTaskWorker#doReduce failed, main:{}", mainTask.getMainTaskId(), e);
-            mainTask.setResultMessage(e.getMessage());
-            mainTask.setGmtFinished(new Date());
-            ageiPort.getTaskServerClient().updateMainTask(mainTask);
-            ageiPort.getLocalEventBus().post(TaskStageEvent.mainTaskEvent(mainTask.getMainTaskId(), CommonStage.ERROR));
+            onError(e);
         } finally {
             IOUtils.closeQuietly(fileWriter);
             IOUtils.closeQuietly(fileStream);

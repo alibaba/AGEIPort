@@ -20,6 +20,7 @@ public class StandaloneExportProcessorTest {
     public void test() {
         //1.初始化AgeiPort实例
         AgeiPortOptions options = AgeiPortOptions.debug();
+        options.setMainTaskCallback("TestMainTaskCallback");
 
         AgeiPort ageiPort = AgeiPort.ageiPort(options);
 

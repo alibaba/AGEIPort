@@ -71,6 +71,8 @@ public class AgeiPortOptions {
 
     private String taskAcceptor = "DefaultTaskAcceptorFactory";
 
+    private String mainTaskCallback = "DefaultMainTaskCallback";
+
     private Map<String, String> spiSelectMappings = new HashMap<>();
 
     private Map<String, String> fileTypeWriterSpiMappings = new HashMap<>();

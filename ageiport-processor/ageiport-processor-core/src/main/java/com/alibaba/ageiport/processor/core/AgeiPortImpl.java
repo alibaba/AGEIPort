@@ -28,6 +28,7 @@ import com.alibaba.ageiport.processor.core.spi.service.TaskService;
 import com.alibaba.ageiport.processor.core.spi.service.TaskServiceImpl;
 import com.alibaba.ageiport.processor.core.spi.task.acceptor.TaskAcceptor;
 import com.alibaba.ageiport.processor.core.spi.task.acceptor.TaskAcceptorFactory;
+import com.alibaba.ageiport.processor.core.spi.task.callback.MainTaskCallback;
 import com.alibaba.ageiport.processor.core.spi.task.monitor.TaskProgressMonitor;
 import com.alibaba.ageiport.processor.core.spi.task.monitor.TaskProgressService;
 import com.alibaba.ageiport.processor.core.spi.task.selector.TaskSpiSelector;
@@ -93,6 +94,8 @@ public class AgeiPortImpl implements AgeiPort {
     private ClusterManager clusterManager;
 
     private ApiServer apiServer;
+
+    private MainTaskCallback mainTaskCallback;
 
 
     private AgeiPortImpl(AgeiPortOptions options) {
@@ -200,10 +203,11 @@ public class AgeiPortImpl implements AgeiPort {
 
         this.taskAcceptor = ExtensionLoader.getExtensionLoader(TaskAcceptorFactory.class).getExtension(this.options.getTaskAcceptor()).create(this);
 
-
         ApiServerOptions apiServerOptions = options.getApiServerOptions();
         String apiServerType = apiServerOptions.type();
         ApiServerFactory apiServerFactory = ExtensionLoader.getExtensionLoader(ApiServerFactory.class).getExtension(apiServerType);
         this.apiServer = apiServerFactory.create(this, apiServerOptions);
+
+        this.mainTaskCallback = ExtensionLoader.getExtensionLoader(MainTaskCallback.class).getExtension(this.options.getMainTaskCallback());
     }
 }

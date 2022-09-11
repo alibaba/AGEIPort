@@ -16,7 +16,7 @@ public abstract class AbstractMainTaskWorker implements MainTaskWorker {
     protected MainTask mainTask;
 
     @Override
-    public AgeiPort getAgei() {
+    public AgeiPort getAgeiPort() {
         return ageiPort;
     }
 
