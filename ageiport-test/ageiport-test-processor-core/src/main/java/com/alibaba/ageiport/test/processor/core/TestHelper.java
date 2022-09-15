@@ -34,7 +34,7 @@ public class TestHelper {
     }
 
     public String file(String fileName) {
-        return "." + File.separator + "files" + File.separator + "import-xlsx" + File.separator + fileName;
+        return "." + File.separator + "import-xlsx" + File.separator + fileName;
     }
 
     public void assertWithoutFile(String mainTaskId) throws InterruptedException {
