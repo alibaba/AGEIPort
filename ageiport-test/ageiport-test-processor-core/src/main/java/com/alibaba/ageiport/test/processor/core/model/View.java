@@ -14,4 +14,5 @@ public class View {
 
     @ViewField(headerName = "姓名")
     private String name;
+
 }

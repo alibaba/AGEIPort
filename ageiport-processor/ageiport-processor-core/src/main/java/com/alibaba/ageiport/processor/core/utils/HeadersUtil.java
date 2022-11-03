@@ -46,7 +46,8 @@ public class HeadersUtil {
                 List<BizColumnHeader> flatColumnHeaders = bizDynamicColumnHeader.getFlatColumnHeaders();
                 for (BizColumnHeader flatColumnHeader : flatColumnHeaders) {
                     ColumnHeaderImpl columnHeader = new ColumnHeaderImpl();
-                    columnHeader.setFieldName(flatColumnHeader.getFieldName());
+                    String flatColumnFieldName = flatColumnHeader.getFieldName();
+                    columnHeader.setFieldName(flatColumnFieldName == null ? bizDynamicColumnHeader.getFieldName() : flatColumnFieldName);
                     columnHeader.setHeaderName(flatColumnHeader.getHeaderName());
                     columnHeader.setType(flatColumnHeader.getType());
                     columnHeader.setIndex(index);
@@ -101,7 +102,8 @@ public class HeadersUtil {
                 List<BizColumnHeader> flatColumnHeaders = bizDynamicColumnHeader.getFlatColumnHeaders();
                 for (BizColumnHeader flatColumnHeader : flatColumnHeaders) {
                     ColumnHeaderImpl columnHeader = new ColumnHeaderImpl();
-                    columnHeader.setFieldName(flatColumnHeader.getFieldName());
+                    String flatColumnFieldName = flatColumnHeader.getFieldName();
+                    columnHeader.setFieldName(flatColumnFieldName == null ? bizDynamicColumnHeader.getFieldName() : flatColumnFieldName);
                     columnHeader.setHeaderName(flatColumnHeader.getHeaderName());
                     columnHeader.setType(flatColumnHeader.getType());
                     columnHeader.setIndex(index);

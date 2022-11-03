@@ -16,6 +16,8 @@ public class Query {
 
     private List<View> writeErrorData;
 
+    private Integer dynamicHeaderCount;
+
 
     public Integer getErrorCount() {
         int sum = 0;

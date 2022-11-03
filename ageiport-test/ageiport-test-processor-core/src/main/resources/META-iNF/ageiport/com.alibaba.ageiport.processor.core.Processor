@@ -1,4 +1,5 @@
 StandaloneExportProcessor=com.alibaba.ageiport.test.processor.core.exporter.StandaloneExportProcessor
+DynamicColumnExportProcessor=com.alibaba.ageiport.test.processor.core.exporter.DynamicColumnExportProcessor
 ClusterExportProcessor=com.alibaba.ageiport.test.processor.core.exporter.ClusterExportProcessor
 
 StandaloneImportProcessor=com.alibaba.ageiport.test.processor.core.importer.StandaloneImportProcessor

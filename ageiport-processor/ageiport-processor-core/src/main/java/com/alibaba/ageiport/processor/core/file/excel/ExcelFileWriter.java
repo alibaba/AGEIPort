@@ -97,7 +97,16 @@ public class ExcelFileWriter implements FileWriter {
                 }
                 String fieldName = columnHeader.getFieldName();
                 Object value = values.get(fieldName);
-                result.add(value);
+                if (columnHeader.getDynamicColumn()) {
+                    Map map = (Map) value;
+                    Object o = map.get(columnHeader.getDynamicColumnKey());
+                    result.add(o);
+                    if (o == null) {
+                        System.out.println(o);
+                    }
+                } else {
+                    result.add(value);
+                }
             }
             data.add(result);
         }
