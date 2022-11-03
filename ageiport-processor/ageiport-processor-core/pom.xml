@@ -5,11 +5,11 @@
     <parent>
         <artifactId>ageiport-processor</artifactId>
         <groupId>com.alibaba</groupId>
-        <version>0.0.2-SNAPSHOT</version>
+        <version>0.0.2</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <version>0.0.2-SNAPSHOT</version>
+    <version>0.0.2</version>
     <artifactId>ageiport-processor-core</artifactId>
 
     <properties>
@@ -22,32 +22,32 @@
         <dependency>
             <groupId>com.alibaba</groupId>
             <artifactId>ageiport-common</artifactId>
-            <version>0.0.2-SNAPSHOT</version>
+            <version>0.0.2</version>
         </dependency>
         <dependency>
             <groupId>com.alibaba</groupId>
             <artifactId>ageiport-ext-arch</artifactId>
-            <version>0.0.2-SNAPSHOT</version>
+            <version>0.0.2</version>
         </dependency>
         <dependency>
             <groupId>com.alibaba</groupId>
             <artifactId>ageiport-sdk-core</artifactId>
-            <version>0.0.2-SNAPSHOT</version>
+            <version>0.0.2</version>
         </dependency>
         <dependency>
             <groupId>com.alibaba</groupId>
             <artifactId>ageiport-task-server-model</artifactId>
-            <version>0.0.2-SNAPSHOT</version>
+            <version>0.0.2</version>
         </dependency>
         <dependency>
             <groupId>com.alibaba</groupId>
             <artifactId>ageiport-ext-security-default</artifactId>
-            <version>0.0.2-SNAPSHOT</version>
+            <version>0.0.2</version>
         </dependency>
         <dependency>
             <groupId>com.alibaba</groupId>
             <artifactId>ageiport-ext-file-store</artifactId>
-            <version>0.0.2-SNAPSHOT</version>
+            <version>0.0.2</version>
         </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
