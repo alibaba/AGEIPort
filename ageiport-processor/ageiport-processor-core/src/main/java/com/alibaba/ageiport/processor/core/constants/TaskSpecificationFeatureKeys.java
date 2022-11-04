@@ -8,7 +8,9 @@ import com.alibaba.ageiport.common.feature.FeatureKey;
 public interface TaskSpecificationFeatureKeys {
 
     FeatureKey<Long> TIMEOUT_MS = FeatureKey.create("timeoutMs", Long.class);
+
     FeatureKey<Integer> THRESHOLD = FeatureKey.create("threshold", Integer.class);
+
     FeatureKey<String> FILE_TYPE = FeatureKey.create("fileType", String.class);
 
     FeatureKey<Integer> PAGE_SIZE = FeatureKey.create("pageSize", Integer.class);

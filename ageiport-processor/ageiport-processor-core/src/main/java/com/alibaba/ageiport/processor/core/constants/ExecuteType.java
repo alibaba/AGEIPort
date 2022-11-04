@@ -8,4 +8,5 @@ public interface ExecuteType {
     String STANDALONE = "STANDALONE";
 
     String CLUSTER = "CLUSTER";
+
 }
