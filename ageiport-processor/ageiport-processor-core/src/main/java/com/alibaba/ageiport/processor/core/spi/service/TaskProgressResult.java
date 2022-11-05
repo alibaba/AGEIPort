@@ -13,6 +13,10 @@ import java.util.Map;
 @Setter
 public class TaskProgressResult {
 
+    private Boolean success;
+
+    private String errorMessage;
+
     private String mainTaskId;
 
     private String stageCode;

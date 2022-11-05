@@ -56,7 +56,7 @@ public class ExportSubTaskWorker<QUERY, DATA, VIEW> extends AbstractSubTaskWorke
             context.setStage(stageProvider.subTaskStart());
 
             ExportTaskSpecification<QUERY, DATA, VIEW> exportTaskSpec = context.getExportTaskSpec();
-            ExportProcessor<QUERY, DATA, VIEW> processor = exportTaskSpec.getExportProcessor();
+            ExportProcessor<QUERY, DATA, VIEW> processor = exportTaskSpec.getProcessor();
             ExportProcessorAdapter<QUERY, DATA, VIEW> adapter = (ExportProcessorAdapter) processor.getConcreteAdapter();
 
             BizUser bizUser = context.getBizUser();
@@ -69,19 +69,19 @@ public class ExportSubTaskWorker<QUERY, DATA, VIEW> extends AbstractSubTaskWorke
             page.setOffset(runtimeConfig.getPageOffset());
             page.setSize(runtimeConfig.getPageSize());
             page.setAttributes(runtimeConfig.getAttributes());
-            List<DATA> dataList = adapter.queryData(bizUser, query, page, exportTaskSpec.getExportProcessor(), context);
+            List<DATA> dataList = adapter.queryData(bizUser, query, page, exportTaskSpec.getProcessor(), context);
             context.goNextStageEventNew();
 
             context.goNextStageEventNew();
-            List<VIEW> viewList = adapter.convert(bizUser, query, dataList, exportTaskSpec.getExportProcessor(), context);
+            List<VIEW> viewList = adapter.convert(bizUser, query, dataList, exportTaskSpec.getProcessor(), context);
             context.goNextStageEventNew();
 
             context.goNextStageEventNew();
-            BizDataGroup<VIEW> group = adapter.group(bizUser, query, viewList, exportTaskSpec.getExportProcessor(), context);
+            BizDataGroup<VIEW> group = adapter.group(bizUser, query, viewList, exportTaskSpec.getProcessor(), context);
             context.goNextStageEventNew();
 
             context.goNextStageEventNew();
-            DataGroup dataGroup = adapter.getDataGroup(bizUser, query, group, exportTaskSpec.getExportProcessor(), context);
+            DataGroup dataGroup = adapter.getDataGroup(bizUser, query, group, exportTaskSpec.getProcessor(), context);
             context.goNextStageEventNew();
 
             context.goNextStageEventNew();

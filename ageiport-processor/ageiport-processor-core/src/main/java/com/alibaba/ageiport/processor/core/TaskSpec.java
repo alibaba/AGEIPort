@@ -13,7 +13,7 @@ public interface TaskSpec {
 
     String getTaskCode();
 
-    Processor getExportProcessor();
+    Processor getProcessor();
 
     Class<?> getProcessorClass();
 

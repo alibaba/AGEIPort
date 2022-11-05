@@ -8,6 +8,7 @@ import com.alibaba.ageiport.processor.core.spi.api.ApiServer;
 import com.alibaba.ageiport.processor.core.spi.api.model.ApiResponse;
 import com.alibaba.ageiport.processor.core.spi.api.model.ExecuteMainTaskRequest;
 import com.alibaba.ageiport.processor.core.spi.api.model.GetMainTaskProgressRequest;
+import com.alibaba.ageiport.processor.core.spi.api.model.SyncExtensionApiRequest;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.http.HttpClient;
 
@@ -38,16 +39,24 @@ public class HttpApiVerticle extends AbstractVerticle {
 
                 switch (request.uri()) {
                     case HttpApiServer.TASK_PROGRESS_URL: {
-                        GetMainTaskProgressRequest progressRequest = JsonUtil.toObject(requestJson, GetMainTaskProgressRequest.class);
-                        apiServer.getTaskProgress(progressRequest, response -> {
+                        GetMainTaskProgressRequest req = JsonUtil.toObject(requestJson, GetMainTaskProgressRequest.class);
+                        apiServer.getTaskProgress(req, response -> {
                             String jsonResult = JsonUtil.toJsonString(response);
                             request.response().end(jsonResult);
                         });
                         break;
                     }
                     case HttpApiServer.TASK_EXECUTE_URL: {
-                        ExecuteMainTaskRequest executeRequest = JsonUtil.toObject(requestJson, ExecuteMainTaskRequest.class);
-                        apiServer.executeTask(executeRequest, response -> {
+                        ExecuteMainTaskRequest req = JsonUtil.toObject(requestJson, ExecuteMainTaskRequest.class);
+                        apiServer.executeTask(req, response -> {
+                            String jsonResult = JsonUtil.toJsonString(response);
+                            request.response().end(jsonResult);
+                        });
+                        break;
+                    }
+                    case HttpApiServer.SYNC_EXTENSION_API_URL: {
+                        SyncExtensionApiRequest req = JsonUtil.toObject(requestJson, SyncExtensionApiRequest.class);
+                        apiServer.executeSyncExtension(req, response -> {
                             String jsonResult = JsonUtil.toJsonString(response);
                             request.response().end(jsonResult);
                         });

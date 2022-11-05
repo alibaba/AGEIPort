@@ -8,7 +8,7 @@ import com.alibaba.ageiport.processor.core.task.exporter.ExportProcessor;
  */
 public interface ExportTaskSpecification<QUERY, DATA, VIEW> extends TaskSpec {
 
-    ExportProcessor<QUERY, DATA, VIEW> getExportProcessor();
+    ExportProcessor<QUERY, DATA, VIEW> getProcessor();
 
     Class<QUERY> getQueryClass();
 

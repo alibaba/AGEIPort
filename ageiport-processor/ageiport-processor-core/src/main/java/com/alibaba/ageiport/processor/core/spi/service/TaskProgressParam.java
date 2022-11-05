@@ -8,13 +8,13 @@ import lombok.Setter;
  */
 @Getter
 @Setter
-public class GetTaskProgressParam {
+public class TaskProgressParam {
     private String mainTaskId;
 
-    public GetTaskProgressParam() {
+    public TaskProgressParam() {
     }
 
-    public GetTaskProgressParam(String mainTaskId) {
+    public TaskProgressParam(String mainTaskId) {
         this.mainTaskId = mainTaskId;
     }
 }

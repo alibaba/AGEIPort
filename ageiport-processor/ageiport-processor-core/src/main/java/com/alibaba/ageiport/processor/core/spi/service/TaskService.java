@@ -7,6 +7,8 @@ public interface TaskService {
 
     TaskExecuteResult executeTask(TaskExecuteParam param);
 
-    TaskProgressResult getTaskProgress(GetTaskProgressParam param);
+    TaskProgressResult getTaskProgress(TaskProgressParam param);
+
+    SyncExtensionApiResult executeSyncExtension(SyncExtensionApiParam param);
 
 }

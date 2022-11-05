@@ -23,12 +23,11 @@ import com.alibaba.ageiport.processor.core.spi.convertor.Model;
 import com.alibaba.ageiport.processor.core.spi.file.*;
 import com.alibaba.ageiport.processor.core.spi.task.factory.MainTaskContextFactory;
 import com.alibaba.ageiport.processor.core.spi.task.monitor.TaskStageEvent;
-import com.alibaba.ageiport.processor.core.spi.task.stage.CommonStage;
+import com.alibaba.ageiport.processor.core.spi.task.selector.TaskSpiSelector;
+import com.alibaba.ageiport.processor.core.spi.task.slice.SliceStrategy;
 import com.alibaba.ageiport.processor.core.spi.task.stage.MainTaskStageProvider;
 import com.alibaba.ageiport.processor.core.spi.task.stage.Stage;
 import com.alibaba.ageiport.processor.core.spi.task.stage.SubTaskStageProvider;
-import com.alibaba.ageiport.processor.core.spi.task.selector.TaskSpiSelector;
-import com.alibaba.ageiport.processor.core.spi.task.slice.SliceStrategy;
 import com.alibaba.ageiport.processor.core.task.AbstractMainTaskWorker;
 import com.alibaba.ageiport.processor.core.task.importer.ImportProcessor;
 import com.alibaba.ageiport.processor.core.task.importer.adapter.ImportProcessorAdapter;
@@ -204,7 +203,7 @@ public class ImportMainTaskWorker<QUERY, DATA, VIEW> extends AbstractMainTaskWor
             if (existView) {
                 String fileWriterFactoryName = ageiPort.getOptions().getFileTypeWriterSpiMappings().get(runtimeConfig.getFileType());
                 FileWriterFactory fileWriterFactory = ExtensionLoader.getExtensionLoader(FileWriterFactory.class).getExtension(fileWriterFactoryName);
-                fileWriter = fileWriterFactory.create(ageiPort, mainTask, context.getColumnHeaders());
+                fileWriter = fileWriterFactory.create(ageiPort, context.getColumnHeaders());
 
                 for (int i = 1; i <= mainTask.getSubTotalCount(); i++) {
                     String subTaskId = TaskIdUtil.genSubTaskId(mainTask.getMainTaskId(), i);

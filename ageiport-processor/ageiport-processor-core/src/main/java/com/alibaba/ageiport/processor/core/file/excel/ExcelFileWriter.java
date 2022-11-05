@@ -6,7 +6,6 @@ import com.alibaba.ageiport.processor.core.AgeiPort;
 import com.alibaba.ageiport.processor.core.constants.ConstValues;
 import com.alibaba.ageiport.processor.core.model.core.ColumnHeader;
 import com.alibaba.ageiport.processor.core.model.core.ColumnHeaders;
-import com.alibaba.ageiport.processor.core.model.core.impl.MainTask;
 import com.alibaba.ageiport.processor.core.spi.file.DataGroup;
 import com.alibaba.ageiport.processor.core.spi.file.FileWriter;
 import com.alibaba.excel.EasyExcel;
@@ -29,16 +28,13 @@ public class ExcelFileWriter implements FileWriter {
 
     private AgeiPort ageiPort;
 
-    private MainTask mainTask;
-
     private ColumnHeaders columnHeaders;
 
     private ExcelWriter excelWriter;
 
-    public ExcelFileWriter(AgeiPort ageiPort, MainTask mainTask, ColumnHeaders columnHeaders) {
+    public ExcelFileWriter(AgeiPort ageiPort, ColumnHeaders columnHeaders) {
 
         this.ageiPort = ageiPort;
-        this.mainTask = mainTask;
         this.columnHeaders = columnHeaders;
 
         Integer sheetNo = ConstValues.DEFAULT_SHEET_NO;
@@ -101,9 +97,6 @@ public class ExcelFileWriter implements FileWriter {
                     Map map = (Map) value;
                     Object o = map.get(columnHeader.getDynamicColumnKey());
                     result.add(o);
-                    if (o == null) {
-                        System.out.println(o);
-                    }
                 } else {
                     result.add(value);
                 }

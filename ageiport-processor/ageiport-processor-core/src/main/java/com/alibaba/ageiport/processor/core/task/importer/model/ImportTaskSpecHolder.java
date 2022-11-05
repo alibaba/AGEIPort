@@ -25,6 +25,7 @@ public class ImportTaskSpecHolder<QUERY, DATA, VIEW> extends TaskSpecHolder impl
 
     private String fileType;
 
+    @Override
     public ImportProcessor<QUERY, DATA, VIEW> getImportProcessor() {
         return (ImportProcessor<QUERY, DATA, VIEW>) getProcessor();
     }

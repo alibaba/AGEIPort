@@ -24,6 +24,7 @@ import java.util.Map;
  */
 public interface ImportProcessor<QUERY, DATA, VIEW> extends Processor {
 
+    @Override
     default String resolver() {
         return "ImportSpecificationResolver";
     }

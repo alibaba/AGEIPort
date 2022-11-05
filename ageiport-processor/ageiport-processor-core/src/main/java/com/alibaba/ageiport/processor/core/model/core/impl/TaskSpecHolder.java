@@ -34,7 +34,7 @@ public class TaskSpecHolder implements TaskSpec {
     }
 
     @Override
-    public Processor getExportProcessor() {
+    public Processor getProcessor() {
         return processor;
     }
 

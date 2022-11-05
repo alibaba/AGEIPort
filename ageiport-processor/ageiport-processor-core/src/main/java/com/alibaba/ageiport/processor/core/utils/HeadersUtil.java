@@ -25,11 +25,18 @@ public class HeadersUtil {
     public static <T> ColumnHeaders buildHeaders(BizColumnHeaders bizColumnHeaders,
                                                  Class<T> viewClass,
                                                  BizDynamicColumnHeaders bizDynamicColumnHeaders) {
+        ColumnHeaders columnHeaders;
         if (bizColumnHeaders != null) {
-            return buildHeaders(bizColumnHeaders, bizDynamicColumnHeaders);
+            columnHeaders = buildHeaders(bizColumnHeaders, bizDynamicColumnHeaders);
         } else {
-            return buildHeaders(viewClass, bizDynamicColumnHeaders);
+            columnHeaders = buildHeaders(viewClass, bizDynamicColumnHeaders);
         }
+        for (ColumnHeader columnHeader : columnHeaders.getColumnHeaders()) {
+            if (columnHeader.getIgnoreHeader() == null) {
+                columnHeader.setIgnoreHeader(false);
+            }
+        }
+        return columnHeaders;
     }
 
     private static ColumnHeaders buildHeaders(BizColumnHeaders bizColumnHeaders,

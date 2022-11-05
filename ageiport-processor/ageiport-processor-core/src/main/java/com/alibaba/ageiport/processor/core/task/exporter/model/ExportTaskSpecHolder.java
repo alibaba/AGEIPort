@@ -25,7 +25,7 @@ public class ExportTaskSpecHolder<QUERY, DATA, VIEW> extends TaskSpecHolder impl
 
     private String fileType;
 
-    public ExportProcessor<QUERY, DATA, VIEW> getExportProcessor() {
+    public ExportProcessor<QUERY, DATA, VIEW> getProcessor() {
         return (ExportProcessor<QUERY, DATA, VIEW>) getProcessor();
     }
 

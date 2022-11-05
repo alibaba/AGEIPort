@@ -24,12 +24,11 @@ import com.alibaba.ageiport.processor.core.spi.file.FileWriter;
 import com.alibaba.ageiport.processor.core.spi.file.FileWriterFactory;
 import com.alibaba.ageiport.processor.core.spi.task.factory.MainTaskContextFactory;
 import com.alibaba.ageiport.processor.core.spi.task.monitor.TaskStageEvent;
-import com.alibaba.ageiport.processor.core.spi.task.stage.CommonStage;
+import com.alibaba.ageiport.processor.core.spi.task.selector.TaskSpiSelector;
+import com.alibaba.ageiport.processor.core.spi.task.slice.SliceStrategy;
 import com.alibaba.ageiport.processor.core.spi.task.stage.MainTaskStageProvider;
 import com.alibaba.ageiport.processor.core.spi.task.stage.Stage;
 import com.alibaba.ageiport.processor.core.spi.task.stage.SubTaskStageProvider;
-import com.alibaba.ageiport.processor.core.spi.task.selector.TaskSpiSelector;
-import com.alibaba.ageiport.processor.core.spi.task.slice.SliceStrategy;
 import com.alibaba.ageiport.processor.core.task.AbstractMainTaskWorker;
 import com.alibaba.ageiport.processor.core.task.exporter.ExportProcessor;
 import com.alibaba.ageiport.processor.core.task.exporter.adapter.ExportProcessorAdapter;
@@ -78,7 +77,7 @@ public class ExportMainTaskWorker<QUERY, DATA, VIEW> extends AbstractMainTaskWor
             context.setStage(stageProvider.mainTaskStart());
 
             ExportTaskSpecification<QUERY, DATA, VIEW> taskSpec = context.getExportTaskSpec();
-            ExportProcessor<QUERY, DATA, VIEW> processor = taskSpec.getExportProcessor();
+            ExportProcessor<QUERY, DATA, VIEW> processor = taskSpec.getProcessor();
             ExportProcessorAdapter<QUERY, DATA, VIEW> adapter = (ExportProcessorAdapter) processor.getConcreteAdapter();
 
             BizUser bizUser = context.getBizUser();
@@ -179,7 +178,7 @@ public class ExportMainTaskWorker<QUERY, DATA, VIEW> extends AbstractMainTaskWor
             ExportTaskRuntimeConfig runtimeConfig = context.getExportTaskRuntimeConfig();
             String fileWriterFactoryName = ageiPort.getOptions().getFileTypeWriterSpiMappings().get(runtimeConfig.getFileType());
             FileWriterFactory fileWriterFactory = ExtensionLoader.getExtensionLoader(FileWriterFactory.class).getExtension(fileWriterFactoryName);
-            fileWriter = fileWriterFactory.create(ageiPort, mainTask, context.getColumnHeaders());
+            fileWriter = fileWriterFactory.create(ageiPort, context.getColumnHeaders());
 
             for (int i = 1; i <= mainTask.getSubTotalCount(); i++) {
                 String subTaskId = TaskIdUtil.genSubTaskId(mainTask.getMainTaskId(), i);

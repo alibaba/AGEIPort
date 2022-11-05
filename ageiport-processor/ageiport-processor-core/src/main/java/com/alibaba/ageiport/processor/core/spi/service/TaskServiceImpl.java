@@ -6,18 +6,17 @@ import com.alibaba.ageiport.common.logger.Logger;
 import com.alibaba.ageiport.common.logger.LoggerFactory;
 import com.alibaba.ageiport.common.utils.BeanUtils;
 import com.alibaba.ageiport.common.utils.JsonUtil;
+import com.alibaba.ageiport.ext.arch.ExtensionLoader;
 import com.alibaba.ageiport.processor.core.AgeiPort;
 import com.alibaba.ageiport.processor.core.TaskSpec;
 import com.alibaba.ageiport.processor.core.constants.MainTaskFeatureKeys;
 import com.alibaba.ageiport.processor.core.model.core.impl.MainTask;
 import com.alibaba.ageiport.processor.core.spi.client.CreateMainTaskRequest;
 import com.alibaba.ageiport.processor.core.spi.client.TaskServerClient;
+import com.alibaba.ageiport.processor.core.spi.sync.SyncExtension;
 import com.alibaba.ageiport.processor.core.spi.task.factory.TaskContext;
 import com.alibaba.ageiport.processor.core.spi.task.monitor.MainTaskProgress;
 import com.alibaba.ageiport.processor.core.spi.task.monitor.TaskProgressService;
-import com.alibaba.ageiport.processor.core.spi.task.monitor.TaskStageEvent;
-import com.alibaba.ageiport.processor.core.spi.task.stage.MainTaskStageProvider;
-import com.alibaba.ageiport.processor.core.spi.task.selector.TaskSpiSelector;
 import com.alibaba.ageiport.processor.core.spi.task.specification.TaskSpecificationRegistry;
 
 /**
@@ -34,6 +33,7 @@ public class TaskServiceImpl implements TaskService {
     }
 
 
+    @Override
     public TaskExecuteResult executeTask(TaskExecuteParam param) {
         try {
             String code = param.getTaskSpecificationCode();
@@ -75,12 +75,40 @@ public class TaskServiceImpl implements TaskService {
 
     }
 
-    public TaskProgressResult getTaskProgress(GetTaskProgressParam param) {
-        String mainTaskId = param.getMainTaskId();
-        TaskProgressService taskProgressService = ageiPort.getTaskProgressService();
-        MainTaskProgress taskProgress = taskProgressService.getTaskProgress(mainTaskId);
-        TaskProgressResult response = BeanUtils.cloneProp(taskProgress, TaskProgressResult.class);
-        return response;
+    @Override
+    public TaskProgressResult getTaskProgress(TaskProgressParam param) {
+        try {
+            String mainTaskId = param.getMainTaskId();
+            TaskProgressService taskProgressService = ageiPort.getTaskProgressService();
+            MainTaskProgress taskProgress = taskProgressService.getTaskProgress(mainTaskId);
+            TaskProgressResult response = BeanUtils.cloneProp(taskProgress, TaskProgressResult.class);
+            return response;
+        } catch (Throwable e) {
+            log.error("TaskServiceImpl#getTaskProgress , param:{}", param, e);
+            TaskProgressResult taskProgressResult = new TaskProgressResult();
+            taskProgressResult.setSuccess(false);
+            taskProgressResult.setErrorMessage(e.getMessage());
+            return taskProgressResult;
+        }
+
+    }
+
+    @Override
+    public SyncExtensionApiResult executeSyncExtension(SyncExtensionApiParam param) {
+        try {
+            String syncExtensionApiCode = param.getSyncExtensionApiCode();
+            ExtensionLoader<SyncExtension> extensionLoader = ExtensionLoader.getExtensionLoader(SyncExtension.class);
+            SyncExtension syncExtension = extensionLoader.getExtension(syncExtensionApiCode);
+            SyncExtensionApiResult result = syncExtension.execute(ageiPort, param);
+            return result;
+        } catch (Throwable e) {
+            log.error("TaskServiceImpl#getTaskProgress, param:{}", param, e);
+            SyncExtensionApiResult syncExtensionApiResult = new SyncExtensionApiResult();
+            syncExtensionApiResult.setSuccess(false);
+            syncExtensionApiResult.setErrorMessage(e.getMessage());
+            return syncExtensionApiResult;
+        }
+
     }
 
 }

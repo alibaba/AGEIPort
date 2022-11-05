@@ -9,14 +9,8 @@ import com.alibaba.ageiport.common.utils.StringUtils;
 import com.alibaba.ageiport.processor.core.AgeiPort;
 import com.alibaba.ageiport.processor.core.model.core.impl.MainTask;
 import com.alibaba.ageiport.processor.core.spi.api.ApiServer;
-import com.alibaba.ageiport.processor.core.spi.api.model.ExecuteMainTaskRequest;
-import com.alibaba.ageiport.processor.core.spi.api.model.ExecuteMainTaskResponse;
-import com.alibaba.ageiport.processor.core.spi.api.model.GetMainTaskProgressRequest;
-import com.alibaba.ageiport.processor.core.spi.api.model.GetMainTaskProgressResponse;
-import com.alibaba.ageiport.processor.core.spi.service.GetTaskProgressParam;
-import com.alibaba.ageiport.processor.core.spi.service.TaskExecuteParam;
-import com.alibaba.ageiport.processor.core.spi.service.TaskExecuteResult;
-import com.alibaba.ageiport.processor.core.spi.service.TaskProgressResult;
+import com.alibaba.ageiport.processor.core.spi.api.model.*;
+import com.alibaba.ageiport.processor.core.spi.service.*;
 import com.alibaba.ageiport.processor.core.spi.task.stage.CommonStage;
 import io.vertx.core.Vertx;
 import io.vertx.core.http.HttpClient;
@@ -34,6 +28,8 @@ public class HttpApiServer implements ApiServer {
     public static final String TASK_PROGRESS_URL = "/TaskProgress";
 
     public static final String TASK_EXECUTE_URL = "/TaskExecute";
+
+    public static final String SYNC_EXTENSION_API_URL = "/SyncExecute";
 
     private AgeiPort ageiPort;
 
@@ -67,8 +63,9 @@ public class HttpApiServer implements ApiServer {
         MainTask mainTask = ageiPort.getTaskServerClient().getMainTask(mainTaskId);
 
         if (canUserCurrentNode(mainTask)) {
-            GetTaskProgressParam taskProgressRequest = new GetTaskProgressParam(mainTaskId);
-            TaskProgressResult taskProgressResult = ageiPort.getTaskService().getTaskProgress(taskProgressRequest);
+            TaskProgressParam taskProgressRequest = new TaskProgressParam(mainTaskId);
+            TaskService taskService = ageiPort.getTaskService();
+            TaskProgressResult taskProgressResult = taskService.getTaskProgress(taskProgressRequest);
             GetMainTaskProgressResponse response = BeanUtils.cloneProp(taskProgressResult, GetMainTaskProgressResponse.class);
             response.setSuccess(true);
             handler.handle(response);
@@ -104,6 +101,16 @@ public class HttpApiServer implements ApiServer {
                 }
             });
         }
+    }
+
+    @Override
+    public void executeSyncExtension(SyncExtensionApiRequest request, Handler<SyncExtensionApiResponse> handler) {
+        SyncExtensionApiParam syncExtensionApiParam = BeanUtils.cloneProp(request, SyncExtensionApiParam.class);
+        SyncExtensionApiResult executeResult = ageiPort.getTaskService().executeSyncExtension(syncExtensionApiParam);
+        SyncExtensionApiResponse response = new SyncExtensionApiResponse();
+        response.setSuccess(executeResult.getSuccess());
+        response.setMessage(executeResult.getErrorMessage());
+        handler.handle(response);
     }
 
     private boolean canUserCurrentNode(MainTask mainTask) {

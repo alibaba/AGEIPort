@@ -12,7 +12,7 @@ import com.alibaba.ageiport.processor.core.model.core.impl.MainTask;
 import com.alibaba.ageiport.processor.core.spi.file.DataGroup;
 import com.alibaba.ageiport.processor.core.spi.file.FileReader;
 import com.alibaba.ageiport.processor.core.spi.file.FileReaderFactory;
-import com.alibaba.ageiport.processor.core.spi.service.GetTaskProgressParam;
+import com.alibaba.ageiport.processor.core.spi.service.TaskProgressParam;
 import com.alibaba.ageiport.processor.core.spi.service.TaskProgressResult;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
@@ -39,7 +39,7 @@ public class TestHelper {
 
     public void assertWithoutFile(String mainTaskId) throws InterruptedException {
         //1.创建进度查询请求参数GetTaskProgressParam
-        GetTaskProgressParam progressRequest = new GetTaskProgressParam();
+        TaskProgressParam progressRequest = new TaskProgressParam();
         progressRequest.setMainTaskId(mainTaskId);
         //2.调用本地方法，查询任务进度。
         TaskProgressResult taskProgress = ageiPort.getTaskService().getTaskProgress(progressRequest);
@@ -64,7 +64,7 @@ public class TestHelper {
 
     public void assertWithFile(String mainTaskId, Integer outputCount) throws InterruptedException {
         //1.创建进度查询请求参数GetTaskProgressParam
-        GetTaskProgressParam progressRequest = new GetTaskProgressParam();
+        TaskProgressParam progressRequest = new TaskProgressParam();
         progressRequest.setMainTaskId(mainTaskId);
         //2.调用本地方法，查询任务进度。
         TaskProgressResult taskProgress = ageiPort.getTaskService().getTaskProgress(progressRequest);
