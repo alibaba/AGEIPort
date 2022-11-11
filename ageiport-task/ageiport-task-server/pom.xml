@@ -5,11 +5,11 @@
     <parent>
         <artifactId>ageiport-task</artifactId>
         <groupId>com.alibaba</groupId>
-        <version>0.0.3</version>
+        <version>0.0.4</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <version>0.0.3</version>
+    <version>0.0.4</version>
     <artifactId>ageiport-task-server</artifactId>
 
     <properties>
@@ -45,12 +45,12 @@
         <dependency>
             <groupId>com.alibaba</groupId>
             <artifactId>ageiport-task-server-model</artifactId>
-            <version>0.0.3</version>
+            <version>0.0.4</version>
         </dependency>
         <dependency>
             <groupId>com.alibaba</groupId>
             <artifactId>ageiport-common</artifactId>
-            <version>0.0.3</version>
+            <version>0.0.4</version>
         </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>

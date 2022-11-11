@@ -8,6 +8,7 @@ import com.alibaba.ageiport.processor.core.task.exporter.ExportProcessor;
  */
 public interface ExportTaskSpecification<QUERY, DATA, VIEW> extends TaskSpec {
 
+    @Override
     ExportProcessor<QUERY, DATA, VIEW> getProcessor();
 
     Class<QUERY> getQueryClass();

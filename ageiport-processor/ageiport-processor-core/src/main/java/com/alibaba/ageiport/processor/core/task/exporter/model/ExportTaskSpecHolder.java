@@ -25,8 +25,10 @@ public class ExportTaskSpecHolder<QUERY, DATA, VIEW> extends TaskSpecHolder impl
 
     private String fileType;
 
+
+    @Override
     public ExportProcessor<QUERY, DATA, VIEW> getProcessor() {
-        return (ExportProcessor<QUERY, DATA, VIEW>) getProcessor();
+        return (ExportProcessor<QUERY, DATA, VIEW>) super.getProcessor();
     }
 
     @Override
