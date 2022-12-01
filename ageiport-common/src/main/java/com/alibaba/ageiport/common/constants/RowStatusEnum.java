@@ -5,7 +5,6 @@ package com.alibaba.ageiport.common.constants;
  */
 
 public enum RowStatusEnum {
-
     VALID,
     INVALID
 }
