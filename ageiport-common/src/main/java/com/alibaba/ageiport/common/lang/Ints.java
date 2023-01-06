@@ -1,11 +1,18 @@
 package com.alibaba.ageiport.common.lang;
 
+import java.io.Serializable;
+import java.util.AbstractList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.RandomAccess;
+import java.util.Spliterator;
+import java.util.Spliterators;
 
 import com.alibaba.ageiport.common.function.Converter;
 import com.alibaba.ageiport.common.utils.StringUtils;
-
-import java.io.Serializable;
-import java.util.*;
 
 /**
  * Static utility methods pertaining to {@code int} primitives, that are not already found in either
@@ -48,10 +55,10 @@ public final class Ints {
      * @param value any value in the range of the {@code int} type
      * @return the {@code int} value that equals {@code value}
      * @throws IllegalArgumentException if {@code value} is greater than {@link Integer#MAX_VALUE} or
-     *                                  less than {@link Integer#MIN_VALUE}
+     * less than {@link Integer#MIN_VALUE}
      */
     public static int checkedCast(long value) {
-        int result = (int) value;
+        int result = (int)value;
         if (value != result) {
             throw new IllegalArgumentException("Out of range: " + value);
         }
@@ -73,7 +80,7 @@ public final class Ints {
         if (value < Integer.MIN_VALUE) {
             return Integer.MIN_VALUE;
         }
-        return (int) value;
+        return (int)value;
     }
 
     /**
@@ -247,7 +254,8 @@ public final class Ints {
      */
     public static int constrainToRange(int value, int min, int max) {
         if (min > max) {
-            throw new IllegalArgumentException(String.format("min (%s) must be less than or equal to max (%s)", min, max));
+            throw new IllegalArgumentException(
+                String.format("min (%s) must be less than or equal to max (%s)", min, max));
         }
         return Math.min(Math.max(value, min), max);
     }
@@ -274,8 +282,8 @@ public final class Ints {
     }
 
     public static byte[] toByteArray(int value) {
-        return new byte[]{
-            (byte) (value >> 24), (byte) (value >> 16), (byte) (value >> 8), (byte) value
+        return new byte[] {
+            (byte)(value >> 24), (byte)(value >> 16), (byte)(value >> 8), (byte)value
         };
     }
 
@@ -482,7 +490,7 @@ public final class Ints {
      * efficient.
      *
      * @throws IndexOutOfBoundsException if {@code fromIndex < 0}, {@code toIndex > array.length}, or
-     *                                   {@code toIndex > fromIndex}
+     * {@code toIndex > fromIndex}
      * @since 23.1
      */
     public static void reverse(int[] array, int fromIndex, int toIndex) {
@@ -512,7 +520,7 @@ public final class Ints {
      */
     public static int[] toArray(Collection<? extends Number> collection) {
         if (collection instanceof IntArrayAsList) {
-            return ((IntArrayAsList) collection).toIntArray();
+            return ((IntArrayAsList)collection).toIntArray();
         }
 
         Object[] boxedArray = collection.toArray();
@@ -523,7 +531,7 @@ public final class Ints {
             if (boxedArray[i] == null) {
                 throw new IllegalArgumentException("collection element is null, index:" + i);
             }
-            array[i] = ((Number) boxedArray[i]).intValue();
+            array[i] = ((Number)boxedArray[i]).intValue();
         }
         return array;
     }
@@ -574,14 +582,14 @@ public final class Ints {
         @Override
         public boolean contains(Object target) {
             // Overridden to prevent a ton of boxing
-            return (target instanceof Integer) && Ints.indexOf(array, (Integer) target, start, end) != -1;
+            return (target instanceof Integer) && Ints.indexOf(array, (Integer)target, start, end) != -1;
         }
 
         @Override
         public int indexOf(Object target) {
             // Overridden to prevent a ton of boxing
             if (target instanceof Integer) {
-                int i = Ints.indexOf(array, (Integer) target, start, end);
+                int i = Ints.indexOf(array, (Integer)target, start, end);
                 if (i >= 0) {
                     return i - start;
                 }
@@ -593,7 +601,7 @@ public final class Ints {
         public int lastIndexOf(Object target) {
             // Overridden to prevent a ton of boxing
             if (target instanceof Integer) {
-                int i = Ints.lastIndexOf(array, (Integer) target, start, end);
+                int i = Ints.lastIndexOf(array, (Integer)target, start, end);
                 if (i >= 0) {
                     return i - start;
                 }
@@ -624,7 +632,7 @@ public final class Ints {
                 return true;
             }
             if (object instanceof IntArrayAsList) {
-                IntArrayAsList that = (IntArrayAsList) object;
+                IntArrayAsList that = (IntArrayAsList)object;
                 int size = size();
                 if (that.size() != size) {
                     return false;
@@ -702,16 +710,16 @@ public final class Ints {
      * @return the integer value represented by {@code string} using {@code radix}, or {@code null} if
      * {@code string} has a length of zero or cannot be parsed as an integer value
      * @throws IllegalArgumentException if {@code radix < Character.MIN_RADIX} or {@code radix >
-     *                                  Character.MAX_RADIX}
-     * @throws NullPointerException     if {@code string} is {@code null}
+     * Character.MAX_RADIX}
+     * @throws NullPointerException if {@code string} is {@code null}
      * @since 19.0
      */
     public static Integer tryParse(String string, int radix) {
         long result = Long.parseLong(string);
-        if (result != (int) result) {
+        if (result != (int)result) {
             return null;
         } else {
-            return (int) result;
+            return (int)result;
         }
     }
 }
