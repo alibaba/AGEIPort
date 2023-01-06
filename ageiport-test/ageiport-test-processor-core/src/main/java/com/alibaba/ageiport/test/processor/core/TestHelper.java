@@ -106,7 +106,7 @@ public class TestHelper {
         final FileReaderFactory factory = ExtensionLoader.getExtensionLoader(FileReaderFactory.class).getExtension(outputFileReaderFactory);
 
         //6.断言判断产生的文件是否符合期望
-        FileReader fileReader = factory.create(ageiPort, mainTask, headers);
+        FileReader fileReader = factory.create(ageiPort, headers);
         fileReader.read(inputStream);
         DataGroup dataGroup = fileReader.finish();
         int count = 0;

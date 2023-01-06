@@ -116,7 +116,7 @@ public class ImportMainTaskWorker<QUERY, DATA, VIEW> extends AbstractMainTaskWor
             InputStream inputStream = ageiPort.getFileStore().get(inputFileKey, new HashMap<>());
             String fileReaderFactoryName = ageiPort.getOptions().getFileTypeReaderSpiMappings().get(fileType);
             FileReaderFactory fileReaderFactory = ExtensionLoader.getExtensionLoader(FileReaderFactory.class).getExtension(fileReaderFactoryName);
-            fileReader = fileReaderFactory.create(ageiPort, mainTask, columnHeaders);
+            fileReader = fileReaderFactory.create(ageiPort, columnHeaders);
             fileReader.read(inputStream);
             DataGroup dataGroup = fileReader.finish();
             context.load(dataGroup);

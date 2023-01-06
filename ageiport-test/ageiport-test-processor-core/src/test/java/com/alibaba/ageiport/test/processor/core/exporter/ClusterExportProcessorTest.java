@@ -22,7 +22,7 @@ public class ClusterExportProcessorTest {
         AgeiPort ageiPort = AgeiPort.ageiPort(options);
 
         Query query = new Query();
-        query.setTotalCount(100);
+        query.setTotalCount(4000);
 
         TaskExecuteParam request = new TaskExecuteParam();
         String simpleName = ClusterExportProcessor.class.getSimpleName();

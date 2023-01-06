@@ -17,10 +17,14 @@ public interface ConstValues {
 
     String DEFAULT_KEY = "default";
 
+    String REMOVE_PREFIX = "-";
+
     String DOT = ".";
 
     String AT = "@";
 
     String SUB = "-";
+
+    int MAX_TIMEOUT_TIME_MS = 3 * 60 * 60 * 1000;
 
 }

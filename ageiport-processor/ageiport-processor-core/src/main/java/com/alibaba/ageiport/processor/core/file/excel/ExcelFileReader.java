@@ -32,17 +32,14 @@ public class ExcelFileReader implements FileReader {
 
     private AgeiPort ageiPort;
 
-    private MainTask mainTask;
-
     private ColumnHeaders columnHeaders;
 
     private List<EasyExcelReadListener> readListeners;
 
-    public ExcelFileReader(AgeiPort ageiPort, MainTask mainTask, ColumnHeaders columnHeaders) {
+    public ExcelFileReader(AgeiPort ageiPort, ColumnHeaders columnHeaders) {
         this.ageiPort = ageiPort;
-        this.mainTask = mainTask;
         this.columnHeaders = columnHeaders;
-        this.readListeners = Lists.newArrayList(new EasyExcelReadListener(ageiPort, mainTask, columnHeaders));
+        this.readListeners = Lists.newArrayList(new EasyExcelReadListener(ageiPort, columnHeaders));
 
     }
 
@@ -99,9 +96,8 @@ public class ExcelFileReader implements FileReader {
 
         private CountDownLatch countDownLatch;
 
-        public EasyExcelReadListener(AgeiPort ageiPort, MainTask mainTask, ColumnHeaders columnHeaders) {
+        public EasyExcelReadListener(AgeiPort ageiPort, ColumnHeaders columnHeaders) {
             this.ageiPort = ageiPort;
-            this.mainTask = mainTask;
             this.columnHeaders = columnHeaders;
             this.countDownLatch = new CountDownLatch(1);
         }
