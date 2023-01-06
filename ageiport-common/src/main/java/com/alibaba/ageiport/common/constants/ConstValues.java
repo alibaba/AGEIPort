@@ -15,7 +15,6 @@ public interface ConstValues {
 
     String PROJECT_LOWER_KEY = "ageiport";
 
-
     String DEFAULT_KEY = "default";
 
     String DOT = ".";
@@ -23,9 +22,5 @@ public interface ConstValues {
     String AT = "@";
 
     String SUB = "-";
-
-    String REMOVE_PREFIX = SUB;
-
-    long MAX_TIMEOUT_TIME_MS = 1000 * 60 * 60 * 2;
 
 }
