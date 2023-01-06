@@ -1,9 +1,9 @@
 package com.alibaba.ageiport.common.lang;
 
-import lombok.Data;
-
 import java.util.concurrent.Delayed;
 import java.util.concurrent.TimeUnit;
+
+import lombok.Data;
 
 /**
  * 延迟
@@ -30,7 +30,6 @@ public class DelayedElement<T> implements Delayed {
      * 创建时间，毫秒
      */
     private final long now;
-
 
     public DelayedElement(long delay, T data) {
         this.delay = delay;
@@ -59,7 +58,7 @@ public class DelayedElement<T> implements Delayed {
      */
     @Override
     public int compareTo(Delayed o) {
-        return (int) (this.getDelay(TimeUnit.MILLISECONDS) - o.getDelay(TimeUnit.MILLISECONDS));
+        return (int)(this.getDelay(TimeUnit.MILLISECONDS) - o.getDelay(TimeUnit.MILLISECONDS));
     }
 
     @Override
@@ -82,7 +81,7 @@ public class DelayedElement<T> implements Delayed {
             return false;
         }
 
-        DelayedElement<?> that = (DelayedElement<?>) o;
+        DelayedElement<?> that = (DelayedElement<?>)o;
 
         return data != null ? data.equals(that.data) : that.data == null;
     }
