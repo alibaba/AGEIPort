@@ -24,4 +24,6 @@ public @interface ViewField {
     boolean isErrorHeader() default false;
 
     boolean isRequired() default true;
+
+    int columnWidth() default 20;
 }

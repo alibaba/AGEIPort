@@ -4,12 +4,14 @@ import com.alibaba.ageiport.common.feature.FeatureUtils;
 import com.alibaba.ageiport.common.utils.JsonUtil;
 import com.alibaba.ageiport.ext.arch.ExtensionLoader;
 import com.alibaba.ageiport.processor.core.AgeiPort;
+import com.alibaba.ageiport.processor.core.TaskSpec;
 import com.alibaba.ageiport.processor.core.constants.MainTaskFeatureKeys;
 import com.alibaba.ageiport.processor.core.model.core.ColumnHeader;
 import com.alibaba.ageiport.processor.core.model.core.impl.ColumnHeaderImpl;
 import com.alibaba.ageiport.processor.core.model.core.impl.ColumnHeadersImpl;
 import com.alibaba.ageiport.processor.core.model.core.impl.MainTask;
 import com.alibaba.ageiport.processor.core.spi.file.DataGroup;
+import com.alibaba.ageiport.processor.core.spi.file.FileContext;
 import com.alibaba.ageiport.processor.core.spi.file.FileReader;
 import com.alibaba.ageiport.processor.core.spi.file.FileReaderFactory;
 import com.alibaba.ageiport.processor.core.spi.service.TaskProgressParam;
@@ -106,7 +108,12 @@ public class TestHelper {
         final FileReaderFactory factory = ExtensionLoader.getExtensionLoader(FileReaderFactory.class).getExtension(outputFileReaderFactory);
 
         //6.断言判断产生的文件是否符合期望
-        FileReader fileReader = factory.create(ageiPort, headers);
+        FileContext fileContext = new FileContext();
+        fileContext.setBizQuery(JsonUtil.toJsonString(mainTask.getBizQuery()));
+        TaskSpec taskSpec = ageiPort.getSpecificationRegistry().get(mainTask.getCode());
+        fileContext.setTaskSpec(taskSpec);
+        fileContext.setMainTask(mainTask);
+        FileReader fileReader = factory.create(ageiPort, headers, fileContext);
         fileReader.read(inputStream);
         DataGroup dataGroup = fileReader.finish();
         int count = 0;

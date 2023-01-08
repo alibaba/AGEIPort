@@ -2,16 +2,22 @@ package com.alibaba.ageiport.processor.core.file.excel;
 
 import com.alibaba.ageiport.common.collections.Lists;
 import com.alibaba.ageiport.common.io.FastByteArrayOutputStream;
+import com.alibaba.ageiport.common.utils.JsonUtil;
+import com.alibaba.ageiport.ext.arch.ExtensionLoader;
 import com.alibaba.ageiport.processor.core.AgeiPort;
+import com.alibaba.ageiport.processor.core.AgeiPortOptions;
 import com.alibaba.ageiport.processor.core.constants.ConstValues;
 import com.alibaba.ageiport.processor.core.model.core.ColumnHeader;
 import com.alibaba.ageiport.processor.core.model.core.ColumnHeaders;
 import com.alibaba.ageiport.processor.core.spi.file.DataGroup;
+import com.alibaba.ageiport.processor.core.spi.file.FileContext;
 import com.alibaba.ageiport.processor.core.spi.file.FileWriter;
 import com.alibaba.excel.EasyExcel;
 import com.alibaba.excel.ExcelWriter;
 import com.alibaba.excel.context.WriteContext;
 import com.alibaba.excel.enums.WriteTypeEnum;
+import com.alibaba.excel.write.builder.ExcelWriterSheetBuilder;
+import com.alibaba.excel.write.handler.WriteHandler;
 import com.alibaba.excel.write.metadata.WriteSheet;
 import org.apache.commons.compress.utils.IOUtils;
 
@@ -32,30 +38,54 @@ public class ExcelFileWriter implements FileWriter {
 
     private ExcelWriter excelWriter;
 
-    public ExcelFileWriter(AgeiPort ageiPort, ColumnHeaders columnHeaders) {
+    private FileContext fileContext;
+
+    private List<WriteHandler> writeHandlers;
+
+    public ExcelFileWriter(AgeiPort ageiPort, ColumnHeaders columnHeaders, FileContext fileContext) {
 
         this.ageiPort = ageiPort;
         this.columnHeaders = columnHeaders;
+        this.fileContext = fileContext;
+        this.writeHandlers = new ArrayList<>();
+
+        AgeiPortOptions options = ageiPort.getOptions();
+        Map<String, Map<String, String>> spiConfigs = options.getSpiConfigs();
+        Map<String, String> providerConfigs = spiConfigs.get("ExcelWriteHandlerProvider");
+        String configAsJson = JsonUtil.toJsonString(providerConfigs);
+        ExcelWriteHandlerProviderSpiConfig providerSpiConfig = JsonUtil.toObject(configAsJson, ExcelWriteHandlerProviderSpiConfig.class);
+
+        for (String extensionName : providerSpiConfig.getExtensionNames()) {
+            ExtensionLoader<ExcelWriteHandlerProvider> extensionLoader = ExtensionLoader.getExtensionLoader(ExcelWriteHandlerProvider.class);
+            ExcelWriteHandlerProvider handlerProvider = extensionLoader.getExtension(extensionName);
+            this.writeHandlers.addAll(handlerProvider.provide(ageiPort, columnHeaders, fileContext));
+        }
+
 
         Integer sheetNo = ConstValues.DEFAULT_SHEET_NO;
         String sheetName = ConstValues.DEFAULT_SHEET_NAME;
-
 
         List<List<String>> head = columnHeaders.getColumnHeaders().stream()
                 .filter(s -> !s.getIgnoreHeader())
                 .map(s -> Lists.newArrayList(s.getHeaderName()))
                 .collect(Collectors.toList());
 
-        WriteSheet writeSheet = EasyExcel.writerSheet()
+        ExcelWriterSheetBuilder sheetBuilder = EasyExcel.writerSheet()
                 .sheetNo(sheetNo)
                 .sheetName(sheetName)
                 .needHead(true)
-                .head(head)
-                .build();
+                .head(head);
+
+        for (WriteHandler writeHandler : this.writeHandlers) {
+            sheetBuilder.registerWriteHandler(writeHandler);
+        }
+
+        WriteSheet writeSheet = sheetBuilder.build();
 
         FastByteArrayOutputStream output = new FastByteArrayOutputStream(10240);
         this.excelWriter = EasyExcel.write(output).build();
         excelWriter.writeContext().currentSheet(writeSheet, WriteTypeEnum.ADD);
+
     }
 
     @Override

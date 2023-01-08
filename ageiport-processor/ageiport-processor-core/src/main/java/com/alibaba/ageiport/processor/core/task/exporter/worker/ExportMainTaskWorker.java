@@ -20,6 +20,7 @@ import com.alibaba.ageiport.processor.core.spi.cache.BigDataCache;
 import com.alibaba.ageiport.processor.core.spi.client.CreateSubTasksRequest;
 import com.alibaba.ageiport.processor.core.spi.convertor.Model;
 import com.alibaba.ageiport.processor.core.spi.file.DataGroup;
+import com.alibaba.ageiport.processor.core.spi.file.FileContext;
 import com.alibaba.ageiport.processor.core.spi.file.FileWriter;
 import com.alibaba.ageiport.processor.core.spi.file.FileWriterFactory;
 import com.alibaba.ageiport.processor.core.spi.task.factory.MainTaskContextFactory;
@@ -178,7 +179,13 @@ public class ExportMainTaskWorker<QUERY, DATA, VIEW> extends AbstractMainTaskWor
             ExportTaskRuntimeConfig runtimeConfig = context.getExportTaskRuntimeConfig();
             String fileWriterFactoryName = ageiPort.getOptions().getFileTypeWriterSpiMappings().get(runtimeConfig.getFileType());
             FileWriterFactory fileWriterFactory = ExtensionLoader.getExtensionLoader(FileWriterFactory.class).getExtension(fileWriterFactoryName);
-            fileWriter = fileWriterFactory.create(ageiPort, context.getColumnHeaders());
+            ColumnHeaders columnHeaders = context.getColumnHeaders();
+
+            FileContext fileContext = new FileContext();
+            fileContext.setBizQuery(JsonUtil.toJsonString(mainTask.getBizQuery()));
+            fileContext.setTaskSpec(context.getExportTaskSpec());
+            fileContext.setMainTask(mainTask);
+            fileWriter = fileWriterFactory.create(ageiPort, columnHeaders, fileContext);
 
             for (int i = 1; i <= mainTask.getSubTotalCount(); i++) {
                 String subTaskId = TaskIdUtil.genSubTaskId(mainTask.getMainTaskId(), i);

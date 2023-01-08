@@ -9,6 +9,7 @@ import com.alibaba.ageiport.processor.core.model.core.ColumnHeader;
 import com.alibaba.ageiport.processor.core.model.core.ColumnHeaders;
 import com.alibaba.ageiport.processor.core.model.core.impl.MainTask;
 import com.alibaba.ageiport.processor.core.spi.file.DataGroup;
+import com.alibaba.ageiport.processor.core.spi.file.FileContext;
 import com.alibaba.ageiport.processor.core.spi.file.FileReader;
 import com.alibaba.ageiport.processor.core.spi.task.factory.TaskContext;
 import com.alibaba.excel.EasyExcel;
@@ -36,11 +37,13 @@ public class ExcelFileReader implements FileReader {
 
     private List<EasyExcelReadListener> readListeners;
 
-    public ExcelFileReader(AgeiPort ageiPort, ColumnHeaders columnHeaders) {
+    private FileContext fileContext;
+
+    public ExcelFileReader(AgeiPort ageiPort, ColumnHeaders columnHeaders, FileContext fileContext) {
         this.ageiPort = ageiPort;
         this.columnHeaders = columnHeaders;
         this.readListeners = Lists.newArrayList(new EasyExcelReadListener(ageiPort, columnHeaders));
-
+        this.fileContext = fileContext;
     }
 
     @Override

@@ -66,7 +66,7 @@ public class TaskProgressMonitorImpl implements TaskProgressMonitor {
 
 
     @Override
-    public void onSubTaskChanged(MainTaskProgress mainTaskProgress, Stage oldStage, Stage newStage, Stage mainTaskStage) {
+    public void onSubTaskChanged(MainTaskProgress mainTaskProgress, SubTaskProgress subTaskProgress, Stage oldStage, Stage newStage, Stage mainTaskStage) {
         Map<String, SubTaskProgress> subTaskProgressMap = mainTaskProgress.getSubTaskProgressMap();
 
         MainTaskStageProvider mainStageProvider = (MainTaskStageProvider) mainTaskStage.getStageProvider();
@@ -79,13 +79,13 @@ public class TaskProgressMonitorImpl implements TaskProgressMonitor {
             Integer currentErrorSubTaskCount = 0;
             Double currentSubTaskPercentSum = 0D;
 
-            for (SubTaskProgress subTaskProgress : subTaskProgressMap.values()) {
-                if (subTaskProgress.getIsFinished()) {
+            for (SubTaskProgress value : subTaskProgressMap.values()) {
+                if (value.getIsFinished()) {
                     currentFinishedSubTaskCount += 1;
-                } else if (subTaskProgress.getIsError()) {
+                } else if (value.getIsError()) {
                     currentErrorSubTaskCount += 1;
                 }
-                currentSubTaskPercentSum += subTaskProgress.getPercent();
+                currentSubTaskPercentSum += value.getPercent();
             }
             mainTaskProgress.setFinishedSubTaskCount(currentFinishedSubTaskCount);
             mainTaskProgress.setErrorSubTaskCount(currentErrorSubTaskCount);
@@ -97,6 +97,8 @@ public class TaskProgressMonitorImpl implements TaskProgressMonitor {
             if (mainTaskProgress.getPercent() < mainTaskPercent) {
                 mainTaskProgress.setPercent(mainTaskPercent);
             }
+
+            log.info("onSubTaskChanged, main:{}, total:{}, finished:{}, error:{}", mainTaskProgress.getMainTaskId(), subTaskProgress.getSubTaskId(), totalSubTaskCount, currentFinishedSubTaskCount, currentErrorSubTaskCount);
 
             if (totalSubTaskCount.equals(currentFinishedSubTaskCount + currentErrorSubTaskCount)) {
                 Class<? extends EventObject> triggerEvent = subTaskExecuteEnd.getTriggerEvent();

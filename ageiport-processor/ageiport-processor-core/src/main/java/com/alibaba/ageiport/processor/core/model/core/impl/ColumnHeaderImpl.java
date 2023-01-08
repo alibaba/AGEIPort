@@ -32,4 +32,6 @@ public class ColumnHeaderImpl implements ColumnHeader {
     private Boolean ignoreHeader;
 
     private Boolean required;
+
+    private Integer columnWidth;
 }

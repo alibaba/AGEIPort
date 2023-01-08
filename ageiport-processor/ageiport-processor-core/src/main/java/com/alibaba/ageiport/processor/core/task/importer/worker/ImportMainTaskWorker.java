@@ -116,7 +116,12 @@ public class ImportMainTaskWorker<QUERY, DATA, VIEW> extends AbstractMainTaskWor
             InputStream inputStream = ageiPort.getFileStore().get(inputFileKey, new HashMap<>());
             String fileReaderFactoryName = ageiPort.getOptions().getFileTypeReaderSpiMappings().get(fileType);
             FileReaderFactory fileReaderFactory = ExtensionLoader.getExtensionLoader(FileReaderFactory.class).getExtension(fileReaderFactoryName);
-            fileReader = fileReaderFactory.create(ageiPort, columnHeaders);
+
+            FileContext fileContext = new FileContext();
+            fileContext.setBizQuery(JsonUtil.toJsonString(mainTask.getBizQuery()));
+            fileContext.setTaskSpec(context.getImportTaskSpec());
+            fileContext.setMainTask(mainTask);
+            fileReader = fileReaderFactory.create(ageiPort, columnHeaders, fileContext);
             fileReader.read(inputStream);
             DataGroup dataGroup = fileReader.finish();
             context.load(dataGroup);
@@ -203,7 +208,12 @@ public class ImportMainTaskWorker<QUERY, DATA, VIEW> extends AbstractMainTaskWor
             if (existView) {
                 String fileWriterFactoryName = ageiPort.getOptions().getFileTypeWriterSpiMappings().get(runtimeConfig.getFileType());
                 FileWriterFactory fileWriterFactory = ExtensionLoader.getExtensionLoader(FileWriterFactory.class).getExtension(fileWriterFactoryName);
-                fileWriter = fileWriterFactory.create(ageiPort, context.getColumnHeaders());
+                ColumnHeaders columnHeaders = context.getColumnHeaders();
+                FileContext fileContext = new FileContext();
+                fileContext.setBizQuery(JsonUtil.toJsonString(mainTask.getBizQuery()));
+                fileContext.setTaskSpec(context.getImportTaskSpec());
+                fileContext.setMainTask(mainTask);
+                fileWriter = fileWriterFactory.create(ageiPort, columnHeaders, fileContext);
 
                 for (int i = 1; i <= mainTask.getSubTotalCount(); i++) {
                     String subTaskId = TaskIdUtil.genSubTaskId(mainTask.getMainTaskId(), i);

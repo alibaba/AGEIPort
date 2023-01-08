@@ -1,0 +1,1 @@
+DefaultExcelWriteHandlerProvider=com.alibaba.ageiport.processor.core.file.excel.style.DefaultExcelWriteHandlerProvider

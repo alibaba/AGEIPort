@@ -5,10 +5,10 @@ import com.alibaba.ageiport.common.logger.LoggerFactory;
 import com.alibaba.ageiport.processor.core.AgeiPort;
 import com.alibaba.ageiport.processor.core.model.core.impl.MainTask;
 import com.alibaba.ageiport.processor.core.spi.task.monitor.*;
+import com.alibaba.ageiport.processor.core.spi.task.selector.TaskSpiSelector;
 import com.alibaba.ageiport.processor.core.spi.task.stage.MainTaskStageProvider;
 import com.alibaba.ageiport.processor.core.spi.task.stage.Stage;
 import com.alibaba.ageiport.processor.core.spi.task.stage.SubTaskStageProvider;
-import com.alibaba.ageiport.processor.core.spi.task.selector.TaskSpiSelector;
 
 import java.util.ArrayList;
 import java.util.Map;
@@ -36,14 +36,14 @@ public class TaskProgressServiceImpl implements TaskProgressService {
     public void updateTaskProgress(TaskStageEvent event) {
         try {
             if (event.isMainTaskEvent()) {
-                log.info("progress, main:{}, stage:{}", event.getMainTaskId(), event.getName());
+                log.info("update progress, main:{}, stage:{}", event.getMainTaskId(), event.getName());
                 updateMainTaskProgress(event);
             } else {
-                log.info("progress, main:{}, sub:{}, stage:{}", event.getMainTaskId(), event.getSubTaskId(), event.getName());
+                log.info("update progress, main:{}, sub:{}, stage:{}", event.getMainTaskId(), event.getSubTaskId(), event.getName());
                 updateSubTaskProgress(event);
             }
         } catch (Throwable e) {
-            log.error("progress failed, main:{}, sub:{}, stage:{}", event.getMainTaskId(), event.getSubTaskId(), event.getName(), e);
+            log.error("update progress failed, main:{}, sub:{}, stage:{}", event.getMainTaskId(), event.getSubTaskId(), event.getName(), e);
         }
 
     }
@@ -116,15 +116,19 @@ public class TaskProgressServiceImpl implements TaskProgressService {
         }
         Stage oldStage = subTaskStageProvider.getStage(subTaskProgress.getStageCode());
 
-        TaskProgressLog subLog = createLog(event, newStage);
-        subTaskProgress.addLog(subLog);
-        subTaskProgress.setStageCode(newStage.getCode());
-        subTaskProgress.setStageName(newStage.getName());
-        subTaskProgress.setIsFinished(newStage.isFinished());
-        subTaskProgress.setIsError(newStage.isError());
-        subTaskProgress.setPercent(newStage.getMaxPercent());
-
-        monitor.onSubTaskChanged(mainTaskProgress, oldStage, newStage, mainStage);
+        if (newStage.getOrder() >= oldStage.getOrder()) {
+            TaskProgressLog subLog = createLog(event, newStage);
+            subTaskProgress.addLog(subLog);
+            subTaskProgress.setStageCode(newStage.getCode());
+            subTaskProgress.setStageName(newStage.getName());
+            subTaskProgress.setIsFinished(newStage.isFinished());
+            subTaskProgress.setIsError(newStage.isError());
+            subTaskProgress.setPercent(newStage.getMaxPercent());
+            monitor.onSubTaskChanged(mainTaskProgress, subTaskProgress, oldStage, newStage, mainStage);
+        } else {
+            TaskProgressLog subLog = createLog(event, newStage);
+            subTaskProgress.addLog(subLog);
+        }
     }
 
     private SubTaskProgress createSubTaskProgress(String subTaskId, Stage newStage) {

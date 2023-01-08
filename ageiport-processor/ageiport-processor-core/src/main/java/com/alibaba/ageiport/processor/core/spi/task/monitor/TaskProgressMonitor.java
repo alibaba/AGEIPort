@@ -8,6 +8,6 @@ import com.alibaba.ageiport.processor.core.spi.task.stage.Stage;
 public interface TaskProgressMonitor {
     void onMainTaskChanged(MainTaskProgress mainTaskProgress, Stage oldStage, Stage newStage);
 
-    void onSubTaskChanged(MainTaskProgress mainTaskProgress, Stage oldStage, Stage newStage, Stage mainTaskStage);
+    void onSubTaskChanged(MainTaskProgress mainTaskProgress, SubTaskProgress subTaskProgress, Stage oldStage, Stage newStage, Stage mainTaskStage);
 
 }

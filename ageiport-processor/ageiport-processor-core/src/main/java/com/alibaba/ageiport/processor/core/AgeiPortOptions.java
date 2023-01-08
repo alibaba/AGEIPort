@@ -17,7 +17,6 @@ import com.alibaba.ageiport.processor.core.spi.client.TaskServerClientOptions;
 import com.alibaba.ageiport.processor.core.spi.cluster.ClusterOptions;
 import com.alibaba.ageiport.processor.core.spi.dispatcher.DispatcherOptions;
 import com.alibaba.ageiport.processor.core.spi.eventbus.EventBusOptions;
-import io.netty.util.NetUtil;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -75,12 +74,18 @@ public class AgeiPortOptions {
 
     private Map<String, String> spiSelectMappings = new HashMap<>();
 
+    private Map<String, Map<String, String>> spiConfigs = new HashMap<>();
     private Map<String, String> fileTypeWriterSpiMappings = new HashMap<>();
     private Map<String, String> fileTypeReaderSpiMappings = new HashMap<>();
+
 
     public AgeiPortOptions() {
         fileTypeWriterSpiMappings.put("xlsx", "ExcelFileWriterFactory");
         fileTypeReaderSpiMappings.put("xlsx", "ExcelFileReaderFactory");
+
+        Map<String, String> excelWriteHandlerProviderConfigs = new HashMap<>();
+        excelWriteHandlerProviderConfigs.put("extensionNames", "DefaultExcelWriteHandlerProvider");
+        spiConfigs.put("ExcelWriteHandlerProvider", excelWriteHandlerProviderConfigs);
     }
 
     @Getter
@@ -191,7 +196,7 @@ public class AgeiPortOptions {
             options.setFileStoreOptions(debug.getFileStoreOptions());
         }
         if (debug.getTaskServerClientOptions() != null) {
-             boolean portAvailable = NetUtils.isPortAvailable(9821);
+            boolean portAvailable = NetUtils.isPortAvailable(9821);
             if (portAvailable) {
                 HttpTaskServerClientOptions clientOptions = new HttpTaskServerClientOptions();
                 clientOptions.setEndpoint("localhost");

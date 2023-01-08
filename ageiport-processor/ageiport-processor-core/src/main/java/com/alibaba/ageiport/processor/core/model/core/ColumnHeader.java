@@ -52,6 +52,11 @@ public interface ColumnHeader extends Comparable<ColumnHeader> {
     void setRequired(Boolean required);
 
 
+    Integer getColumnWidth();
+
+    void setColumnWidth(Integer columnWidth);
+
+
     @Override
     default int compareTo(@NotNull ColumnHeader o) {
         return this.getIndex().compareTo(o.getIndex());

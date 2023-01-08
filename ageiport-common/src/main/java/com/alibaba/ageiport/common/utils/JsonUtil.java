@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author lingyi
@@ -20,6 +21,15 @@ public class JsonUtil {
     public static <T> T toObject(String jsonString, Class<T> clazz) {
         return JSON.parseObject(jsonString, clazz);
     }
+
+    public static <T> T toObject(Map jsonString, Class<T> clazz) {
+        return JSON.parseObject(toJsonString(jsonString), clazz);
+    }
+
+    public static Map toMap(Object object) {
+        return JSON.parseObject(toJsonString(object));
+    }
+
 
     public static <T> List<T> toArrayObject(String jsonString, Class<T> clazz) {
         return JSON.parseArray(jsonString, clazz);

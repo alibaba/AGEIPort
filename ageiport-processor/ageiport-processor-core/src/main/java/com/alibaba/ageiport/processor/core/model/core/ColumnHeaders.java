@@ -16,6 +16,8 @@ public interface ColumnHeaders extends Serializable {
 
     ColumnHeader getHeaderByIndex(Integer index);
 
+    Integer getHeaderRowCount();
+
     void fromJson(String json);
 
     String toJson();

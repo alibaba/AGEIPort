@@ -10,6 +10,6 @@ import com.alibaba.ageiport.processor.core.model.core.ColumnHeaders;
 @SPI
 public interface FileReaderFactory {
 
-    FileReader create(AgeiPort ageiPort, ColumnHeaders columnHeaders);
+    FileReader create(AgeiPort ageiPort, ColumnHeaders columnHeaders, FileContext context);
 
 }

@@ -13,6 +13,7 @@ import com.alibaba.ageiport.processor.core.model.api.BizDynamicColumnHeaders;
 import com.alibaba.ageiport.processor.core.model.api.BizUser;
 import com.alibaba.ageiport.processor.core.model.api.impl.BizUserImpl;
 import com.alibaba.ageiport.processor.core.model.core.ColumnHeaders;
+import com.alibaba.ageiport.processor.core.spi.file.FileContext;
 import com.alibaba.ageiport.processor.core.spi.file.FileWriter;
 import com.alibaba.ageiport.processor.core.spi.file.FileWriterFactory;
 import com.alibaba.ageiport.processor.core.spi.service.SyncExtensionApiParam;
@@ -65,7 +66,12 @@ public class ImportTemplateSyncExtension<QUERY, DATA, VIEW> implements SyncExten
 
             String fileWriterFactoryName = ageiPort.getOptions().getFileTypeWriterSpiMappings().get(taskRuntimeConfig.getFileType());
             FileWriterFactory fileWriterFactory = ExtensionLoader.getExtensionLoader(FileWriterFactory.class).getExtension(fileWriterFactoryName);
-            fileWriter = fileWriterFactory.create(ageiPort, columnHeaders);
+
+            FileContext fileContext = new FileContext();
+            fileContext.setBizQuery(JsonUtil.toJsonString(resetQuery));
+            fileContext.setTaskSpec(importTaskSpec);
+
+            fileWriter = fileWriterFactory.create(ageiPort, columnHeaders, fileContext);
             fileStream = fileWriter.finish();
             FileStore fileStore = ageiPort.getFileStore();
             String key = UUID.randomUUID() + "." + taskRuntimeConfig.getFileType();

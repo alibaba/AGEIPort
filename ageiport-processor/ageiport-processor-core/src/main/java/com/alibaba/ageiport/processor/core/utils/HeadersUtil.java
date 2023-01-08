@@ -134,6 +134,7 @@ public class HeadersUtil {
                 columnHeader.setGroupName(viewField.groupName());
                 columnHeader.setErrorHeader(viewField.isErrorHeader());
                 columnHeader.setRequired(viewField.isRequired());
+                columnHeader.setColumnWidth(viewField.columnWidth());
                 columnHeaders.add(columnHeader);
                 index++;
             }

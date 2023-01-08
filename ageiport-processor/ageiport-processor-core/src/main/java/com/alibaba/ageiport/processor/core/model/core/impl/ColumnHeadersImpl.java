@@ -64,6 +64,11 @@ public class ColumnHeadersImpl implements ColumnHeaders {
     }
 
     @Override
+    public Integer getHeaderRowCount() {
+        return null;
+    }
+
+    @Override
     public void fromJson(String json) {
         List<ColumnHeader> columnHeaderList = JsonUtil.toArrayObject(json, ColumnHeader.class);
         loadColumnHeaders(columnHeaderList);
