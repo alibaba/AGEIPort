@@ -4,6 +4,8 @@ import com.alibaba.ageiport.processor.core.model.api.BizColumnHeader;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.List;
+
 /**
  * @author lingyi
  */
@@ -30,4 +32,8 @@ public class BizColumnHeaderImpl implements BizColumnHeader {
     private boolean errorHeader;
 
     private boolean required;
+
+    private Integer columnWidth;
+
+    private List<String> values;
 }

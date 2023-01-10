@@ -1,5 +1,7 @@
 package com.alibaba.ageiport.processor.core.model.api;
 
+import java.util.List;
+
 /**
  * @author lingyi
  */
@@ -24,5 +26,9 @@ public interface BizColumnHeader {
     boolean isErrorHeader();
 
     boolean isRequired();
+
+    Integer getColumnWidth();
+
+    List<String> getValues();
 
 }

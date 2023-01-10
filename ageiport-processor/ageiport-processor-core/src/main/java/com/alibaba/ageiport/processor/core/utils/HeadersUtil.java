@@ -65,6 +65,8 @@ public class HeadersUtil {
                     columnHeader.setGroupName(flatColumnHeader.getGroupName());
                     columnHeader.setErrorHeader(flatColumnHeader.isErrorHeader());
                     columnHeader.setRequired(flatColumnHeader.isRequired());
+                    columnHeader.setColumnWidth(flatColumnHeader.getColumnWidth());
+                    columnHeader.setValues(flatColumnHeader.getValues());
                     columnHeaders.add(columnHeader);
                     index++;
                 }
@@ -79,6 +81,8 @@ public class HeadersUtil {
                 columnHeader.setGroupName(bizColumnHeader.getGroupName());
                 columnHeader.setErrorHeader(bizColumnHeader.isErrorHeader());
                 columnHeader.setRequired(bizColumnHeader.isRequired());
+                columnHeader.setColumnWidth(bizColumnHeader.getColumnWidth());
+                columnHeader.setValues(bizColumnHeader.getValues());
                 columnHeaders.add(columnHeader);
                 index++;
             }

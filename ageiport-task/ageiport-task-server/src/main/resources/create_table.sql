@@ -1,16 +1,3 @@
-## 生产环境部署
-
-### 任务存储-部署ageiport-task-server
-
-直接运行本项目中的单元测试时框架会将任务存储在本机内存中，因此实际在生产环境中需部署用于任务CURD的 ageiport-task-server
-
-1. 建立数据库表
-2. 未接触过Quark的开发者使用legacy打包方式，打出的runner包与SpringBootFatJar相同```mvn package -Dmaven.test.skip=true -Dquarkus.package.type=legacy-jar```
-3. java -jar 运行Jar包，运行Jar包时可通过系统环境变量或JVM参数执行数据库等参数
-
-建表脚本：
-
-```sql
 CREATE TABLE `agei_main_task_instance`
 (
     `id`                   bigint      NOT NULL AUTO_INCREMENT,
@@ -149,57 +136,3 @@ CREATE TABLE `agei_task_specification`
     PRIMARY KEY (`id`),
     KEY                 `tenant_namespace_app_env_task_code` (`tenant`,`namespace`,`app`,`env`,`task_code`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-```
-
-### 文件存储-使用OSS
-
-运行单元测试时框架会将生成的文件存储在本机硬盘中，实际生产中我们一般会在OSS/HDFS等存储文件
-
-框架默认提供了AliyunOSS文件存储的插件，如果需要其他OSS或文件存储支持可参考此实现
-
-1. Maven依赖
-
-```xml
-<dependency>
-    <groupId>com.alibaba</groupId>
-    <artifactId>ageiport-ext-file-store-aliyunoss</artifactId>
-</dependency>
-```
-
-2. 配置及初始化，设置FileStoreOptions
-```
-    AgeiPortOptions options = AgeiPortOptions.debug();
-    AliyunOssFileStoreOptions aliyunOssFileStoreOptions = new AliyunOssFileStoreOptions();
-    aliyunOssFileStoreOptions.setBucketName(bucketName);
-    aliyunOssFileStoreOptions.setEndpoint(endpoint);
-    aliyunOssFileStoreOptions.setConfig(new ClientConfiguration());
-    DefaultCredentials credentials = new DefaultCredentials(accessKeyId, accessKeySecret);
-    DefaultCredentialProvider credentialProvider = new DefaultCredentialProvider(credentials);
-    aliyunOssFileStoreOptions.setCredentialsProvider(credentialProvider);
-    options.setFileStoreOptions(aliyunOssFileStoreOptions);
-```
-
-### 部署ageiport-task-server到Docker
-
-#### 传统jar包方式-Dockerfile
-
-如果使用```mvn package -Dmaven.test.skip=true -Dquarkus.package.type=legacy-jar```命令打包，则制品为Fatjar
-
-使用如下Dockerfile，可从ageiport-task-server目录docker文件夹下"Dockerfile.legacy-jar"获取最新Dockerfile
-
-```dockerfile
-FROM registry.access.redhat.com/ubi8/openjdk-11:1.11
-
-ENV LANG='en_US.UTF-8' LANGUAGE='en_US:en'
-
-
-COPY target/lib/* /deployments/lib/
-COPY target/*-runner.jar /deployments/quarkus-run.jar
-
-EXPOSE 8080
-USER 185
-ENV AB_JOLOKIA_OFF=""
-ENV JAVA_OPTS="-Dquarkus.http.host=0.0.0.0 -Djava.util.logging.manager=org.jboss.logmanager.LogManager"
-ENV JAVA_APP_JAR="/deployments/quarkus-run.jar"
-
-```
