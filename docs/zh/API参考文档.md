@@ -1,7 +1,5 @@
 # API参考文档
 
-
-
 ## Processor
 
 ### ImportProcessor
@@ -312,8 +310,6 @@ DataObject，映射到实际写入数据源或接口的类型，一般是ViewObj
 
 * 返回值：BizDataGroup\<VIEW\>
 
-
-
 #### 11.getDataGroup(可选实现)
 
 * 接口功能：将BizDataGroup\<VIEW\>转换为子任务要数据的原始数据格式，将VIEW对象转为List、Map等原始数据类型
@@ -333,16 +329,18 @@ DataObject，映射到实际写入数据源或接口的类型，一般是ViewObj
 
 注解在VIEW类型的字段上
 
-| 字段            | 含义                                                       | 可选值 |
-| --------------- | ---------------------------------------------------------- | ------ |
-| headerName      | 表头名称，必填                                             |        |
-| type            | 表头类型，非必填                                           |        |
-| index           | 表头下标，用于排序，非必填                                 |        |
-| isDynamicColumn | 表头是否动态列，若为true则当前字段需为Map类型，非必填      |        |
-| groupIndex      | 表头分组下标，用于处理多sheet/多文件，非必填               |        |
-| groupName       | 表头分组名称，用于处理多sheet/多文件，非必填               |        |
-| isErrorHeader   | 表头是否为错误列，错误列不会出现在导入文件的模板中，非必填 |        |
-| isRequired      | 表头对应的值是否必须，非必填                               |        |
+| 字段            | 含义                             | 可选值 |
+| --------------- |--------------------------------| ------ |
+| headerName      | 表头名称，必填                        |        |
+| type            | 表头类型，非必填                       |        |
+| index           | 表头下标，用于排序，非必填                  |        |
+| isDynamicColumn | 表头是否动态列，若为true则当前字段需为Map类型，非必填 |        |
+| groupIndex      | 表头分组下标，用于处理多sheet/多文件，非必填      |        |
+| groupName       | 表头分组名称，用于处理多sheet/多文件，非必填      |        |
+| isErrorHeader   | 表头是否为错误列，错误列不会出现在导入文件的模板中，非必填  |        |
+| isRequired      | 表头对应的值是否必须，非必填                 |        |
+| columnWidth      | 宽度，对Excel生效,非必填                |        |
+| values      | 可选值，在Excel中会转为下拉框，非必填          |        |
 
 ### @ImportSpecification
 
