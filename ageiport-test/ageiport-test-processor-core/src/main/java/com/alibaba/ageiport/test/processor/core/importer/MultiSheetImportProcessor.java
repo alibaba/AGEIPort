@@ -4,7 +4,6 @@ import com.alibaba.ageiport.common.logger.Logger;
 import com.alibaba.ageiport.common.logger.LoggerFactory;
 import com.alibaba.ageiport.common.utils.JsonUtil;
 import com.alibaba.ageiport.processor.core.annotation.ImportSpecification;
-import com.alibaba.ageiport.processor.core.constants.ExecuteType;
 import com.alibaba.ageiport.processor.core.exception.BizException;
 import com.alibaba.ageiport.processor.core.model.api.BizUser;
 import com.alibaba.ageiport.processor.core.task.importer.ImportProcessor;
@@ -20,11 +19,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-@ImportSpecification(code = "ClusterImportProcessor", name = "ClusterImportProcessor", executeType = ExecuteType.CLUSTER)
-public class ClusterImportProcessor implements ImportProcessor<Query, Data, View> {
+//1.实现ImportProcessor接口
+@ImportSpecification(code = "MultiSheetImportProcessor", name = "MultiSheetImportProcessor")
+public class MultiSheetImportProcessor implements ImportProcessor<Query, Data, View> {
 
-    Logger logger = LoggerFactory.getLogger(ClusterImportProcessor.class);
+    Logger logger = LoggerFactory.getLogger(MultiSheetImportProcessor.class);
 
+    //2.实现ImportProcessor接口的convertAndCheck方法
     @Override
     public BizImportResult<View, Data> convertAndCheck(BizUser user, Query query, List<View> views) {
         BizImportResultImpl<View, Data> result = new BizImportResultImpl<>();
@@ -43,6 +44,7 @@ public class ClusterImportProcessor implements ImportProcessor<Query, Data, View
         return result;
     }
 
+    //3.实现ExportProcessor接口的write方法，此方法负责执行写入业务逻辑。
     @Override
     public BizImportResult<View, Data> write(BizUser user, Query query, List<Data> data) {
         BizImportResultImpl<View, Data> result = new BizImportResultImpl<>();
@@ -54,7 +56,7 @@ public class ClusterImportProcessor implements ImportProcessor<Query, Data, View
     @Override
     public BizImportTaskRuntimeConfig taskRuntimeConfig(BizUser user, Query query) throws BizException {
         BizImportTaskRuntimeConfigImpl runtimeConfig = new BizImportTaskRuntimeConfigImpl();
-        runtimeConfig.setExecuteType("CLUSTER");
+        runtimeConfig.setExecuteType("STANDALONE");
         return runtimeConfig;
     }
 }

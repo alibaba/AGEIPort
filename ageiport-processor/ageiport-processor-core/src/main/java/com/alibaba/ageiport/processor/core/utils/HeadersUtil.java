@@ -14,6 +14,7 @@ import com.alibaba.ageiport.processor.core.model.core.impl.ColumnHeadersImpl;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -135,6 +136,7 @@ public class HeadersUtil {
                 columnHeader.setErrorHeader(viewField.isErrorHeader());
                 columnHeader.setRequired(viewField.isRequired());
                 columnHeader.setColumnWidth(viewField.columnWidth());
+                columnHeader.setValues(Arrays.asList(viewField.values()));
                 columnHeaders.add(columnHeader);
                 index++;
             }

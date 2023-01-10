@@ -75,7 +75,8 @@ public interface ExportProcessor<QUERY, DATA, VIEW> extends Processor {
         for (BizData<VIEW> bizDatum : bizData) {
             DataGroup.Data data = new DataGroup.Data();
             dataList.add(data);
-            data.setName(bizDatum.getName());
+            data.setCode(bizDatum.getCode());
+            data.setMeta(bizDatum.getMeta());
             List<DataGroup.Item> items = new ArrayList<>();
             data.setItems(items);
             List<BizDataItem<VIEW>> bizDataItems = bizDatum.getItems();

@@ -23,6 +23,7 @@ import org.apache.commons.compress.utils.IOUtils;
 
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -42,12 +43,18 @@ public class ExcelFileWriter implements FileWriter {
 
     private List<WriteHandler> writeHandlers;
 
+    private Map<Integer, WriteSheet> writeSheetMap;
+
+    private Map<String, Integer> sheetNameNoMap;
+
     public ExcelFileWriter(AgeiPort ageiPort, ColumnHeaders columnHeaders, FileContext fileContext) {
 
         this.ageiPort = ageiPort;
         this.columnHeaders = columnHeaders;
         this.fileContext = fileContext;
         this.writeHandlers = new ArrayList<>();
+        this.writeSheetMap = new HashMap<>();
+        this.sheetNameNoMap = new HashMap<>();
 
         AgeiPortOptions options = ageiPort.getOptions();
         Map<String, Map<String, String>> spiConfigs = options.getSpiConfigs();
@@ -61,38 +68,57 @@ public class ExcelFileWriter implements FileWriter {
             this.writeHandlers.addAll(handlerProvider.provide(ageiPort, columnHeaders, fileContext));
         }
 
-
-        Integer sheetNo = ConstValues.DEFAULT_SHEET_NO;
-        String sheetName = ConstValues.DEFAULT_SHEET_NAME;
-
-        List<List<String>> head = columnHeaders.getColumnHeaders().stream()
-                .filter(s -> !s.getIgnoreHeader())
-                .map(s -> Lists.newArrayList(s.getHeaderName()))
-                .collect(Collectors.toList());
-
-        ExcelWriterSheetBuilder sheetBuilder = EasyExcel.writerSheet()
-                .sheetNo(sheetNo)
-                .sheetName(sheetName)
-                .needHead(true)
-                .head(head);
-
-        for (WriteHandler writeHandler : this.writeHandlers) {
-            sheetBuilder.registerWriteHandler(writeHandler);
-        }
-
-        WriteSheet writeSheet = sheetBuilder.build();
-
         FastByteArrayOutputStream output = new FastByteArrayOutputStream(10240);
         this.excelWriter = EasyExcel.write(output).build();
-        excelWriter.writeContext().currentSheet(writeSheet, WriteTypeEnum.ADD);
-
     }
 
     @Override
     public void write(DataGroup fileData) {
-        WriteSheet writeSheet = excelWriter.writeContext().writeSheetHolder().getWriteSheet();
-        for (DataGroup.Data datum : fileData.getData()) {
-            List<List<Object>> lines = resolve(columnHeaders, datum);
+        for (DataGroup.Data data : fileData.getData()) {
+            Integer sheetNo;
+            String sheetName = ConstValues.DEFAULT_SHEET_NAME;
+
+            Map<String, String> meta = data.getMeta();
+            if (meta.get(ExcelConstants.sheetNameKey) != null) {
+                sheetName = meta.get(ExcelConstants.sheetNameKey);
+            } else {
+                sheetName = data.getCode() == null ? sheetName : data.getCode();
+            }
+
+            if (meta.get(ExcelConstants.sheetNoKey) != null) {
+                sheetNo = Integer.parseInt(meta.get(ExcelConstants.sheetNoKey));
+            } else {
+                if (!sheetNameNoMap.containsKey(sheetName)) {
+                    int size = sheetNameNoMap.size();
+                    sheetNameNoMap.put(sheetName, size);
+                }
+                sheetNo = sheetNameNoMap.get(sheetName);
+            }
+
+            if (!this.writeSheetMap.containsKey(sheetNo)) {
+                List<List<String>> head = columnHeaders.getColumnHeaders().stream()
+                        .filter(s -> !s.getIgnoreHeader())
+                        .filter(s -> s.getGroupIndex().equals(sheetNo) || s.getGroupIndex().equals(-1))
+                        .map(s -> Lists.newArrayList(s.getHeaderName()))
+                        .collect(Collectors.toList());
+
+                ExcelWriterSheetBuilder sheetBuilder = EasyExcel.writerSheet()
+                        .sheetNo(sheetNo)
+                        .sheetName(sheetName)
+                        .needHead(true)
+                        .head(head);
+
+                for (WriteHandler writeHandler : this.writeHandlers) {
+                    sheetBuilder.registerWriteHandler(writeHandler);
+                }
+                WriteSheet writeSheet = sheetBuilder.build();
+                writeSheetMap.put(sheetNo, writeSheet);
+
+                excelWriter.writeContext().currentSheet(writeSheet, WriteTypeEnum.ADD);
+            }
+
+            WriteSheet writeSheet = writeSheetMap.get(sheetNo);
+            List<List<Object>> lines = resolve(columnHeaders, data, sheetNo);
             excelWriter.write(lines, writeSheet);
         }
     }
@@ -111,7 +137,7 @@ public class ExcelFileWriter implements FileWriter {
         IOUtils.closeQuietly(excelWriter);
     }
 
-    List<List<Object>> resolve(ColumnHeaders columnHeaders, DataGroup.Data groupData) {
+    List<List<Object>> resolve(ColumnHeaders columnHeaders, DataGroup.Data groupData, Integer groupIndex) {
         List<DataGroup.Item> items = groupData.getItems();
         List<List<Object>> data = new ArrayList<>(items.size());
         for (DataGroup.Item item : items) {
@@ -121,6 +147,10 @@ public class ExcelFileWriter implements FileWriter {
                 if (columnHeader.getIgnoreHeader()) {
                     continue;
                 }
+                if ((columnHeader.getGroupIndex() >= 0) && !columnHeader.getGroupIndex().equals(groupIndex)) {
+                    continue;
+                }
+
                 String fieldName = columnHeader.getFieldName();
                 Object value = values.get(fieldName);
                 if (columnHeader.getDynamicColumn()) {

@@ -2,6 +2,8 @@ package com.alibaba.ageiport.processor.core.model.core;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
+
 /**
  * @author lingyi
  */
@@ -56,6 +58,9 @@ public interface ColumnHeader extends Comparable<ColumnHeader> {
 
     void setColumnWidth(Integer columnWidth);
 
+    List<String> getValues();
+
+    void setValues(List<String> values);
 
     @Override
     default int compareTo(@NotNull ColumnHeader o) {

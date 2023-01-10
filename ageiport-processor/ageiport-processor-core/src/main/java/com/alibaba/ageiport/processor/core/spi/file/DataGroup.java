@@ -22,9 +22,11 @@ public class DataGroup {
     @Setter
     public static class Data {
 
-        private String name;
+        private String code;
 
         private List<Item> items;
+
+        private Map<String, String> meta;
     }
 
 

@@ -39,6 +39,10 @@ public class TaskServiceImpl implements TaskService {
             String code = param.getTaskSpecificationCode();
             TaskSpecificationRegistry registry = ageiPort.getSpecificationRegistry();
             TaskSpec taskSpec = registry.get(code);
+            if (taskSpec == null) {
+                log.error("not found TaskSpec in registry, for code:{}, please check config", code);
+                throw new IllegalArgumentException("There is no TaskSpec for code:" + code);
+            }
             String executeType = taskSpec.getExecuteType();
             String taskType = taskSpec.getTaskType();
 

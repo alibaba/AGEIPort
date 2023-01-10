@@ -35,6 +35,7 @@ public class StandaloneImportProcessor implements ImportProcessor<Query, Data, V
             Data datum = new Data();
             datum.setId(view.getId());
             datum.setName(view.getName());
+            datum.setGender(view.getGender());
             data.add(datum);
         }
 

@@ -33,7 +33,8 @@ public class AvgImportSliceStrategy<QUERY, DATA, VIEW> implements ImportSliceStr
                 List<DataGroup.Item> sliceItemList = new ArrayList<>(subList);
 
                 DataGroup.Data sliceData = new DataGroup.Data();
-                sliceData.setName(datum.getName());
+                sliceData.setCode(datum.getCode());
+                sliceData.setMeta(datum.getMeta());
                 sliceData.setItems(sliceItemList);
 
                 List<DataGroup.Data> sliceDataList = new ArrayList<>();

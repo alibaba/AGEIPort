@@ -17,7 +17,7 @@ public @interface ViewField {
 
     boolean isDynamicColumn() default false;
 
-    int groupIndex() default 1;
+    int groupIndex() default -1;
 
     String groupName() default "";
 
@@ -26,4 +26,6 @@ public @interface ViewField {
     boolean isRequired() default true;
 
     int columnWidth() default 20;
+
+    String[] values() default {};
 }

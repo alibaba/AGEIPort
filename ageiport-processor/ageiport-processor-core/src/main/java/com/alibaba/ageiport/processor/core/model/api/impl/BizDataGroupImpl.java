@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author lingyi
@@ -26,7 +27,9 @@ public class BizDataGroupImpl<T> implements BizDataGroup<T> {
     @Setter
     public static class Data<T> implements BizData<T> {
 
-        private String name;
+        private String code;
+
+        private Map<String, String> meta;
 
         private List<BizDataItem<T>> items;
     }

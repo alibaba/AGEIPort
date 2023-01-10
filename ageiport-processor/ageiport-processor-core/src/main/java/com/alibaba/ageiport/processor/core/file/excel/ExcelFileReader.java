@@ -3,19 +3,18 @@ package com.alibaba.ageiport.processor.core.file.excel;
 import com.alibaba.ageiport.common.collections.Lists;
 import com.alibaba.ageiport.common.logger.Logger;
 import com.alibaba.ageiport.common.logger.LoggerFactory;
-import com.alibaba.ageiport.common.utils.JsonUtil;
 import com.alibaba.ageiport.processor.core.AgeiPort;
 import com.alibaba.ageiport.processor.core.model.core.ColumnHeader;
 import com.alibaba.ageiport.processor.core.model.core.ColumnHeaders;
-import com.alibaba.ageiport.processor.core.model.core.impl.MainTask;
 import com.alibaba.ageiport.processor.core.spi.file.DataGroup;
 import com.alibaba.ageiport.processor.core.spi.file.FileContext;
 import com.alibaba.ageiport.processor.core.spi.file.FileReader;
 import com.alibaba.ageiport.processor.core.spi.task.factory.TaskContext;
 import com.alibaba.excel.EasyExcel;
-import com.alibaba.excel.cache.MapCache;
+import com.alibaba.excel.ExcelReader;
 import com.alibaba.excel.context.AnalysisContext;
 import com.alibaba.excel.event.AnalysisEventListener;
+import com.alibaba.excel.read.metadata.ReadSheet;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -31,6 +30,8 @@ import java.util.concurrent.CountDownLatch;
  */
 public class ExcelFileReader implements FileReader {
 
+    public static Logger logger = LoggerFactory.getLogger(ExcelFileReader.class);
+
     private AgeiPort ageiPort;
 
     private ColumnHeaders columnHeaders;
@@ -42,20 +43,28 @@ public class ExcelFileReader implements FileReader {
     public ExcelFileReader(AgeiPort ageiPort, ColumnHeaders columnHeaders, FileContext fileContext) {
         this.ageiPort = ageiPort;
         this.columnHeaders = columnHeaders;
-        this.readListeners = Lists.newArrayList(new EasyExcelReadListener(ageiPort, columnHeaders));
+        this.readListeners = new ArrayList<>();
         this.fileContext = fileContext;
     }
 
     @Override
     public void read(InputStream inputStream) {
-        for (EasyExcelReadListener readListener : readListeners) {
-            EasyExcel.read(inputStream, readListener)
-                    .readCache(new MapCache())
-                    .headRowNumber(1)
-                    .sheet()
-                    .doRead();
+        ExcelReader excelReader = EasyExcel.read(inputStream).build();
+        List<ReadSheet> readSheets = excelReader.excelExecutor().sheetList();
+
+        List<ReadSheet> sheetsNeedRead = new ArrayList<>();
+        for (ReadSheet readSheet : readSheets) {
+            if (readSheet.getSheetName().startsWith("hidden_")) {
+                logger.info("ignore sheet, main:{}, sheetNo:{}, sheetName:{}", fileContext.getMainTask(), readSheet.getSheetNo(), readSheet.getSheetName());
+                continue;
+            }
+            EasyExcelReadListener readListener = new EasyExcelReadListener(ageiPort, fileContext, columnHeaders);
+            readListeners.add(readListener);
+            readSheet.setCustomReadListenerList(Lists.newArrayList(readListener));
+            sheetsNeedRead.add(readSheet);
         }
 
+        excelReader.read(sheetsNeedRead);
     }
 
     @Override
@@ -63,7 +72,7 @@ public class ExcelFileReader implements FileReader {
         DataGroup dataGroup = new DataGroup();
         List<DataGroup.Data> data = new ArrayList<>();
         for (EasyExcelReadListener listener : readListeners) {
-            DataGroup.Data uploadData = listener.getUploadData();
+            DataGroup.Data uploadData = listener.getData();
             if (uploadData != null) {
                 data.add(uploadData);
             }
@@ -74,7 +83,6 @@ public class ExcelFileReader implements FileReader {
 
     @Override
     public void close() {
-
     }
 
 
@@ -86,7 +94,7 @@ public class ExcelFileReader implements FileReader {
 
         private AgeiPort ageiPort;
 
-        private MainTask mainTask;
+        private FileContext fileContext;
 
         private ColumnHeaders columnHeaders;
 
@@ -99,9 +107,10 @@ public class ExcelFileReader implements FileReader {
 
         private CountDownLatch countDownLatch;
 
-        public EasyExcelReadListener(AgeiPort ageiPort, ColumnHeaders columnHeaders) {
+        public EasyExcelReadListener(AgeiPort ageiPort, FileContext fileContext, ColumnHeaders columnHeaders) {
             this.ageiPort = ageiPort;
             this.columnHeaders = columnHeaders;
+            this.fileContext = fileContext;
             this.countDownLatch = new CountDownLatch(1);
         }
 
@@ -140,12 +149,17 @@ public class ExcelFileReader implements FileReader {
             item.setCode(code);
             item.setValues(line);
 
-            if (uploadData == null) {
-                uploadData = new DataGroup.Data();
-                uploadData.setName(groupName);
-                uploadData.setItems(new ArrayList<>());
+            if (this.uploadData == null) {
+                this.uploadData = new DataGroup.Data();
+                this.uploadData.setCode(groupName);
+                this.uploadData.setItems(new ArrayList<>());
+                Map<String, String> meta = new HashMap<>();
+                meta.put(ExcelConstants.sheetNoKey, sheetNo);
+                meta.put(ExcelConstants.sheetNameKey, sheetName);
+                this.uploadData.setMeta(meta);
             }
-            uploadData.getItems().add(item);
+
+            this.uploadData.getItems().add(item);
         }
 
         @Override
@@ -167,7 +181,7 @@ public class ExcelFileReader implements FileReader {
                 }
             }
             if (!lostHeaders.isEmpty()) {
-                throw new IllegalArgumentException("no header:" + JsonUtil.toJsonString(lostHeaders));
+                log.warn("lostHeaders, mainTask:{}, lostHeaders:{}", fileContext.getMainTask(), lostHeaders);
             }
             countDownLatch.countDown();
         }

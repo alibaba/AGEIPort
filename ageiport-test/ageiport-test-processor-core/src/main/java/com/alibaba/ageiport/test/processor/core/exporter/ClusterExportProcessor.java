@@ -32,6 +32,15 @@ public class ClusterExportProcessor implements ExportProcessor<Query, Data, View
             final Data data = new Data();
             data.setId(i);
             data.setName("name" + i);
+            if (i % 3 == 0) {
+                data.setGender("男");
+            }
+            if (i % 3 == 1) {
+                data.setGender("女");
+            }
+            if (i % 3 == 2) {
+                data.setGender("其他");
+            }
             dataList.add(data);
         }
         return dataList;

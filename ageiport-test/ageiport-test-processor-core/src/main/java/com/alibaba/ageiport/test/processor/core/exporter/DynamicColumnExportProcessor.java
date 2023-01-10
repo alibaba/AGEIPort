@@ -82,6 +82,15 @@ public class DynamicColumnExportProcessor implements ExportProcessor<Query, Data
             final Data data = new Data();
             data.setId(index);
             data.setName("name" + index);
+            if (index % 3 == 0) {
+                data.setGender("男");
+            }
+            if (index % 3 == 1) {
+                data.setGender("女");
+            }
+            if (index % 3 == 2) {
+                data.setGender("其他");
+            }
             dataList.add(data);
         }
         return dataList;

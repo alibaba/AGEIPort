@@ -16,6 +16,7 @@ import com.alibaba.ageiport.processor.core.task.importer.model.BizImportResult;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -58,16 +59,18 @@ public interface ImportProcessor<QUERY, DATA, VIEW> extends Processor {
         List<BizData<VIEW>> bizDataList = new ArrayList<>();
         bizDataGroup.setData(bizDataList);
 
-        List<DataGroup.Data> data = group.getData();
-        for (DataGroup.Data datum : data) {
+        for (DataGroup.Data data : group.getData()) {
             List<BizDataItem<VIEW>> items = new ArrayList<>();
             BizDataGroupImpl.Data<VIEW> bizData = new BizDataGroupImpl.Data<>();
             bizDataList.add(bizData);
-            bizData.setName(datum.getName());
+            bizData.setCode(data.getCode());
+            bizData.setMeta(data.getMeta());
             bizData.setItems(items);
-            for (DataGroup.Item item : datum.getItems()) {
+            for (DataGroup.Item item : data.getItems()) {
                 VIEW view = JsonUtil.toObject("{}", viewClass);
-                Model.toModel(item.getValues(), view);
+                Map<String, Object> values = new HashMap<>(item.getValues());
+                values.putAll(data.getMeta());
+                Model.toModel(values, view);
                 BizDataGroupImpl.Item<VIEW> dataItem = new BizDataGroupImpl.Item<>();
                 dataItem.setCode(item.getCode());
                 dataItem.setData(view);
@@ -118,7 +121,8 @@ public interface ImportProcessor<QUERY, DATA, VIEW> extends Processor {
         for (BizData<VIEW> bizDatum : bizData) {
             DataGroup.Data data = new DataGroup.Data();
             dataList.add(data);
-            data.setName(bizDatum.getName());
+            data.setCode(bizDatum.getCode());
+            data.setMeta(bizDatum.getMeta());
             List<DataGroup.Item> items = new ArrayList<>();
             data.setItems(items);
             List<BizDataItem<VIEW>> bizDataItems = bizDatum.getItems();
