@@ -7,7 +7,7 @@
     <groupId>com.alibaba</groupId>
     <artifactId>ageiport-parent</artifactId>
     <packaging>pom</packaging>
-    <version>0.0.7</version>
+    <version>0.0.9</version>
     <name>AGEIPort</name>
     <description>AGEIPort is alibaba generic export import framework in Java</description>
     <url>https://github.com/alibaba/AGEIPort</url>
@@ -110,8 +110,12 @@
             <dependency>
                 <groupId>org.junit.jupiter</groupId>
                 <artifactId>junit-jupiter</artifactId>
-                <version>5.8.2</version>
-                <scope>test</scope>
+                <version>5.9.0</version>
+            </dependency>
+            <dependency>
+                <groupId>org.junit.jupiter</groupId>
+                <artifactId>junit-jupiter-api</artifactId>
+                <version>5.9.0</version>
             </dependency>
 
         </dependencies>

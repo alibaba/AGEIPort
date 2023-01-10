@@ -5,7 +5,7 @@
     <parent>
         <artifactId>ageiport-test</artifactId>
         <groupId>com.alibaba</groupId>
-        <version>0.0.7</version>
+        <version>0.0.9</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -21,16 +21,21 @@
         <dependency>
             <groupId>com.alibaba</groupId>
             <artifactId>ageiport-test-processor-core</artifactId>
-            <version>0.0.7</version>
+            <version>0.0.9</version>
         </dependency>
         <dependency>
             <groupId>com.alibaba</groupId>
             <artifactId>ageiport-ext-file-store-aliyunoss</artifactId>
-            <version>0.0.7</version>
+            <version>0.0.9</version>
         </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-api</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>
