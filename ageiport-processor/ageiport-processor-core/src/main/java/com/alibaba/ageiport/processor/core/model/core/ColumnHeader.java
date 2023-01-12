@@ -9,13 +9,20 @@ import java.util.List;
  */
 public interface ColumnHeader extends Comparable<ColumnHeader> {
 
+    String headerSplit = "/:/";
+
     Integer getIndex();
 
     void setIndex(Integer headerName);
 
-    String getHeaderName();
+    List<String> getHeaderName();
 
-    void setHeaderName(String headerName);
+    String getHeaderNameKey();
+
+    void setHeaderName(List<String> headerName);
+
+
+    Integer getHeaderRowCount();
 
     String getFieldName();
 

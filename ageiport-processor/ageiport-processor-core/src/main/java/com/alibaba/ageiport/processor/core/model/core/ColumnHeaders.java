@@ -12,13 +12,16 @@ public interface ColumnHeaders extends Serializable {
 
     ColumnHeader getColumnHeaderByFieldName(String fieldName);
 
-    ColumnHeader getColumnHeaderByHeaderName(String headerName);
+    ColumnHeader getColumnHeaderByHeaderName(List<String> headerName);
+
+    ColumnHeader getColumnHeaderByHeaderNameKey(String headerNameKey);
 
     ColumnHeader getHeaderByIndex(Integer index);
 
-    Integer getHeaderRowCount();
+    Integer getHeaderRowCount(Integer groupIndex);
 
     void fromJson(String json);
 
     String toJson();
+
 }

@@ -19,9 +19,11 @@ public class ColumnHeadersImpl implements ColumnHeaders {
 
     private Map<String, ColumnHeader> fieldNameIndexMap;
 
-    private Map<String, ColumnHeader> headerNameIndexMap;
-
     private Map<Integer, ColumnHeader> columnIndexIndexMap;
+
+    private Map<String, ColumnHeader> headerNameKeyIndexMap;
+
+    private Map<List<String>, ColumnHeader> headerNameIndexMap;
 
     public ColumnHeadersImpl() {
     }
@@ -33,13 +35,15 @@ public class ColumnHeadersImpl implements ColumnHeaders {
     private void loadColumnHeaders(List<ColumnHeader> columnHeaders) {
         this.columnHeaders = columnHeaders;
         this.fieldNameIndexMap = new HashMap<>(columnHeaders.size() * 2);
-        this.headerNameIndexMap = new HashMap<>(columnHeaders.size() * 2);
         this.columnIndexIndexMap = new HashMap<>(columnHeaders.size() * 2);
+        this.headerNameIndexMap = new HashMap<>(columnHeaders.size() * 2);
+        this.headerNameKeyIndexMap = new HashMap<>(columnHeaders.size() * 2);
 
         for (ColumnHeader columnHeader : columnHeaders) {
             this.fieldNameIndexMap.put(columnHeader.getFieldName(), columnHeader);
-            this.headerNameIndexMap.put(columnHeader.getHeaderName(), columnHeader);
             this.columnIndexIndexMap.put(columnHeader.getIndex(), columnHeader);
+            this.headerNameIndexMap.put(columnHeader.getHeaderName(), columnHeader);
+            this.headerNameKeyIndexMap.put(columnHeader.getHeaderNameKey(), columnHeader);
         }
     }
 
@@ -54,9 +58,15 @@ public class ColumnHeadersImpl implements ColumnHeaders {
     }
 
     @Override
-    public ColumnHeader getColumnHeaderByHeaderName(String headerName) {
+    public ColumnHeader getColumnHeaderByHeaderName(List<String> headerName) {
         return this.headerNameIndexMap.get(headerName);
     }
+
+    @Override
+    public ColumnHeader getColumnHeaderByHeaderNameKey(String headerNameKey) {
+        return headerNameKeyIndexMap.get(headerNameKey);
+    }
+
 
     @Override
     public ColumnHeader getHeaderByIndex(Integer index) {
@@ -64,8 +74,17 @@ public class ColumnHeadersImpl implements ColumnHeaders {
     }
 
     @Override
-    public Integer getHeaderRowCount() {
-        return null;
+    public Integer getHeaderRowCount(Integer groupIndex) {
+        Integer max = 1;
+        for (ColumnHeader columnHeader : columnHeaders) {
+            if ((columnHeader.getGroupIndex() != -1) && !columnHeader.getGroupIndex().equals(groupIndex)) {
+                continue;
+            }
+            if (columnHeader.getHeaderRowCount() > max) {
+                max = columnHeader.getHeaderRowCount();
+            }
+        }
+        return max;
     }
 
     @Override
@@ -78,4 +97,5 @@ public class ColumnHeadersImpl implements ColumnHeaders {
     public String toJson() {
         return JsonUtil.toJsonString(columnHeaders);
     }
+
 }

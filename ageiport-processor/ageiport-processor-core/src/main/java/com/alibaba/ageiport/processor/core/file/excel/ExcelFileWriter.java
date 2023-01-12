@@ -99,7 +99,7 @@ public class ExcelFileWriter implements FileWriter {
                 List<List<String>> head = columnHeaders.getColumnHeaders().stream()
                         .filter(s -> !s.getIgnoreHeader())
                         .filter(s -> s.getGroupIndex().equals(sheetNo) || s.getGroupIndex().equals(-1))
-                        .map(s -> Lists.newArrayList(s.getHeaderName()))
+                        .map(ColumnHeader::getHeaderName)
                         .collect(Collectors.toList());
 
                 ExcelWriterSheetBuilder sheetBuilder = EasyExcel.writerSheet()

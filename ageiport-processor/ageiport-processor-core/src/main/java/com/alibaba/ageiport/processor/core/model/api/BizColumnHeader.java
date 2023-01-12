@@ -7,7 +7,9 @@ import java.util.List;
  */
 public interface BizColumnHeader {
 
-    String getHeaderName();
+    List<String> getHeaderName();
+
+    String getHeaderNameKey();
 
     String getFieldName();
 
@@ -30,5 +32,7 @@ public interface BizColumnHeader {
     Integer getColumnWidth();
 
     List<String> getValues();
+
+    Integer getHeaderRowCount();
 
 }

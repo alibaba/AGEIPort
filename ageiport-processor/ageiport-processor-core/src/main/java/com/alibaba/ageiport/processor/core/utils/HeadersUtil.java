@@ -131,7 +131,7 @@ public class HeadersUtil {
             } else {
                 ColumnHeaderImpl columnHeader = new ColumnHeaderImpl();
                 columnHeader.setFieldName(dataField.getName());
-                columnHeader.setHeaderName(viewField.headerName());
+                columnHeader.setHeaderName(Arrays.asList(viewField.headerName()));
                 columnHeader.setType(viewField.type());
                 columnHeader.setIndex(index);
                 columnHeader.setDynamicColumn(false);

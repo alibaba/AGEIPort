@@ -9,7 +9,7 @@ import java.lang.annotation.RetentionPolicy;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ViewField {
 
-    String headerName();
+    String[] headerName();
 
     String type() default "AUTO";
 

@@ -53,15 +53,19 @@ public class ExcelFileReader implements FileReader {
         List<ReadSheet> readSheets = excelReader.excelExecutor().sheetList();
 
         List<ReadSheet> sheetsNeedRead = new ArrayList<>();
+
+        int sheetIndex = 0;
         for (ReadSheet readSheet : readSheets) {
             if (readSheet.getSheetName().startsWith("hidden_")) {
-                logger.info("ignore sheet, main:{}, sheetNo:{}, sheetName:{}", fileContext.getMainTask(), readSheet.getSheetNo(), readSheet.getSheetName());
+                logger.warn("ignore sheet, main:{}, sheetNo:{}, sheetName:{}", fileContext.getMainTask(), readSheet.getSheetNo(), readSheet.getSheetName());
                 continue;
             }
             EasyExcelReadListener readListener = new EasyExcelReadListener(ageiPort, fileContext, columnHeaders);
             readListeners.add(readListener);
             readSheet.setCustomReadListenerList(Lists.newArrayList(readListener));
+            readSheet.setHeadRowNumber(columnHeaders.getHeaderRowCount(sheetIndex));
             sheetsNeedRead.add(readSheet);
+            sheetIndex++;
         }
 
         excelReader.read(sheetsNeedRead);
@@ -98,10 +102,7 @@ public class ExcelFileReader implements FileReader {
 
         private ColumnHeaders columnHeaders;
 
-        private List<Map<Integer, String>> uploadHeaders = new ArrayList<>(4);
-
-        private Map<Integer, String> lastHeadMap = new HashMap<>();
-
+        private Map<Integer, String> uploadHeaderNameKeys = new HashMap<>(4);
 
         private DataGroup.Data uploadData;
 
@@ -120,8 +121,8 @@ public class ExcelFileReader implements FileReader {
 
             for (Map.Entry<Integer, Object> entry : data.entrySet()) {
                 Integer column = entry.getKey();
-                String header = lastHeadMap.get(column);
-                ColumnHeader columnHeader = columnHeaders.getColumnHeaderByHeaderName(header);
+                String headerNameKey = uploadHeaderNameKeys.get(column);
+                ColumnHeader columnHeader = columnHeaders.getColumnHeaderByHeaderNameKey(headerNameKey);
                 if (columnHeader != null) {
                     String fieldName = columnHeader.getFieldName();
                     if (columnHeader.getDynamicColumn()) {
@@ -144,8 +145,8 @@ public class ExcelFileReader implements FileReader {
             String sheetName = context.readSheetHolder().getSheetName();
             String sheetNo = context.readSheetHolder().getSheetNo().toString();
             Integer rowIndex = context.readRowHolder().getRowIndex();
-            String groupName = sheetName + "-" + sheetNo;
-            String code = groupName + "-" + rowIndex;
+            String groupName = sheetName + "@" + sheetNo;
+            String code = groupName + "@" + rowIndex;
             item.setCode(code);
             item.setValues(line);
 
@@ -164,25 +165,20 @@ public class ExcelFileReader implements FileReader {
 
         @Override
         public void invokeHeadMap(Map<Integer, String> headMap, AnalysisContext context) {
-            uploadHeaders.add(headMap);
-            lastHeadMap.putAll(headMap);
+            for (Map.Entry<Integer, String> entry : headMap.entrySet()) {
+                Integer key = entry.getKey();
+                String headerNameKey = uploadHeaderNameKeys.get(key);
+                if (headerNameKey == null) {
+                    headerNameKey = entry.getValue();
+                } else {
+                    headerNameKey = headerNameKey + ColumnHeader.headerSplit + entry.getValue();
+                }
+                uploadHeaderNameKeys.put(key, headerNameKey);
+            }
         }
 
         @Override
         public void doAfterAllAnalysed(AnalysisContext context) {
-            List<ColumnHeader> columnHeaderList = columnHeaders.getColumnHeaders();
-            List<String> headers = new ArrayList<>(lastHeadMap.values());
-            List<String> lostHeaders = new ArrayList<>();
-            for (ColumnHeader columnHeader : columnHeaderList) {
-                if (columnHeader.getRequired() && !columnHeader.getIgnoreHeader() && !columnHeader.getErrorHeader()) {
-                    if (!headers.contains(columnHeader.getHeaderName())) {
-                        lostHeaders.add(columnHeader.getHeaderName());
-                    }
-                }
-            }
-            if (!lostHeaders.isEmpty()) {
-                log.warn("lostHeaders, mainTask:{}, lostHeaders:{}", fileContext.getMainTask(), lostHeaders);
-            }
             countDownLatch.countDown();
         }
 

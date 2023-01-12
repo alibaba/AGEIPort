@@ -1,5 +1,6 @@
 package com.alibaba.ageiport.processor.core.model.core.impl;
 
+import com.alibaba.ageiport.common.collections.Lists;
 import com.alibaba.ageiport.processor.core.model.core.ColumnHeader;
 import lombok.Getter;
 import lombok.Setter;
@@ -15,7 +16,9 @@ public class ColumnHeaderImpl implements ColumnHeader {
 
     private Integer index;
 
-    private String headerName;
+    private List<String> headerName;
+
+    private String headerNameKey;
 
     private String fieldName;
 
@@ -38,4 +41,29 @@ public class ColumnHeaderImpl implements ColumnHeader {
     private Integer columnWidth;
 
     private List<String> values;
+
+    @Override
+    public Integer getHeaderRowCount() {
+        return this.headerName.size();
+    }
+
+    @Override
+    public void setHeaderName(List<String> headerName) {
+        this.headerName = headerName;
+        this.setHeaderNameKey(this.headerName);
+    }
+
+    public void setHeaderName(String headerName) {
+        this.setHeaderName(Lists.newArrayList(headerName));
+        this.setHeaderNameKey(this.headerName);
+    }
+
+    public void setHeaderNameKey(List<String> headerName) {
+        String key = String.join(ColumnHeader.headerSplit, headerName);
+        this.setHeaderNameKey(key);
+    }
+
+    public void setHeaderNameKey(String headerNameKey) {
+        this.headerNameKey = headerNameKey;
+    }
 }
