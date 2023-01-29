@@ -190,7 +190,7 @@ public class ExportMainTaskWorker<QUERY, DATA, VIEW> extends AbstractMainTaskWor
             for (int i = 1; i <= mainTask.getSubTotalCount(); i++) {
                 String subTaskId = TaskIdUtil.genSubTaskId(mainTask.getMainTaskId(), i);
                 BigDataCache cache = ageiPort.getBigDataCacheManager().getBigDataCacheCache(mainTask.getExecuteType());
-                DataGroup dataGroup = cache.get(subTaskId, DataGroup.class);
+                DataGroup dataGroup = cache.remove(subTaskId, DataGroup.class);
                 fileWriter.write(dataGroup);
             }
             fileStream = fileWriter.finish();
