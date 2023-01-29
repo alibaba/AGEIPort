@@ -1,6 +1,5 @@
 package com.alibaba.ageiport.processor.core.file.excel;
 
-import com.alibaba.ageiport.common.collections.Lists;
 import com.alibaba.ageiport.common.io.FastByteArrayOutputStream;
 import com.alibaba.ageiport.common.utils.JsonUtil;
 import com.alibaba.ageiport.ext.arch.ExtensionLoader;
@@ -79,20 +78,20 @@ public class ExcelFileWriter implements FileWriter {
             String sheetName = ConstValues.DEFAULT_SHEET_NAME;
 
             Map<String, String> meta = data.getMeta();
-            if (meta.get(ExcelConstants.sheetNameKey) != null) {
-                sheetName = meta.get(ExcelConstants.sheetNameKey);
-            } else {
+            if (meta == null || !meta.containsKey(ExcelConstants.sheetNameKey)) {
                 sheetName = data.getCode() == null ? sheetName : data.getCode();
+            } else {
+                sheetName = meta.get(ExcelConstants.sheetNameKey);
             }
 
-            if (meta.get(ExcelConstants.sheetNoKey) != null) {
-                sheetNo = Integer.parseInt(meta.get(ExcelConstants.sheetNoKey));
-            } else {
+            if (meta == null || !meta.containsKey(ExcelConstants.sheetNoKey)) {
                 if (!sheetNameNoMap.containsKey(sheetName)) {
                     int size = sheetNameNoMap.size();
                     sheetNameNoMap.put(sheetName, size);
                 }
                 sheetNo = sheetNameNoMap.get(sheetName);
+            } else {
+                sheetNo = Integer.parseInt(meta.get(ExcelConstants.sheetNoKey));
             }
 
             if (!this.writeSheetMap.containsKey(sheetNo)) {
