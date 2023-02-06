@@ -61,7 +61,8 @@ public class HeadersUtil {
                     columnHeader.setIndex(index);
                     columnHeader.setDynamicColumn(true);
                     columnHeader.setDynamicColumnKey(flatColumnHeader.getDynamicColumnKey());
-                    columnHeader.setGroupIndex(flatColumnHeader.getGroupIndex());
+                    Integer groupIndex = flatColumnHeader.getGroupIndex() == null ? bizColumnHeader.getGroupIndex() : flatColumnHeader.getGroupIndex();
+                    columnHeader.setGroupIndex(groupIndex);
                     columnHeader.setGroupName(flatColumnHeader.getGroupName());
                     columnHeader.setErrorHeader(flatColumnHeader.isErrorHeader());
                     columnHeader.setRequired(flatColumnHeader.isRequired());
@@ -121,7 +122,8 @@ public class HeadersUtil {
                     columnHeader.setIndex(index);
                     columnHeader.setDynamicColumn(true);
                     columnHeader.setDynamicColumnKey(flatColumnHeader.getDynamicColumnKey());
-                    columnHeader.setGroupIndex(flatColumnHeader.getGroupIndex());
+                    Integer groupIndex = flatColumnHeader.getGroupIndex() == null ? viewField.groupIndex() : flatColumnHeader.getGroupIndex();
+                    columnHeader.setGroupIndex(groupIndex);
                     columnHeader.setGroupName(flatColumnHeader.getGroupName());
                     columnHeader.setErrorHeader(flatColumnHeader.isErrorHeader());
                     columnHeader.setRequired(flatColumnHeader.isRequired());

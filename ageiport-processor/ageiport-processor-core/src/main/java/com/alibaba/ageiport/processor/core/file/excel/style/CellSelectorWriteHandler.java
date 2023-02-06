@@ -1,5 +1,6 @@
 package com.alibaba.ageiport.processor.core.file.excel.style;
 
+import com.alibaba.ageiport.common.utils.CollectionUtils;
 import com.alibaba.ageiport.processor.core.model.core.ColumnHeader;
 import com.alibaba.ageiport.processor.core.model.core.ColumnHeaders;
 import com.alibaba.excel.write.handler.SheetWriteHandler;
@@ -43,7 +44,9 @@ public class CellSelectorWriteHandler implements SheetWriteHandler {
         final Workbook workbook = writeWorkbookHolder.getWorkbook();
         final Sheet sheet = writeSheetHolder.getSheet();
         for (Map.Entry<Integer, List<String>> entry : selectorMap.entrySet()) {
-            setLongHSSFValidation(workbook, sheet, entry.getValue(), 1, 3000, entry.getKey());
+            if (CollectionUtils.isNotEmpty(entry.getValue())) {
+                setLongHSSFValidation(workbook, sheet, entry.getValue(), 1, 3000, entry.getKey());
+            }
         }
     }
 
