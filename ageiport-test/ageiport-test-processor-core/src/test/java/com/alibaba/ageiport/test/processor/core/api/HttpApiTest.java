@@ -30,7 +30,7 @@ public class HttpApiTest {
     @Test
     @SneakyThrows
     public void test() {
-        AgeiPortOptions options = new AgeiPortOptions();
+        AgeiPortOptions options = AgeiPortOptions.debug();
         AgeiPort ageiPort = AgeiPort.ageiPort(options);
 
         Query query = new Query();

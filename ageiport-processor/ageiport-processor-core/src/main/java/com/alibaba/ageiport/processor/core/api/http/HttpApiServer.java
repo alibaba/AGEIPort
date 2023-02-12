@@ -14,10 +14,7 @@ import com.alibaba.ageiport.processor.core.spi.service.*;
 import com.alibaba.ageiport.processor.core.spi.task.stage.CommonStage;
 import com.alibaba.ageiport.processor.core.spi.task.stage.Stage;
 import io.vertx.core.Vertx;
-import io.vertx.core.http.HttpClient;
-import io.vertx.core.http.HttpClientRequest;
-import io.vertx.core.http.HttpMethod;
-import io.vertx.core.http.RequestOptions;
+import io.vertx.core.http.*;
 
 /**
  * @author lingyi
@@ -95,7 +92,7 @@ public class HttpApiServer implements ApiServer {
                 .setPort(this.options.getPort())
                 .setMethod(HttpMethod.POST)
                 .setURI(TASK_PROGRESS_URL)
-                .setTimeout(3000);
+                .setTimeout(1000);
         this.httpClient.request(requestOptions, e -> {
             String message = StringUtils.format("getTaskProgress response failed main:{}, host{}", mainTaskId, mainTask.getHost());
             if (e.succeeded()) {
@@ -120,6 +117,7 @@ public class HttpApiServer implements ApiServer {
                 handler.handle(response);
             }
         });
+
     }
 
     @Override
