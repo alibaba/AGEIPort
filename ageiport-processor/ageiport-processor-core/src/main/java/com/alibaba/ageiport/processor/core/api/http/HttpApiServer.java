@@ -12,6 +12,7 @@ import com.alibaba.ageiport.processor.core.spi.api.ApiServer;
 import com.alibaba.ageiport.processor.core.spi.api.model.*;
 import com.alibaba.ageiport.processor.core.spi.service.*;
 import com.alibaba.ageiport.processor.core.spi.task.stage.CommonStage;
+import com.alibaba.ageiport.processor.core.spi.task.stage.Stage;
 import io.vertx.core.Vertx;
 import io.vertx.core.http.HttpClient;
 import io.vertx.core.http.HttpClientRequest;
@@ -62,6 +63,24 @@ public class HttpApiServer implements ApiServer {
         String mainTaskId = request.getMainTaskId();
         MainTask mainTask = ageiPort.getTaskServerClient().getMainTask(mainTaskId);
 
+        if (isTaskInFinal(mainTask)) {
+            GetMainTaskProgressResponse response = new GetMainTaskProgressResponse();
+            response.setSuccess(true);
+            response.setMainTaskId(mainTask.getMainTaskId());
+            response.setStatus(mainTask.getStatus());
+
+            Stage stage = CommonStage.of(mainTask.getStatus());
+            response.setStageCode(stage.getCode());
+            response.setStageName(stage.getName());
+            response.setErrorSubTaskCount(mainTask.getSubFailedCount());
+            response.setTotalSubTaskCount(mainTask.getSubTotalCount());
+            response.setFinishedSubTaskCount(mainTask.getSubFinishedCount());
+            response.setPercent(1D);
+            response.setIsFinished(stage == CommonStage.FINISHED);
+            response.setIsError(stage == CommonStage.ERROR);
+            handler.handle(response);
+            return;
+        }
         if (canUserCurrentNode(mainTask)) {
             TaskProgressParam taskProgressRequest = new TaskProgressParam(mainTaskId);
             TaskService taskService = ageiPort.getTaskService();
@@ -69,38 +88,38 @@ public class HttpApiServer implements ApiServer {
             GetMainTaskProgressResponse response = BeanUtils.cloneProp(taskProgressResult, GetMainTaskProgressResponse.class);
             response.setSuccess(true);
             handler.handle(response);
-        } else {
-            RequestOptions requestOptions = new RequestOptions();
-            requestOptions.setHost(mainTask.getHost())
-                    .setPort(this.options.getPort())
-                    .setMethod(HttpMethod.POST)
-                    .setURI(TASK_PROGRESS_URL)
-                    .setTimeout(3000);
-            this.httpClient.request(requestOptions, event1 -> {
-                String message = StringUtils.format("getTaskProgress response failed main:{}, host{}", mainTaskId, mainTask.getHost());
-                if (event1.succeeded()) {
-                    HttpClientRequest httpClientRequest = event1.result();
-                    httpClientRequest.send(JsonUtil.toJsonString(request), event11 -> {
-                        if (event11.succeeded()) {
-                            String jsonString = event11.result().body().toString();
-                            handler.handle(JsonUtil.toObject(jsonString, GetMainTaskProgressResponse.class));
-                        } else {
-                            logger.error(message, event11.cause());
-                            GetMainTaskProgressResponse response = new GetMainTaskProgressResponse();
-                            response.setSuccess(false);
-                            response.setMessage(message);
-                            handler.handle(response);
-                        }
-                    });
-                } else {
-                    logger.error(message, event1.cause());
-                    GetMainTaskProgressResponse response = new GetMainTaskProgressResponse();
-                    response.setSuccess(false);
-                    response.setMessage(message);
-                    handler.handle(response);
-                }
-            });
+            return;
         }
+        RequestOptions requestOptions = new RequestOptions();
+        requestOptions.setHost(mainTask.getHost())
+                .setPort(this.options.getPort())
+                .setMethod(HttpMethod.POST)
+                .setURI(TASK_PROGRESS_URL)
+                .setTimeout(3000);
+        this.httpClient.request(requestOptions, e -> {
+            String message = StringUtils.format("getTaskProgress response failed main:{}, host{}", mainTaskId, mainTask.getHost());
+            if (e.succeeded()) {
+                HttpClientRequest httpClientRequest = e.result();
+                httpClientRequest.send(JsonUtil.toJsonString(request), event11 -> {
+                    if (event11.succeeded()) {
+                        String jsonString = event11.result().body().toString();
+                        handler.handle(JsonUtil.toObject(jsonString, GetMainTaskProgressResponse.class));
+                    } else {
+                        logger.error(message, event11.cause());
+                        GetMainTaskProgressResponse response = new GetMainTaskProgressResponse();
+                        response.setSuccess(false);
+                        response.setMessage(message);
+                        handler.handle(response);
+                    }
+                });
+            } else {
+                logger.error(message, e.cause());
+                GetMainTaskProgressResponse response = new GetMainTaskProgressResponse();
+                response.setSuccess(false);
+                response.setMessage(message);
+                handler.handle(response);
+            }
+        });
     }
 
     @Override
@@ -114,9 +133,11 @@ public class HttpApiServer implements ApiServer {
     }
 
     private boolean canUserCurrentNode(MainTask mainTask) {
-        return ageiPort.getClusterManager().getLocalNode().getIp().equals(mainTask.getHost())
-                || mainTask.getStatus().equals(CommonStage.ERROR.getCode())
-                || mainTask.getStatus().equals(CommonStage.FINISHED.getCode());
+        return ageiPort.getClusterManager().getLocalNode().getIp().equals(mainTask.getHost());
     }
 
+    private boolean isTaskInFinal(MainTask mainTask) {
+        return mainTask.getStatus().equals(CommonStage.ERROR.getCode())
+                || mainTask.getStatus().equals(CommonStage.FINISHED.getCode());
+    }
 }

@@ -196,9 +196,9 @@ public class AgeiPortOptions {
             options.setFileStoreOptions(debug.getFileStoreOptions());
         }
         if (debug.getTaskServerClientOptions() != null) {
-            boolean portAvailable = NetUtils.isPortAvailable(9821);
+            HttpTaskServerClientOptions clientOptions = new HttpTaskServerClientOptions();
+            boolean portAvailable = NetUtils.isPortAvailable(clientOptions.getPort());
             if (portAvailable) {
-                HttpTaskServerClientOptions clientOptions = new HttpTaskServerClientOptions();
                 clientOptions.setEndpoint("localhost");
                 options.setTaskServerClientOptions(clientOptions);
             } else {
