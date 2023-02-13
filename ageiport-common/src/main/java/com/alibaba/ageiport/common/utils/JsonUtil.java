@@ -30,6 +30,10 @@ public class JsonUtil {
         return JSON.parseObject(toJsonString(object));
     }
 
+    public static Map toMap(String jsonString) {
+        return JSON.parseObject(jsonString);
+    }
+
 
     public static <T> List<T> toArrayObject(String jsonString, Class<T> clazz) {
         return JSON.parseArray(jsonString, clazz);

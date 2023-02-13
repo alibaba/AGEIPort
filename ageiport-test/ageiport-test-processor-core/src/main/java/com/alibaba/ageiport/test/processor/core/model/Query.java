@@ -18,6 +18,9 @@ public class Query {
 
     private Integer dynamicHeaderCount;
 
+    private String sliceKey;
+    private Integer sliceOffset;
+
 
     public Integer getErrorCount() {
         int sum = 0;

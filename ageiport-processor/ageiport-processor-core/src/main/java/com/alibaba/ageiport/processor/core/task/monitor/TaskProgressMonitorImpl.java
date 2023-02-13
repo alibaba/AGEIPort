@@ -98,7 +98,7 @@ public class TaskProgressMonitorImpl implements TaskProgressMonitor {
                 mainTaskProgress.setPercent(mainTaskPercent);
             }
 
-            log.info("onSubTaskChanged, main:{}, total:{}, finished:{}, error:{}", mainTaskProgress.getMainTaskId(), subTaskProgress.getSubTaskId(), totalSubTaskCount, currentFinishedSubTaskCount, currentErrorSubTaskCount);
+            log.info("onSubTaskChanged, main:{}, sub:{}, total:{}, finished:{}, error:{}", mainTaskProgress.getMainTaskId(), subTaskProgress.getSubTaskId(), totalSubTaskCount, currentFinishedSubTaskCount, currentErrorSubTaskCount);
 
             if (totalSubTaskCount.equals(currentFinishedSubTaskCount + currentErrorSubTaskCount)) {
                 Class<? extends EventObject> triggerEvent = subTaskExecuteEnd.getTriggerEvent();

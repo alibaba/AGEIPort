@@ -14,14 +14,11 @@ import com.alibaba.ageiport.test.processor.core.model.Data;
 import com.alibaba.ageiport.test.processor.core.model.Query;
 import com.alibaba.ageiport.test.processor.core.model.View;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 //1.实现ExportProcessor接口
-@ExportSpecification(code = "MultiSheetExportProcessor", name = "MultiSheetExportProcessor")
-public class MultiSheetExportProcessor implements ExportProcessor<Query, Data, View> {
+@ExportSpecification(code = "UdfSliceStrategyExportProcessor", name = "UdfSliceStrategyExportProcessor", sliceStrategy = "UdfExportSliceStrategy")
+public class UdfSliceStrategyExportProcessor implements ExportProcessor<Query, Data, View> {
 
     //2.实现ExportProcessor接口的TotalCount方法
     @Override
@@ -32,8 +29,20 @@ public class MultiSheetExportProcessor implements ExportProcessor<Query, Data, V
     //3.实现ExportProcessor接口的queryData方法
     @Override
     public List<Data> queryData(BizUser user, Query query, BizExportPage bizExportPage) throws BizException {
-        List<Data> dataList = new ArrayList<>();
+        List<Data> data = new ArrayList<>();
+        String sliceKey = query.getSliceKey();
+        if (Objects.equals(sliceKey, "男")) {
+            data = queryMan(user, query, bizExportPage);
+        } else if (Objects.equals(sliceKey, "女")) {
+            data = queryWomen(user, query, bizExportPage);
+        } else if (Objects.equals(sliceKey, "其他")) {
+            data = queryOthers(user, query, bizExportPage);
+        }
+        return data;
+    }
 
+    private List<Data> queryOthers(BizUser user, Query query, BizExportPage bizExportPage) {
+        List<Data> dataList = new ArrayList<>();
         Integer offset = bizExportPage.getOffset();
         Integer size = bizExportPage.getSize();
         for (int i = 1; i <= size; i++) {
@@ -41,25 +50,45 @@ public class MultiSheetExportProcessor implements ExportProcessor<Query, Data, V
             final Data data = new Data();
             data.setId(index);
             data.setName("name" + index);
-            if (index % 3 == 0) {
-                data.setGender("男");
-            }
-            if (index % 3 == 1) {
-                data.setGender("女");
-            }
-            if (index % 3 == 2) {
-                data.setGender("其他");
-            }
-            data.setManQuestion1("男性问题回答1");
-            data.setManQuestion2("男性问题回答2");
-            data.setWomenQuestion1("女性问题回答1");
-            data.setWomenQuestion2("女性问题回答2");
+            data.setGender("其他");
             data.setOtherQuestion1("其他性别问题回答1");
             data.setOtherQuestion2("其他性别问题回答2");
-
             dataList.add(data);
         }
+        return dataList;
+    }
 
+    private List<Data> queryWomen(BizUser user, Query query, BizExportPage bizExportPage) {
+        List<Data> dataList = new ArrayList<>();
+        Integer offset = bizExportPage.getOffset();
+        Integer size = bizExportPage.getSize();
+        for (int i = 1; i <= size; i++) {
+            int index = offset + i;
+            final Data data = new Data();
+            data.setId(index);
+            data.setName("name" + index);
+            data.setGender("女");
+            data.setWomenQuestion1("女性性别问题回答1");
+            data.setWomenQuestion2("女性性别问题回答2");
+            dataList.add(data);
+        }
+        return dataList;
+    }
+
+    private List<Data> queryMan(BizUser user, Query query, BizExportPage bizExportPage) {
+        List<Data> dataList = new ArrayList<>();
+        Integer offset = bizExportPage.getOffset();
+        Integer size = bizExportPage.getSize();
+        for (int i = 1; i <= size; i++) {
+            int index = offset + i;
+            final Data data = new Data();
+            data.setId(index);
+            data.setName("name" + index);
+            data.setGender("男");
+            data.setManQuestion1("男性别问题回答1");
+            data.setManQuestion2("男性别问题回答2");
+            dataList.add(data);
+        }
         return dataList;
     }
 
@@ -126,6 +155,7 @@ public class MultiSheetExportProcessor implements ExportProcessor<Query, Data, V
         return group;
     }
 
+    @Override
     public BizExportTaskRuntimeConfig taskRuntimeConfig(BizUser user, Query query) throws BizException {
         final BizExportTaskRuntimeConfigImpl runtimeConfig = new BizExportTaskRuntimeConfigImpl();
         runtimeConfig.setExecuteType("STANDALONE");
