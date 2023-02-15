@@ -2,8 +2,8 @@ package com.alibaba.ageiport.processor.core.file.store;
 
 import com.alibaba.ageiport.common.logger.Logger;
 import com.alibaba.ageiport.common.logger.LoggerFactory;
+import com.alibaba.ageiport.common.utils.IOUtils;
 import com.alibaba.ageiport.ext.file.store.FileStore;
-import org.apache.commons.compress.utils.IOUtils;
 
 import java.io.*;
 import java.util.Map;
