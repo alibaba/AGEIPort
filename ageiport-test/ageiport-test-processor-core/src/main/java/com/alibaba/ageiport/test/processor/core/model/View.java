@@ -18,6 +18,10 @@ public class View {
     @ViewField(headerName = {"基本信息", "性别"}, values = {"男", "女", "其他"})
     private String gender;
 
+    private String groupName;
+
+    private Integer groupIndex;
+
     @ViewField(headerName = {"不同性别问题", "男性问题1"}, groupName = "男性问题1", groupIndex = 0)
     private String manQuestion1;
 

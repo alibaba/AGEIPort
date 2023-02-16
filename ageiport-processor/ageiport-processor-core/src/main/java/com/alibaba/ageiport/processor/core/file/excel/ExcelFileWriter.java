@@ -1,6 +1,7 @@
 package com.alibaba.ageiport.processor.core.file.excel;
 
 import com.alibaba.ageiport.common.io.FastByteArrayOutputStream;
+import com.alibaba.ageiport.common.utils.IOUtils;
 import com.alibaba.ageiport.common.utils.JsonUtil;
 import com.alibaba.ageiport.ext.arch.ExtensionLoader;
 import com.alibaba.ageiport.processor.core.AgeiPort;
@@ -18,7 +19,6 @@ import com.alibaba.excel.enums.WriteTypeEnum;
 import com.alibaba.excel.write.builder.ExcelWriterSheetBuilder;
 import com.alibaba.excel.write.handler.WriteHandler;
 import com.alibaba.excel.write.metadata.WriteSheet;
-import org.apache.commons.compress.utils.IOUtils;
 
 import java.io.InputStream;
 import java.util.ArrayList;

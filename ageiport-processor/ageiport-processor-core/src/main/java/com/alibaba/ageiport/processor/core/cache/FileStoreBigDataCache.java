@@ -1,10 +1,10 @@
 package com.alibaba.ageiport.processor.core.cache;
 
+import com.alibaba.ageiport.common.utils.IOUtils;
 import com.alibaba.ageiport.common.utils.JsonUtil;
 import com.alibaba.ageiport.ext.file.store.FileStore;
 import com.alibaba.ageiport.processor.core.AgeiPort;
 import com.alibaba.ageiport.processor.core.spi.cache.BigDataCache;
-import org.apache.commons.compress.utils.IOUtils;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;

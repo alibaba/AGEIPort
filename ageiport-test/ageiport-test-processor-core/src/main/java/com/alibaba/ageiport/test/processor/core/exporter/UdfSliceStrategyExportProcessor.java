@@ -1,11 +1,15 @@
 package com.alibaba.ageiport.test.processor.core.exporter;
 
+import com.alibaba.ageiport.common.collections.Lists;
 import com.alibaba.ageiport.common.utils.BeanUtils;
 import com.alibaba.ageiport.common.utils.JsonUtil;
 import com.alibaba.ageiport.processor.core.annotation.ExportSpecification;
 import com.alibaba.ageiport.processor.core.exception.BizException;
 import com.alibaba.ageiport.processor.core.file.excel.ExcelConstants;
-import com.alibaba.ageiport.processor.core.model.api.*;
+import com.alibaba.ageiport.processor.core.model.api.BizDataGroup;
+import com.alibaba.ageiport.processor.core.model.api.BizDataItem;
+import com.alibaba.ageiport.processor.core.model.api.BizExportPage;
+import com.alibaba.ageiport.processor.core.model.api.BizUser;
 import com.alibaba.ageiport.processor.core.model.api.impl.BizDataGroupImpl;
 import com.alibaba.ageiport.processor.core.task.exporter.ExportProcessor;
 import com.alibaba.ageiport.processor.core.task.exporter.api.BizExportTaskRuntimeConfig;
@@ -51,6 +55,8 @@ public class UdfSliceStrategyExportProcessor implements ExportProcessor<Query, D
             data.setId(index);
             data.setName("name" + index);
             data.setGender("其他");
+            data.setGroupIndex(2);
+            data.setGroupName("其他性别问卷");
             data.setOtherQuestion1("其他性别问题回答1");
             data.setOtherQuestion2("其他性别问题回答2");
             dataList.add(data);
@@ -68,6 +74,8 @@ public class UdfSliceStrategyExportProcessor implements ExportProcessor<Query, D
             data.setId(index);
             data.setName("name" + index);
             data.setGender("女");
+            data.setGroupIndex(1);
+            data.setGroupName("女性性别问卷");
             data.setWomenQuestion1("女性性别问题回答1");
             data.setWomenQuestion2("女性性别问题回答2");
             dataList.add(data);
@@ -85,6 +93,8 @@ public class UdfSliceStrategyExportProcessor implements ExportProcessor<Query, D
             data.setId(index);
             data.setName("name" + index);
             data.setGender("男");
+            data.setGroupIndex(0);
+            data.setGroupName("男性性别问卷");
             data.setManQuestion1("男性别问题回答1");
             data.setManQuestion2("男性别问题回答2");
             dataList.add(data);
@@ -107,49 +117,21 @@ public class UdfSliceStrategyExportProcessor implements ExportProcessor<Query, D
     public BizDataGroup<View> group(BizUser user, Query query, List<View> views) {
         BizDataGroupImpl<View> group = new BizDataGroupImpl<>();
 
-        BizDataGroupImpl.Data<View> dataMan = new BizDataGroupImpl.Data<>();
-        List<BizDataItem<View>> itemsMain = new ArrayList<>();
-        dataMan.setItems(itemsMain);
-        Map<String, String> metaMan = new HashMap<>();
-        metaMan.put(ExcelConstants.sheetNameKey, "男");
-        metaMan.put(ExcelConstants.sheetNoKey, "0");
-        dataMan.setMeta(metaMan);
-        dataMan.setCode(JsonUtil.toJsonString(metaMan));
+        View view = views.stream().distinct().findFirst().get();
+        BizDataGroupImpl.Data<View> data = new BizDataGroupImpl.Data<>();
+        List<BizDataItem<View>> items = new ArrayList<>();
+        data.setItems(items);
+        Map<String, String> meta = new HashMap<>();
+        meta.put(ExcelConstants.sheetNoKey, view.getGroupIndex().toString());
+        meta.put(ExcelConstants.sheetNameKey, view.getGroupName());
+        data.setMeta(meta);
+        data.setCode(JsonUtil.toJsonString(meta));
+        group.setData(Lists.newArrayList(data));
 
-        BizDataGroupImpl.Data<View> dataWomen = new BizDataGroupImpl.Data<>();
-        List<BizDataItem<View>> itemsWomen = new ArrayList<>();
-        dataWomen.setItems(itemsWomen);
-        Map<String, String> metaWomen = new HashMap<>();
-        metaWomen.put(ExcelConstants.sheetNameKey, "女");
-        metaWomen.put(ExcelConstants.sheetNoKey, "1");
-        dataWomen.setMeta(metaWomen);
-        dataWomen.setCode(JsonUtil.toJsonString(metaWomen));
-
-        BizDataGroupImpl.Data<View> dataOther = new BizDataGroupImpl.Data<>();
-        List<BizDataItem<View>> itemsOther = new ArrayList<>();
-        dataOther.setItems(itemsOther);
-        Map<String, String> metaOther = new HashMap<>();
-        metaOther.put(ExcelConstants.sheetNameKey, "其他");
-        metaOther.put(ExcelConstants.sheetNoKey, "2");
-        dataOther.setMeta(metaOther);
-        dataWomen.setCode(JsonUtil.toJsonString(metaOther));
-
-        List<BizData<View>> dataList = new ArrayList<>();
-        dataList.add(dataMan);
-        dataList.add(dataWomen);
-        dataList.add(dataOther);
-
-        group.setData(dataList);
-        for (View view : views) {
+        for (View v : views) {
             BizDataGroupImpl.Item<View> item = new BizDataGroupImpl.Item<>();
-            item.setData(view);
-            if (view.getGender().equals("男")) {
-                itemsMain.add(item);
-            } else if (view.getGender().equals("女")) {
-                itemsWomen.add(item);
-            } else {
-                itemsOther.add(item);
-            }
+            item.setData(v);
+            items.add(item);
         }
 
         return group;

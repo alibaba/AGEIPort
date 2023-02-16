@@ -3,6 +3,7 @@ package com.alibaba.ageiport.processor.core.task.importer.worker;
 import com.alibaba.ageiport.common.feature.FeatureUtils;
 import com.alibaba.ageiport.common.logger.Logger;
 import com.alibaba.ageiport.common.logger.LoggerFactory;
+import com.alibaba.ageiport.common.utils.IOUtils;
 import com.alibaba.ageiport.common.utils.JsonUtil;
 import com.alibaba.ageiport.common.utils.TaskIdUtil;
 import com.alibaba.ageiport.ext.arch.ExtensionLoader;
@@ -39,7 +40,6 @@ import com.alibaba.ageiport.processor.core.task.importer.model.ImportTaskSpecifi
 import com.alibaba.ageiport.processor.core.task.importer.slice.ImportSlice;
 import com.alibaba.ageiport.processor.core.task.importer.slice.ImportSliceStrategy;
 import com.alibaba.ageiport.processor.core.utils.HeadersUtil;
-import org.apache.commons.compress.utils.IOUtils;
 
 import java.io.InputStream;
 import java.util.*;

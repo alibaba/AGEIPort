@@ -16,6 +16,10 @@ public class Data {
 
     private String gender;
 
+    private Integer groupIndex;
+
+    private String groupName;
+
     private String manQuestion1;
 
     private String manQuestion2;
