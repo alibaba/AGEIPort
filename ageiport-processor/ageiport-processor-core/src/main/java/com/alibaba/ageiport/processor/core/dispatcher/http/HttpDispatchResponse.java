@@ -16,6 +16,8 @@ public class HttpDispatchResponse implements Serializable {
 
     private Boolean success;
 
+    private String errorMessage;
+
     public HttpDispatchResponse(Boolean success) {
         this.success = success;
     }

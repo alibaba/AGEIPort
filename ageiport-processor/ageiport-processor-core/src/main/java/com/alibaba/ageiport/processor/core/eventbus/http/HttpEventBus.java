@@ -40,7 +40,7 @@ public class HttpEventBus implements EventBus {
         this.ageiPort = ageiPort;
         this.options = options;
         this.agent = new HttpEventBusAgent(ageiPort, options);
-        Vertx vertx = Vertx.vertx();
+        Vertx vertx = ageiPort.getBean(Vertx.class, s -> Vertx.vertx(), ageiPort);
         vertx.deployVerticle(agent);
         this.httpClient = vertx.createHttpClient();
 
@@ -69,23 +69,23 @@ public class HttpEventBus implements EventBus {
                 .setURI(URL)
                 .setTimeout(3000);
 
-        String message = StringUtils.format("main:{}, sub:{}, ip{}, stage:{}",
-                taskStageEvent.getMainTaskId(), taskStageEvent.getSubTaskId(), host, taskStageEvent.getStage());
+        String message = StringUtils.format("main:{}, sub:{}, ip:{}, stage:{}", taskStageEvent.getMainTaskId(), taskStageEvent.getSubTaskId(), host, taskStageEvent.getStage());
 
-        this.httpClient.request(requestOptions, event -> {
-            if (event.succeeded()) {
-                HttpClientRequest httpClientRequest = event.result();
+        this.httpClient.request(requestOptions, e -> {
+            if (e.succeeded()) {
+                HttpClientRequest httpClientRequest = e.result();
                 String body = JsonUtil.toJsonString(eventObject);
-                httpClientRequest.send(body, event1 -> {
-                    if (event1.succeeded()) {
-                        HttpClientResponse response = event1.result();
-                        response.bodyHandler(event11 -> {
-                            String resultJson = event11.toString();
+                logger.info("send:{}", body);
+                httpClientRequest.send(body, asyncResult -> {
+                    if (asyncResult.succeeded() && asyncResult.result().statusCode() == 200) {
+                        HttpClientResponse response = asyncResult.result();
+                        response.bodyHandler(bodyResult -> {
+                            String resultJson = bodyResult.toString();
                             HttpDispatchResponse dispatchResponse = JsonUtil.toObject(resultJson, HttpDispatchResponse.class);
-                            if (dispatchResponse.getSuccess()) {
+                            if (dispatchResponse != null && Boolean.TRUE.equals(dispatchResponse.getSuccess())) {
                                 logger.debug("post event success, {}", message);
                             } else {
-                                logger.error("post event failed, {}", message);
+                                logger.error("post event failed, message:{}, resultJson:{}", message, resultJson);
                             }
                         });
                     } else {

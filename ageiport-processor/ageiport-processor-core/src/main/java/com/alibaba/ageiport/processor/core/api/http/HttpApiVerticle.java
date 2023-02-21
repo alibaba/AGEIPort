@@ -36,7 +36,6 @@ public class HttpApiVerticle extends AbstractVerticle {
             if (event.succeeded()) {
                 String requestJson = event.result().toString();
                 //fixme 验签
-
                 switch (request.uri()) {
                     case HttpApiServer.TASK_PROGRESS_URL: {
                         GetMainTaskProgressRequest req = JsonUtil.toObject(requestJson, GetMainTaskProgressRequest.class);

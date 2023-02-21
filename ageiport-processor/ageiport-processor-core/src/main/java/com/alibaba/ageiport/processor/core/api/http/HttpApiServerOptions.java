@@ -16,5 +16,5 @@ public class HttpApiServerOptions implements ApiServerOptions {
         return HttpApiServerFactory.class.getSimpleName();
     }
 
-    private Integer port = 9742;
+    private Integer port = 9741;
 }

@@ -14,7 +14,10 @@ import com.alibaba.ageiport.processor.core.spi.service.*;
 import com.alibaba.ageiport.processor.core.spi.task.stage.CommonStage;
 import com.alibaba.ageiport.processor.core.spi.task.stage.Stage;
 import io.vertx.core.Vertx;
-import io.vertx.core.http.*;
+import io.vertx.core.http.HttpClient;
+import io.vertx.core.http.HttpClientRequest;
+import io.vertx.core.http.HttpMethod;
+import io.vertx.core.http.RequestOptions;
 
 /**
  * @author lingyi
@@ -93,16 +96,19 @@ public class HttpApiServer implements ApiServer {
                 .setMethod(HttpMethod.POST)
                 .setURI(TASK_PROGRESS_URL)
                 .setTimeout(1000);
+
         this.httpClient.request(requestOptions, e -> {
             String message = StringUtils.format("getTaskProgress response failed main:{}, host{}", mainTaskId, mainTask.getHost());
             if (e.succeeded()) {
                 HttpClientRequest httpClientRequest = e.result();
-                httpClientRequest.send(JsonUtil.toJsonString(request), event11 -> {
-                    if (event11.succeeded()) {
-                        String jsonString = event11.result().body().toString();
-                        handler.handle(JsonUtil.toObject(jsonString, GetMainTaskProgressResponse.class));
+                String requestJson = JsonUtil.toJsonString(request);
+                httpClientRequest.send(requestJson, asyncResult -> {
+                    if (asyncResult.succeeded()) {
+                        String jsonString = asyncResult.result().body().toString();
+                        GetMainTaskProgressResponse response = JsonUtil.toObject(jsonString, GetMainTaskProgressResponse.class);
+                        handler.handle(response);
                     } else {
-                        logger.error(message, event11.cause());
+                        logger.error(message, asyncResult.cause());
                         GetMainTaskProgressResponse response = new GetMainTaskProgressResponse();
                         response.setSuccess(false);
                         response.setMessage(message);

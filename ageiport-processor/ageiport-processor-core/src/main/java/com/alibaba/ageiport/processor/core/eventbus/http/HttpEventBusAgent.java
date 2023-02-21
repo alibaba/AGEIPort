@@ -8,9 +8,13 @@ import com.alibaba.ageiport.processor.core.AgeiPort;
 import com.alibaba.ageiport.processor.core.dispatcher.http.HttpDispatchResponse;
 import com.alibaba.ageiport.processor.core.eventbus.local.async.AsyncEventBus;
 import com.alibaba.ageiport.processor.core.spi.task.monitor.TaskStageEvent;
+import com.alibaba.fastjson.JSON;
 import io.vertx.core.AbstractVerticle;
+import io.vertx.core.http.HttpServer;
 
 import java.util.EventListener;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ExecutorService;
 
@@ -43,24 +47,47 @@ public class HttpEventBusAgent extends AbstractVerticle {
 
     @Override
     public void start() {
-        vertx.createHttpServer().requestHandler(request -> {
-            if (HttpEventBus.URL.equals(request.uri())) {
-                request.body(event -> {
+        logger.info("AGEIPort HttpEventBus Agent start");
+        HttpServer httpServer = vertx.createHttpServer();
+        httpServer.requestHandler(serverRequest -> {
+            logger.info("server request");
+            if (HttpEventBus.URL.equals(serverRequest.uri())) {
+                logger.info("server uri:{}", serverRequest.uri());
+                serverRequest.body(event -> {
+                    logger.info("server event result:{}", event.succeeded());
                     if (event.succeeded()) {
                         String requestJson = event.result().toString();
-                        TaskStageEvent stageEvent = JsonUtil.toObject(requestJson, TaskStageEvent.class);
-                        eventBus.post(stageEvent);
-                        request.response().end("success");
+                        logger.info("server receive:{}", requestJson);
+                        try {
+                            TaskStageEvent stageEvent = JsonUtil.toObject(requestJson, TaskStageEvent.class);
+                            eventBus.post(stageEvent);
+                            HttpDispatchResponse dispatchResponse = new HttpDispatchResponse(true);
+                            String responseJson = JsonUtil.toJsonString(dispatchResponse);
+                            serverRequest.response().setStatusCode(200).end(responseJson);
+                        } catch (Throwable e) {
+                            logger.error("consume request json failed, requestJson:{}", requestJson, e);
+                            HttpDispatchResponse dispatchResponse = new HttpDispatchResponse(false);
+                            String responseJson = JsonUtil.toJsonString(dispatchResponse);
+                            serverRequest.response().setStatusCode(200).end(responseJson);
+                        }
                     } else {
+                        logger.error("consume request error, {}", event.cause());
                         HttpDispatchResponse dispatchResponse = new HttpDispatchResponse(false);
                         String responseJson = JsonUtil.toJsonString(dispatchResponse);
-                        request.response().end(responseJson);
+                        serverRequest.response().setStatusCode(200).end(responseJson);
                     }
                 });
-            } else {
-                request.response().setStatusCode(404).end("");
+                return;
             }
-        }).listen(options.getPort());
+            logger.error("not found, url:{}", serverRequest.uri());
+            Map<String, Object> result = new HashMap<>();
+            result.put("success", false);
+            result.put("errorMessage", "404 not found");
+            String chunk = JSON.toJSONString(result);
+            serverRequest.response().setStatusCode(404).end(chunk);
+        });
+        httpServer.listen(options.getPort());
+        logger.info("AGEIPort HttpEventBus Agent start finished");
     }
 
 

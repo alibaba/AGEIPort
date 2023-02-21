@@ -24,7 +24,7 @@ public class EventBusManager {
         EventBusFactory localEventBusFactory = ExtensionLoader.getExtensionLoader(EventBusFactory.class).getExtension(localEventBusOptions.type());
         this.localEventBus = localEventBusFactory.create(ageiPort, localEventBusOptions);
 
-        EventBusOptions clusterEventBusOptions = options.getLocal().getEventBusOptions();
+        EventBusOptions clusterEventBusOptions = options.getCluster().getEventBusOptions();
         EventBusFactory clusterDispatcherFactory = ExtensionLoader.getExtensionLoader(EventBusFactory.class).getExtension(clusterEventBusOptions.type());
         this.clusterEventBus = clusterDispatcherFactory.create(ageiPort, clusterEventBusOptions);
     }

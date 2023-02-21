@@ -7,7 +7,7 @@
     <groupId>com.alibaba</groupId>
     <artifactId>ageiport-parent</artifactId>
     <packaging>pom</packaging>
-    <version>0.1.7</version>
+    <version>0.1.8</version>
     <name>AGEIPort</name>
     <description>AGEIPort is alibaba generic export import framework in Java</description>
     <url>https://github.com/alibaba/AGEIPort</url>
@@ -208,6 +208,17 @@
                             <version>${mapstruct.version}</version>
                         </path>
                     </annotationProcessorPaths>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.22.2</version>
+                <configuration>
+                    <argLine>
+                        --add-opens java.base/java.lang=ALL-UNNAMED
+                        --add-opens java.base/java.util=ALL-UNNAMED
+                    </argLine>
                 </configuration>
             </plugin>
         </plugins>

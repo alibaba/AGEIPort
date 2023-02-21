@@ -44,6 +44,10 @@ public class TaskStageEvent extends EventObject {
         return !isMainTaskEvent();
     }
 
+    public TaskStageEvent() {
+        super("");
+    }
+
     public TaskStageEvent(String id, String mainTaskId, String subTaskId, String stageCode, String stageName, Long cost, Integer subCount) {
         super(id);
         this.mainTaskId = mainTaskId;
