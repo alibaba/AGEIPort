@@ -72,7 +72,7 @@ public class TaskServiceImpl implements TaskService {
         } catch (Throwable e) {
             log.error("TaskService#executeTask failed, request:{}", param, e);
             TaskExecuteResult response = new TaskExecuteResult();
-            response.setSuccess(true);
+            response.setSuccess(false);
             response.setErrorMessage(e.getMessage());
             return response;
         }
