@@ -94,7 +94,7 @@ public class HttpDispatcher implements Dispatcher {
     private void dispatchToNode(SubDispatcherContext context, Node node) {
         HttpDispatchRequest request = new HttpDispatchRequest(context.getMainTaskId(), context.getSubTaskNos());
         RequestOptions options = new RequestOptions();
-        options.setHost(node.getIp())
+        options.setHost(node.getHost())
                 .setPort(this.options.getPort())
                 .setMethod(HttpMethod.POST)
                 .setURI(URL)
@@ -111,7 +111,7 @@ public class HttpDispatcher implements Dispatcher {
                             String resultJson = event11.toString();
                             HttpDispatchResponse dispatchResponse = JsonUtil.toObject(resultJson, HttpDispatchResponse.class);
                             if (dispatchResponse.getSuccess()) {
-                                logger.info("dispatchToNode success, main:{}, ip{}, nos:{}, labels{}", context.getMainTaskId(), node.getIp(), context.getSubTaskNos(), context.getLabels());
+                                logger.info("dispatchToNode success, main:{}, ip{}, nos:{}, labels{}", context.getMainTaskId(), node.getHost(), context.getSubTaskNos(), context.getLabels());
                             } else {
                                 logger.error("dispatchToNode server response failed, ", resultJson);
                                 dispatchFailed(node, context);
@@ -131,7 +131,7 @@ public class HttpDispatcher implements Dispatcher {
 
     private void dispatchFailed(Node node, SubDispatcherContext context) {
         logger.error("dispatchFailed, main:{}, ip:{}, nos:{}, labels:{}",
-                context.getMainTaskId(), node.getIp(), context.getSubTaskNos(), context.getLabels());
+                context.getMainTaskId(), node.getHost(), context.getSubTaskNos(), context.getLabels());
         this.failedNodeMap.put(node.getId(), node);
         clearTask.addClearTask(node.getId(), options.getNodeFallbackMs(), () -> failedNodeMap.remove(node.getId()));
         dispatchQueue.add(context);

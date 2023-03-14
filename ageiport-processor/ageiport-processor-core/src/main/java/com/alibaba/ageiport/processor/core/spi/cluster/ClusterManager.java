@@ -9,7 +9,7 @@ import java.util.List;
  */
 public interface ClusterManager {
 
-    AgeiPort getAgei();
+    AgeiPort getAgeiPort();
 
     List<Node> getNodes();
 

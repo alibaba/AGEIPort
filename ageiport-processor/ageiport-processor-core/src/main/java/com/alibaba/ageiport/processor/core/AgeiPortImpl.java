@@ -110,12 +110,14 @@ public class AgeiPortImpl implements AgeiPort {
 
     @Override
     public EventBus getLocalEventBus() {
-        return this.getEventBusManager().getEventBus(ExecuteType.STANDALONE);
+        EventBusManager busManager = this.getEventBusManager();
+        return busManager.getEventBus(ExecuteType.STANDALONE);
     }
 
     @Override
     public EventBus getClusterEventBus() {
-        return this.getEventBusManager().getEventBus(ExecuteType.CLUSTER);
+        EventBusManager busManager = this.getEventBusManager();
+        return busManager.getEventBus(ExecuteType.CLUSTER);
     }
 
 

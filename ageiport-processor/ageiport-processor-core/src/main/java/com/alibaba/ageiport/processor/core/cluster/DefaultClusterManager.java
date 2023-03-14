@@ -33,7 +33,7 @@ public class DefaultClusterManager implements ClusterManager {
     }
 
     @Override
-    public AgeiPort getAgei() {
+    public AgeiPort getAgeiPort() {
         return ageiPort;
     }
 

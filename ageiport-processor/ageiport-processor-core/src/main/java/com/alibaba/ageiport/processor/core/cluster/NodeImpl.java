@@ -13,24 +13,25 @@ import java.util.Map;
 @Setter
 public class NodeImpl implements Node {
 
+    private String app;
     private String id;
 
-    private String ip;
+    private String host;
 
     private String group;
 
     private Map<String, String> labels;
 
-    private Map<String, Object> attributes;
+    private Map<String, String> attributes;
 
 
     public NodeImpl() {
 
     }
 
-    public NodeImpl(String id, String ip, String group, Map<String, String> labels, Map<String, Object> attributes) {
+    public NodeImpl(String id, String host, String group, Map<String, String> labels, Map<String, String> attributes) {
         this.id = id;
-        this.ip = ip;
+        this.host = host;
         this.group = group;
         this.labels = labels;
         this.attributes = attributes;

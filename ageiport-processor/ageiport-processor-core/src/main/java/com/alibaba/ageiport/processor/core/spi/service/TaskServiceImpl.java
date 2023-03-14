@@ -51,7 +51,7 @@ public class TaskServiceImpl implements TaskService {
             createMainTaskRequest.setExecuteType(executeType);
             createMainTaskRequest.setType(taskType);
             createMainTaskRequest.setName(taskSpec.getTaskName());
-            createMainTaskRequest.setHost(ageiPort.getClusterManager().getLocalNode().getIp());
+            createMainTaskRequest.setHost(ageiPort.getClusterManager().getLocalNode().getHost());
             String feature = createMainTaskRequest.getFeature();
             feature = FeatureUtils.putFeature(feature, MainTaskFeatureKeys.VERSION, Version.getVersion());
             feature = FeatureUtils.putFeature(feature, MainTaskFeatureKeys.LABELS, JsonUtil.toJsonString(param.getLabels()));

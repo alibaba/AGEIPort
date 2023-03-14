@@ -7,13 +7,15 @@ import java.util.Map;
  */
 public interface Node {
 
+    String getApp();
+
     String getId();
 
-    String getIp();
+    String getHost();
 
     String getGroup();
 
     Map<String, String> getLabels();
 
-    Map<String, Object> getAttributes();
+    Map<String, String> getAttributes();
 }

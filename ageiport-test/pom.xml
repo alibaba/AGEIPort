@@ -5,7 +5,7 @@
     <parent>
         <artifactId>ageiport-parent</artifactId>
         <groupId>com.alibaba</groupId>
-        <version>0.1.8</version>
+        <version>0.1.9</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <packaging>pom</packaging>
@@ -13,6 +13,7 @@
     <modules>
         <module>ageiport-test-processor-core</module>
         <module>ageiport-test-ext-file-store-aliyunoss</module>
+        <module>ageiport-test-ext-cluster-spring-cloud-eureka</module>
     </modules>
 
     <artifactId>ageiport-test</artifactId>

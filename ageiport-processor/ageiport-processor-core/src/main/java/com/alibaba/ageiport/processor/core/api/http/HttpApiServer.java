@@ -137,7 +137,7 @@ public class HttpApiServer implements ApiServer {
     }
 
     private boolean canUserCurrentNode(MainTask mainTask) {
-        return ageiPort.getClusterManager().getLocalNode().getIp().equals(mainTask.getHost());
+        return ageiPort.getClusterManager().getLocalNode().getHost().equals(mainTask.getHost());
     }
 
     private boolean isTaskInFinal(MainTask mainTask) {
