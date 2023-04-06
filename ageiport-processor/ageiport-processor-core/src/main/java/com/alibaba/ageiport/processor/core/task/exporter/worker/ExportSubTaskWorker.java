@@ -97,7 +97,7 @@ public class ExportSubTaskWorker<QUERY, DATA, VIEW> extends AbstractSubTaskWorke
             ageiPort.getTaskServerClient().updateSubTask(subTask);
             MainTask mainTask = new MainTask().setMainTaskId(subTask.getMainTaskId())
                     .setStatus(TaskStatus.ERROR).setGmtFinished(new Date()).setResultMessage(e.getMessage());
-            ageiPort.getTaskServerClient().updateSubTask(subTask);
+            ageiPort.getTaskServerClient().updateMainTask(mainTask);
 
             EventBus eventBus = ageiPort.getEventBusManager().getEventBus(subTask.getExecuteType());
             eventBus.post(TaskStageEvent.subTaskEvent(subTask.getSubTaskId(), CommonStage.ERROR));
