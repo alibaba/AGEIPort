@@ -1,0 +1,64 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: eureka-server
+  namespace: ageiport
+spec:
+  selector:
+    matchLabels:
+      app: eureka-server
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: eureka-server
+    spec:
+      containers:
+        - name: eureka-server
+          imagePullPolicy: IfNotPresent
+          image: eureka-server:latest
+          volumeMounts:
+           - name: volume
+             mountPath: /root/eureka-server/logs
+          ports:
+            - containerPort: 8761
+      volumes:
+        - name: volume
+          hostPath:
+            path: /Users/lingyi/k8s-volumes/eureka-server
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: eureka-server
+  namespace: ageiport
+  labels:
+    app: eureka-server
+spec:
+  type: ClusterIP
+  ports:
+    - port: 8761
+      protocol: TCP
+      targetPort: 8761
+  selector:
+    app: eureka-server
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  namespace: ageiport
+  name: ingress-nginx
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+spec:
+  rules:
+    - host: eureka.alibaba-ageiport.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: eureka-server
+                port:
+                  number: 8761

@@ -9,8 +9,12 @@ import com.alibaba.ageiport.processor.core.spi.api.model.ApiResponse;
 import com.alibaba.ageiport.processor.core.spi.api.model.ExecuteMainTaskRequest;
 import com.alibaba.ageiport.processor.core.spi.api.model.GetMainTaskProgressRequest;
 import com.alibaba.ageiport.processor.core.spi.api.model.SyncExtensionApiRequest;
+import com.alibaba.fastjson.JSON;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.http.HttpClient;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class HttpApiVerticle extends AbstractVerticle {
 
@@ -59,6 +63,14 @@ public class HttpApiVerticle extends AbstractVerticle {
                             String jsonResult = JsonUtil.toJsonString(response);
                             request.response().end(jsonResult);
                         });
+                        break;
+                    }
+                    case HttpApiServer.TASK_HEALTH: {
+                        Map<String, Object> result = new HashMap<>();
+                        result.put("success", true);
+                        result.put("timestamp", System.currentTimeMillis());
+                        String jsonResult = JSON.toJSONString(result);
+                        request.response().end(jsonResult);
                         break;
                     }
                     default: {

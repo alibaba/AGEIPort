@@ -26,6 +26,8 @@ public class HttpEventBus implements EventBus {
 
     public static final String URL = "/event";
 
+    public static final String HEALTH_URL = "/event/ping";
+
     private static final Logger logger = LoggerFactory.getLogger(HttpDispatcher.class);
 
     private AgeiPort ageiPort;

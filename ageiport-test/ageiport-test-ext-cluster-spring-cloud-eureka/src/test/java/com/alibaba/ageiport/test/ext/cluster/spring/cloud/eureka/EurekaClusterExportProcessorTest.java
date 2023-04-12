@@ -52,6 +52,8 @@ public class EurekaClusterExportProcessorTest {
         request.setTaskSpecificationCode(EurekaClusterExportProcessor.class.getSimpleName());
         request.setBizUserId("userId");
         request.setBizQuery(JsonUtil.toJsonString(query));
+
+
         TaskExecuteResult response = ageiPort.getTaskService().executeTask(request);
         Assertions.assertTrue(response.getSuccess());
 

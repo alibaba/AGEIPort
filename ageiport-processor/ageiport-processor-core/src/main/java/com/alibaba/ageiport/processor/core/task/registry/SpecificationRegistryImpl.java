@@ -39,6 +39,9 @@ public class SpecificationRegistryImpl implements TaskSpecificationRegistry {
 
     @Override
     public TaskSpec get(String taskCode) {
+        if (taskCode == null) {
+            throw new IllegalArgumentException("taskCode is null");
+        }
         return taskSpecMap.get(taskCode);
     }
 }

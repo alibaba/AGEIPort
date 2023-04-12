@@ -40,6 +40,8 @@ public class HttpApiTest {
         executeMainTaskRequest.setBizUserId("userId");
         executeMainTaskRequest.setBizQuery(JsonUtil.toJsonString(query));
 
+        System.out.println(JsonUtil.toJsonString(executeMainTaskRequest));
+
         HttpApiServerOptions serverOptions = (HttpApiServerOptions) ageiPort.getOptions().getApiServerOptions();
         RequestOptions requestOptions = new RequestOptions();
         requestOptions.setHost("localhost")

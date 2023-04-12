@@ -61,7 +61,12 @@ public class MockData {
         request.setRuntimeParam(new JSONObject().toJSONString());
         request.setBizQuery(new JSONObject().toJSONString());
 
+
         return request;
+    }
+
+    public static void main(String[] args) {
+
     }
 
     public static CreateSubTaskInstancesRequest createSubTaskInstanceRequest(String mainTaskId) {

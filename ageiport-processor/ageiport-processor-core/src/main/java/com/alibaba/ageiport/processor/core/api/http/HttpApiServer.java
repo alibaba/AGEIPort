@@ -32,6 +32,8 @@ public class HttpApiServer implements ApiServer {
 
     public static final String SYNC_EXTENSION_API_URL = "/SyncExecute";
 
+    public static final String TASK_HEALTH = "/ping";
+
     private AgeiPort ageiPort;
 
     private HttpClient httpClient;

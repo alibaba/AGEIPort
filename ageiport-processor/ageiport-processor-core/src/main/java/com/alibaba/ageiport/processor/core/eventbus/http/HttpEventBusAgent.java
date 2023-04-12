@@ -79,6 +79,25 @@ public class HttpEventBusAgent extends AbstractVerticle {
                 });
                 return;
             }
+            if (HttpEventBus.HEALTH_URL.equals(serverRequest.uri())) {
+                logger.info("server uri:{}", serverRequest.uri());
+                serverRequest.body(event -> {
+                    logger.info("server event result:{}", event.succeeded());
+                    if (event.succeeded()) {
+                        Map<String, Object> result = new HashMap<>();
+                        result.put("success", true);
+                        result.put("timestamp", System.currentTimeMillis());
+                        String chunk = JSON.toJSONString(result);
+                        serverRequest.response().setStatusCode(200).end(chunk);
+                    } else {
+                        logger.error("consume request error, {}", event.cause());
+                        HttpDispatchResponse dispatchResponse = new HttpDispatchResponse(false);
+                        String responseJson = JsonUtil.toJsonString(dispatchResponse);
+                        serverRequest.response().setStatusCode(200).end(responseJson);
+                    }
+                });
+                return;
+            }
             logger.error("not found, url:{}", serverRequest.uri());
             Map<String, Object> result = new HashMap<>();
             result.put("success", false);
