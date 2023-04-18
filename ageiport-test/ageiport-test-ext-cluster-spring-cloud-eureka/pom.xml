@@ -74,10 +74,6 @@
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
                     <mainClass>com.alibaba.ageiport.test.ext.cluster.spring.cloud.eureka.EurekaClientApplication</mainClass>
-                    <jvmArguments>
-                        <jvmArgument>--add-opens java.base/java.lang=ALL-UNNAMED</jvmArgument>
-                        <jvmArgument>--add-opens java.base/java.util=ALL-UNNAMED</jvmArgument>
-                    </jvmArguments>
                 </configuration>
                 <executions>
                     <execution>

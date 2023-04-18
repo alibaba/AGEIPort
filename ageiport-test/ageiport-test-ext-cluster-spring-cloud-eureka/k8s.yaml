@@ -24,6 +24,9 @@ spec:
            - name: volume
              mountPath: /root/logs/ageiport
              subPathExpr: $(POD_NAME)
+           - name: volume
+             mountPath: /root/ageiport_file
+             subPathExpr: $(POD_NAME)
           ports:
             - containerPort: 8769
           env:

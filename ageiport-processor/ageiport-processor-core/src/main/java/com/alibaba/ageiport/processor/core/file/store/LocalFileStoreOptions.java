@@ -15,7 +15,7 @@ import java.io.File;
 @Setter
 public class LocalFileStoreOptions implements FileStoreOptions {
 
-    private String basePath = System.getProperty("user.home") + File.separator + "agei" + File.separator;
+    private String basePath = System.getProperty("user.home") + File.separator + "ageiport_file" + File.separator;
 
     @Override
     public String type() {
