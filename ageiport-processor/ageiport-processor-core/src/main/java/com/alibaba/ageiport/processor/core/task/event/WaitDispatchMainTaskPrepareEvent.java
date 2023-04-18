@@ -2,6 +2,7 @@ package com.alibaba.ageiport.processor.core.task.event;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 import java.util.EventObject;
 import java.util.Map;
@@ -12,6 +13,7 @@ import java.util.Map;
 
 @Getter
 @Setter
+@ToString
 public class WaitDispatchMainTaskPrepareEvent extends EventObject {
 
     private static final long serialVersionUID = -4079144433908101774L;

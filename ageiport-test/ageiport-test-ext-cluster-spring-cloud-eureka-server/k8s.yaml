@@ -17,15 +17,25 @@ spec:
         - name: eureka-server
           imagePullPolicy: IfNotPresent
           image: eureka-server:latest
+          env:
+           - name: TZ
+             value: Asia/Shanghai
+           - name: POD_NAME
+             valueFrom:
+               fieldRef:
+                 apiVersion: v1
+                 fieldPath: metadata.name
           volumeMounts:
            - name: volume
              mountPath: /root/eureka-server/logs
+             subPathExpr: $(POD_NAME)
           ports:
             - containerPort: 8761
       volumes:
         - name: volume
           hostPath:
-            path: /Users/lingyi/k8s-volumes/eureka-server
+            path: /Users/lingyi/k8s-volumes/ageiport-eureka-server
+            type: DirectoryOrCreate
 ---
 apiVersion: v1
 kind: Service
@@ -47,7 +57,7 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   namespace: ageiport
-  name: ingress-nginx
+  name: ingress-nginx-eureka-server
   annotations:
     kubernetes.io/ingress.class: "nginx"
 spec:

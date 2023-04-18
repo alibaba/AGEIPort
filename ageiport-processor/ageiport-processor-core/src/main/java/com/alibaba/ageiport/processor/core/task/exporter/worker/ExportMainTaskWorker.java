@@ -153,7 +153,7 @@ public class ExportMainTaskWorker<QUERY, DATA, VIEW> extends AbstractMainTaskWor
             context.assertCurrentStage(stageProvider.mainTaskSaveSliceEnd());
         } catch (Throwable e) {
             log.error("StandaloneExportMainTaskWorker#doPrepare failed, main:{}", mainTaskId, e);
-            onError(e);
+            ageiPort.onError(mainTask, e);
         }
 
     }
@@ -212,7 +212,7 @@ public class ExportMainTaskWorker<QUERY, DATA, VIEW> extends AbstractMainTaskWor
             context.assertCurrentStage(stageProvider.mainTaskFinished());
         } catch (Throwable e) {
             log.error("StandaloneExportMainTaskWorker#doReduce failed, main:{}", mainTask.getMainTaskId(), e);
-            onError(e);
+            ageiPort.onError(mainTask, e);
         } finally {
             IOUtils.closeQuietly(fileWriter);
             IOUtils.closeQuietly(fileStream);

@@ -1,5 +1,9 @@
 FROM openjdk:17-jdk-alpine
 
+RUN apk update \
+    && apk upgrade \
+    && apk add --no-cache curl
+
 VOLUME /tmp
 
 ADD **/*.jar app.jar

@@ -1,0 +1,79 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ageiport-task-server
+  namespace: ageiport
+spec:
+  selector:
+    matchLabels:
+      app: ageiport-task-server
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: ageiport-task-server
+    spec:
+      containers:
+        - name: ageiport-task-server
+          imagePullPolicy: IfNotPresent
+          image: ageiport-task-server-legacy-jar:latest
+          env:
+            - name: quarkus.http.port
+              value: "9821"
+            - name: quarkus.datasource.db-kind
+              value: mysql
+            - name: quarkus.datasource.username
+              value: root
+            - name: quarkus.datasource.password
+              value: password
+            - name: quarkus.datasource.reactive.url
+              value: vertx-reactive:mysql://mysql/ageiport
+            - name: quarkus.hibernate-orm.database.generation
+              value: none
+            - name: TZ
+              value: Asia/Shanghai
+          volumeMounts:
+           - name: volume
+             mountPath: /home/jboss/logs
+          ports:
+            - containerPort: 9821
+      volumes:
+        - name: volume
+          hostPath:
+            path: /Users/lingyi/k8s-volumes/ageiport-task-server
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ageiport-task-server
+  namespace: ageiport
+  labels:
+    app: ageiport-task-server
+spec:
+  type: ClusterIP
+  ports:
+    - port: 9821
+      protocol: TCP
+      targetPort: 9821
+  selector:
+    app: ageiport-task-server
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  namespace: ageiport
+  name: ingress-nginx-ageiport-task-server
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+spec:
+  rules:
+    - host: ageiport-task-server.alibaba-ageiport.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: ageiport-task-server
+                port:
+                  number: 9821

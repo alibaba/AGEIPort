@@ -2,6 +2,7 @@ package com.alibaba.ageiport.processor.core.spi.service;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 import java.util.List;
 import java.util.Map;
@@ -11,6 +12,7 @@ import java.util.Map;
  */
 @Getter
 @Setter
+@ToString
 public class TaskProgressResult {
 
     private Boolean success;

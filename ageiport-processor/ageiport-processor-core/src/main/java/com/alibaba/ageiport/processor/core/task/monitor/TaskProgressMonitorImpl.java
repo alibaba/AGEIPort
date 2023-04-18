@@ -7,6 +7,7 @@ import com.alibaba.ageiport.common.logger.LoggerFactory;
 import com.alibaba.ageiport.processor.core.AgeiPort;
 import com.alibaba.ageiport.processor.core.spi.publisher.ManageablePublisher;
 import com.alibaba.ageiport.processor.core.spi.publisher.PublishPayload;
+import com.alibaba.ageiport.processor.core.spi.publisher.PublisherManager;
 import com.alibaba.ageiport.processor.core.spi.task.monitor.MainTaskProgress;
 import com.alibaba.ageiport.processor.core.spi.task.monitor.SubTaskProgress;
 import com.alibaba.ageiport.processor.core.spi.task.monitor.TaskProgressMonitor;
@@ -23,7 +24,7 @@ import java.util.Set;
  */
 public class TaskProgressMonitorImpl implements TaskProgressMonitor {
 
-    public static Logger log = LoggerFactory.getLogger(TaskProgressServiceImpl.class);
+    public static Logger logger = LoggerFactory.getLogger(TaskProgressServiceImpl.class);
 
     private AgeiPort ageiPort;
 
@@ -41,14 +42,19 @@ public class TaskProgressMonitorImpl implements TaskProgressMonitor {
 
     @Override
     public void onMainTaskChanged(MainTaskProgress mainTaskProgress, Stage oldStage, Stage newStage) {
+
+        logger.info("onMainTaskChanged, main:{}, old:{}, new:{} ", mainTaskProgress.getMainTaskId(), oldStage == null ? null : oldStage.getCode(), newStage.getCode());
+
         Class<? extends EventObject> triggerEvent = newStage.getTriggerEvent();
+        PublisherManager publisherManager = ageiPort.getPublisherManager();
         if (triggerEvent != null) {
-            ManageablePublisher<? extends EventObject> publisher = ageiPort.getPublisherManager().getPublisher(triggerEvent);
+            ManageablePublisher<? extends EventObject> publisher = publisherManager.getPublisher(triggerEvent);
             PublishPayload payload = new PublishPayload();
             payload.setMainTaskId(mainTaskProgress.getMainTaskId());
             publisher.publish(payload);
         }
-        ManageablePublisher<TaskStageChangedEvent> publisher = ageiPort.getPublisherManager().getPublisher(TaskStageChangedEvent.class);
+
+        ManageablePublisher<TaskStageChangedEvent> publisher = publisherManager.getPublisher(TaskStageChangedEvent.class);
         if (publisher != null) {
             PublishPayload payload = new PublishPayload();
             payload.setMainTaskId(mainTaskProgress.getMainTaskId());
@@ -98,7 +104,7 @@ public class TaskProgressMonitorImpl implements TaskProgressMonitor {
                 mainTaskProgress.setPercent(mainTaskPercent);
             }
 
-            log.info("onSubTaskChanged, main:{}, sub:{}, total:{}, finished:{}, error:{}", mainTaskProgress.getMainTaskId(), subTaskProgress.getSubTaskId(), totalSubTaskCount, currentFinishedSubTaskCount, currentErrorSubTaskCount);
+            logger.info("onSubTaskChanged, main:{}, sub:{}, total:{}, finished:{}, error:{}", mainTaskProgress.getMainTaskId(), subTaskProgress.getSubTaskId(), totalSubTaskCount, currentFinishedSubTaskCount, currentErrorSubTaskCount);
 
             if (totalSubTaskCount.equals(currentFinishedSubTaskCount + currentErrorSubTaskCount)) {
                 Class<? extends EventObject> triggerEvent = subTaskExecuteEnd.getTriggerEvent();
@@ -108,7 +114,7 @@ public class TaskProgressMonitorImpl implements TaskProgressMonitor {
                 publisher.publish(payload);
             }
         } else {
-            log.info("onSubTaskChanged totalSubTaskCount is null, main:{}", mainTaskProgress.getMainTaskId());
+            logger.info("onSubTaskChanged totalSubTaskCount is null, main:{}", mainTaskProgress.getMainTaskId());
         }
 
         ManageablePublisher<TaskStageChangedEvent> publisher = ageiPort.getPublisherManager().getPublisher(TaskStageChangedEvent.class);

@@ -20,12 +20,31 @@ spec:
           volumeMounts:
            - name: volume
              mountPath: /root/ageiport-eureka-client/logs
+             subPathExpr: $(POD_NAME)
+           - name: volume
+             mountPath: /root/logs/ageiport
+             subPathExpr: $(POD_NAME)
           ports:
             - containerPort: 8769
+          env:
+            - name: eureka.client.service-url.defaultZone
+              value: http://eureka-server:8761/eureka
+            - name: TZ
+              value: Asia/Shanghai
+            - name: ageiport.taskServerClientOptions.port
+              value: "9821"
+            - name: ageiport.taskServerClientOptions.endpoint
+              value: ageiport-task-server
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.name
       volumes:
         - name: volume
           hostPath:
             path: /Users/lingyi/k8s-volumes/ageiport-eureka-client
+            type: DirectoryOrCreate
 ---
 apiVersion: v1
 kind: Service
@@ -47,7 +66,7 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   namespace: ageiport
-  name: ingress-nginx
+  name: ingress-nginx-ageiport-eureka-client
   annotations:
     kubernetes.io/ingress.class: "nginx"
 spec:

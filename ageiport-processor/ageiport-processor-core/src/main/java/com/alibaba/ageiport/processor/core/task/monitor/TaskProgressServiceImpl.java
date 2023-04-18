@@ -36,10 +36,10 @@ public class TaskProgressServiceImpl implements TaskProgressService {
     public void updateTaskProgress(TaskStageEvent event) {
         try {
             if (event.isMainTaskEvent()) {
-                log.info("update progress, main:{}, stage:{}", event.getMainTaskId(), event.getName());
+                log.info("update progress, main:{}, stage:{}", event.getMainTaskId(), event.getStage());
                 updateMainTaskProgress(event);
             } else {
-                log.info("update progress, main:{}, sub:{}, stage:{}", event.getMainTaskId(), event.getSubTaskId(), event.getName());
+                log.info("update progress, main:{}, sub:{}, stage:{}", event.getMainTaskId(), event.getSubTaskId(), event.getStage());
                 updateSubTaskProgress(event);
             }
         } catch (Throwable e) {

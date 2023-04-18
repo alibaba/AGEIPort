@@ -60,6 +60,10 @@ public class HttpEventBus implements EventBus {
 
     @Override
     public void post(EventObject eventObject) {
+        logger.info("http post event:{}", eventObject);
+        String body = JsonUtil.toJsonString(eventObject);
+        logger.info("http event bus send:{}", body);
+
         TaskStageEvent taskStageEvent = (TaskStageEvent) eventObject;
         MainTask mainTask = ageiPort.getTaskServerClient().getMainTask(taskStageEvent.getMainTaskId());
         RequestOptions requestOptions = new RequestOptions();
@@ -71,31 +75,34 @@ public class HttpEventBus implements EventBus {
                 .setURI(URL)
                 .setTimeout(3000);
 
-        String message = StringUtils.format("main:{}, sub:{}, ip:{}, stage:{}", taskStageEvent.getMainTaskId(), taskStageEvent.getSubTaskId(), host, taskStageEvent.getStage());
+
+        String message = StringUtils.format("main:{}, sub:{}, host:{}, stage:{}", taskStageEvent.getMainTaskId(), taskStageEvent.getSubTaskId(), host, taskStageEvent.getStage());
 
         this.httpClient.request(requestOptions, e -> {
             if (e.succeeded()) {
                 HttpClientRequest httpClientRequest = e.result();
-                String body = JsonUtil.toJsonString(eventObject);
-                logger.info("send:{}", body);
                 httpClientRequest.send(body, asyncResult -> {
-                    if (asyncResult.succeeded() && asyncResult.result().statusCode() == 200) {
-                        HttpClientResponse response = asyncResult.result();
-                        response.bodyHandler(bodyResult -> {
-                            String resultJson = bodyResult.toString();
-                            HttpDispatchResponse dispatchResponse = JsonUtil.toObject(resultJson, HttpDispatchResponse.class);
-                            if (dispatchResponse != null && Boolean.TRUE.equals(dispatchResponse.getSuccess())) {
-                                logger.debug("post event success, {}", message);
-                            } else {
-                                logger.error("post event failed, message:{}, resultJson:{}", message, resultJson);
-                            }
-                        });
+                    if (asyncResult.succeeded()) {
+                        if (asyncResult.result().statusCode() == 200) {
+                            HttpClientResponse response = asyncResult.result();
+                            response.bodyHandler(bodyResult -> {
+                                String resultJson = bodyResult.toString();
+                                HttpDispatchResponse dispatchResponse = JsonUtil.toObject(resultJson, HttpDispatchResponse.class);
+                                if (dispatchResponse != null && Boolean.TRUE.equals(dispatchResponse.getSuccess())) {
+                                    logger.info("post event success, {}", message);
+                                } else {
+                                    logger.error("post event failed, message:{}, resultJson:{}", message, resultJson);
+                                }
+                            });
+                        } else {
+                            logger.error("post response failed, send error, {}, statusCode:{}", message, asyncResult.result().statusCode());
+                        }
                     } else {
-                        logger.error("post response failed, {}", message);
+                        logger.error("post response failed, send failed, {}", message, asyncResult.cause());
                     }
                 });
             } else {
-                logger.error("post request failed, {}", message);
+                logger.error("post request failed, {}, body:{}", message, body, e.cause());
             }
         });
     }

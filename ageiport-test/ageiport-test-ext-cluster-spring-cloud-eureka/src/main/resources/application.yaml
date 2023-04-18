@@ -7,9 +7,13 @@ spring:
 
 eureka:
   instance:
-    instance-id: ${spring.application.name}
+    instance-id: ${spring.application.name}:${random.value}
   client:
     fetch-registry: true
     register-with-eureka: true
     service-url:
-      defaultZone: http://eureka-server:8761/eureka/ #Eureka地址
+      defaultZone: http://eureka.alibaba-ageiport.com/eureka/ #Eureka地址
+ageiport:
+    taskServerClientOptions:
+        port: 80
+        endpoint: ageiport-task-server.alibaba-ageiport.com

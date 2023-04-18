@@ -22,7 +22,7 @@ public class HttpTaskServerClientOptions implements TaskServerClientOptions {
 
     private String schema = "http";
 
-    private String endpoint = "agei-server-task";
+    private String endpoint = "ageiport-task-server";
 
     private Integer port = 9821;
 

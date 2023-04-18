@@ -8,6 +8,7 @@ import com.alibaba.ageiport.processor.core.AgeiPort;
 import com.alibaba.ageiport.processor.core.spi.service.TaskExecuteParam;
 import com.alibaba.ageiport.processor.core.spi.service.TaskExecuteResult;
 import com.alibaba.ageiport.test.ext.cluster.spring.cloud.eureka.model.Query;
+import com.alibaba.fastjson.JSON;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -52,6 +53,7 @@ public class EurekaClusterExportProcessorTest {
         request.setTaskSpecificationCode(EurekaClusterExportProcessor.class.getSimpleName());
         request.setBizUserId("userId");
         request.setBizQuery(JsonUtil.toJsonString(query));
+
 
 
         TaskExecuteResult response = ageiPort.getTaskService().executeTask(request);

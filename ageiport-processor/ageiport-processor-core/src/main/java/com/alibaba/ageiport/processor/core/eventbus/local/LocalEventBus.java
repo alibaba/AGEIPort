@@ -2,6 +2,8 @@ package com.alibaba.ageiport.processor.core.eventbus.local;
 
 
 import com.alibaba.ageiport.common.concurrent.ThreadPoolUtil;
+import com.alibaba.ageiport.common.logger.Logger;
+import com.alibaba.ageiport.common.logger.LoggerFactory;
 import com.alibaba.ageiport.processor.core.eventbus.local.async.AsyncEventBus;
 import com.alibaba.ageiport.processor.core.spi.eventbus.EventBus;
 
@@ -15,7 +17,10 @@ import java.util.concurrent.ExecutorService;
  *
  * @author lingyi
  */
+
 public class LocalEventBus implements EventBus {
+
+    public static final Logger LOGGER = LoggerFactory.getLogger(LocalEventBus.class);
 
     private AsyncEventBus eventBus;
 
@@ -40,6 +45,7 @@ public class LocalEventBus implements EventBus {
 
     @Override
     public void post(EventObject event) {
+        LOGGER.info("local post event:{}", event);
         eventBus.post(event);
     }
 

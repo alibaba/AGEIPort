@@ -20,6 +20,8 @@ spec:
           env:
             - name: MYSQL_ROOT_PASSWORD
               value: password
+            - name: TZ
+              value: Asia/Shanghai
           ports:
             - containerPort: 3306
               name: mysql
@@ -44,25 +46,6 @@ spec:
     - port: 3306
       protocol: TCP
       targetPort: 3306
-      name: mysql
+      nodePort: 30000
   selector:
     app: mysql
-
----
-apiVersion: networking.k8s.io/v1
-kind: Ingress
-metadata:
-  namespace: ageiport
-  name: ingress-nginx
-spec:
-  rules:
-    - host: mysql.alibaba-ageiport.com
-      http:
-        paths:
-          - path: /
-            pathType: Prefix
-            backend:
-              service:
-                name: mysql
-                port:
-                  number: 3306

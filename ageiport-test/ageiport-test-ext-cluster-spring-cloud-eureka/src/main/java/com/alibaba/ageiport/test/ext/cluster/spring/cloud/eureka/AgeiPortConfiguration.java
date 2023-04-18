@@ -5,7 +5,9 @@ import com.alibaba.ageiport.ext.cluster.SpringCloudClusterOptions;
 import com.alibaba.ageiport.ext.cluster.SpringCloudNode;
 import com.alibaba.ageiport.processor.core.AgeiPort;
 import com.alibaba.ageiport.processor.core.AgeiPortOptions;
+import com.alibaba.ageiport.processor.core.client.http.HttpTaskServerClientOptions;
 import com.netflix.discovery.EurekaClient;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
@@ -17,11 +19,17 @@ import org.springframework.context.annotation.Lazy;
 import java.util.HashMap;
 import java.util.UUID;
 
+@Slf4j
 @Configuration
 public class AgeiPortConfiguration {
 
     @Value("${spring.application.name}")
     private String applicationName;
+
+    @Value("${ageiport.taskServerClientOptions.port}")
+    private Integer port;
+    @Value("${ageiport.taskServerClientOptions.endpoint}")
+    private String endpoint;
 
     @Autowired
     private ConfigurableApplicationContext applicationContext;
@@ -34,6 +42,7 @@ public class AgeiPortConfiguration {
 
     @Bean
     public AgeiPort getAgeiPort() {
+        log.info("AgeiPort init start.");
 
         //1.初始化AgeiPort实例
         AgeiPortOptions options = AgeiPortOptions.debug();
@@ -55,7 +64,14 @@ public class AgeiPortConfiguration {
         options.setClusterOptions(clusterOptions);
         options.setApp(applicationName);
 
+        HttpTaskServerClientOptions taskServerClientOptions = new HttpTaskServerClientOptions();
+        taskServerClientOptions.setPort(port);
+        taskServerClientOptions.setEndpoint(endpoint);
+        options.setTaskServerClientOptions(taskServerClientOptions);
+
         AgeiPort ageiPort = AgeiPort.ageiPort(options);
+
+        log.info("AgeiPort init finished.");
         return ageiPort;
     }
 }

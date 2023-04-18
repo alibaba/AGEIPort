@@ -23,6 +23,8 @@ spec:
               value: password
             - name: POSTGRES_DB
               value: pgsql
+            - name: TZ
+              value: Asia/Shanghai
           ports:
             - containerPort: 5432
           volumeMounts:
@@ -41,29 +43,11 @@ metadata:
   labels:
     app: pgsql
 spec:
-  type: ClusterIP
+  type: NodePort
   ports:
   - port: 5432
     protocol: TCP
     targetPort: 5432
+    nodePort: 30001
   selector:
     app: pgsql
-
----
-apiVersion: networking.k8s.io/v1
-kind: Ingress
-metadata:
-  namespace: ageiport
-  name: ingress-nginx
-spec:
-  rules:
-    - host: pgsql.alibaba-ageiport.com
-      http:
-        paths:
-          - path: /
-            pathType: Prefix
-            backend:
-              service:
-                name: pgsql
-                port:
-                  number: 5432

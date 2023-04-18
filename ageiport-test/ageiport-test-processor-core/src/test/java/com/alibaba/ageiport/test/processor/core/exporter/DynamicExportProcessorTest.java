@@ -32,6 +32,8 @@ public class DynamicExportProcessorTest {
         request.setTaskSpecificationCode(DynamicColumnExportProcessor.class.getSimpleName());
         request.setBizUserId("userId");
         request.setBizQuery(JsonUtil.toJsonString(query));
+        System.out.println(JsonUtil.toJsonString(request));
+
         TaskExecuteResult response = ageiPort.getTaskService().executeTask(request);
         Assertions.assertTrue(response.getSuccess());
 
