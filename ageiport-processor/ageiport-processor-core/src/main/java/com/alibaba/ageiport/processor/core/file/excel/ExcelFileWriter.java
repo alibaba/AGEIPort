@@ -64,7 +64,8 @@ public class ExcelFileWriter implements FileWriter {
         for (String extensionName : providerSpiConfig.getExtensionNames()) {
             ExtensionLoader<ExcelWriteHandlerProvider> extensionLoader = ExtensionLoader.getExtensionLoader(ExcelWriteHandlerProvider.class);
             ExcelWriteHandlerProvider handlerProvider = extensionLoader.getExtension(extensionName);
-            this.writeHandlers.addAll(handlerProvider.provide(ageiPort, columnHeaders, fileContext));
+            List<WriteHandler> writeHandlerList = handlerProvider.provide(ageiPort, columnHeaders, fileContext);
+            this.writeHandlers.addAll(writeHandlerList);
         }
 
         FastByteArrayOutputStream output = new FastByteArrayOutputStream(10240);
