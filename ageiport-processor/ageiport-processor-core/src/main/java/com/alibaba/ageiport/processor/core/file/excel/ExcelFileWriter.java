@@ -36,22 +36,21 @@ public class ExcelFileWriter implements FileWriter {
 
     private ColumnHeaders columnHeaders;
 
-    private ExcelWriter excelWriter;
-
     private FileContext fileContext;
-
-    private List<WriteHandler> writeHandlers;
 
     private Map<Integer, WriteSheet> writeSheetMap;
 
+    private ExcelWriter excelWriter;
+
     private Map<String, Integer> sheetNameNoMap;
+
+    ExcelWriteHandlerProviderSpiConfig providerSpiConfig;
 
     public ExcelFileWriter(AgeiPort ageiPort, ColumnHeaders columnHeaders, FileContext fileContext) {
 
         this.ageiPort = ageiPort;
         this.columnHeaders = columnHeaders;
         this.fileContext = fileContext;
-        this.writeHandlers = new ArrayList<>();
         this.writeSheetMap = new HashMap<>();
         this.sheetNameNoMap = new HashMap<>();
 
@@ -59,21 +58,17 @@ public class ExcelFileWriter implements FileWriter {
         Map<String, Map<String, String>> spiConfigs = options.getSpiConfigs();
         Map<String, String> providerConfigs = spiConfigs.get("ExcelWriteHandlerProvider");
         String configAsJson = JsonUtil.toJsonString(providerConfigs);
-        ExcelWriteHandlerProviderSpiConfig providerSpiConfig = JsonUtil.toObject(configAsJson, ExcelWriteHandlerProviderSpiConfig.class);
+        this.providerSpiConfig = JsonUtil.toObject(configAsJson, ExcelWriteHandlerProviderSpiConfig.class);
 
-        for (String extensionName : providerSpiConfig.getExtensionNames()) {
-            ExtensionLoader<ExcelWriteHandlerProvider> extensionLoader = ExtensionLoader.getExtensionLoader(ExcelWriteHandlerProvider.class);
-            ExcelWriteHandlerProvider handlerProvider = extensionLoader.getExtension(extensionName);
-            List<WriteHandler> writeHandlerList = handlerProvider.provide(ageiPort, columnHeaders, fileContext);
-            this.writeHandlers.addAll(writeHandlerList);
-        }
-
-        FastByteArrayOutputStream output = new FastByteArrayOutputStream(10240);
-        this.excelWriter = EasyExcel.write(output).build();
+        ExtensionLoader<ExcelWriteHandlerProvider> extensionLoader = ExtensionLoader.getExtensionLoader(ExcelWriteHandlerProvider.class);
+        ExcelWriteHandlerProvider handlerProvider = extensionLoader.getExtension(providerSpiConfig.getExtensionName());
+        this.excelWriter = handlerProvider.provideExcelWriter(ageiPort, columnHeaders, fileContext);
     }
 
     @Override
     public void write(DataGroup fileData) {
+
+
         for (DataGroup.Data data : fileData.getData()) {
             Integer sheetNo;
             String sheetName = ConstValues.DEFAULT_SHEET_NAME;
@@ -108,14 +103,19 @@ public class ExcelFileWriter implements FileWriter {
                         .needHead(true)
                         .head(head);
 
-                for (WriteHandler writeHandler : this.writeHandlers) {
+
+                ExtensionLoader<ExcelWriteHandlerProvider> extensionLoader = ExtensionLoader.getExtensionLoader(ExcelWriteHandlerProvider.class);
+                ExcelWriteHandlerProvider handlerProvider = extensionLoader.getExtension(providerSpiConfig.getExtensionName());
+                List<WriteHandler> writeHandlerList = handlerProvider.provide(ageiPort, columnHeaders, fileContext, data);
+                for (WriteHandler writeHandler : writeHandlerList) {
                     sheetBuilder.registerWriteHandler(writeHandler);
                 }
+
                 WriteSheet writeSheet = sheetBuilder.build();
                 writeSheetMap.put(sheetNo, writeSheet);
-
                 excelWriter.writeContext().currentSheet(writeSheet, WriteTypeEnum.ADD);
             }
+
 
             WriteSheet writeSheet = writeSheetMap.get(sheetNo);
             List<List<Object>> lines = resolve(columnHeaders, data, sheetNo);

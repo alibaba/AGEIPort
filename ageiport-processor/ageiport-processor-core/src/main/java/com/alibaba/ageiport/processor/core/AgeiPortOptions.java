@@ -1,5 +1,6 @@
 package com.alibaba.ageiport.processor.core;
 
+import com.alibaba.ageiport.common.utils.JsonUtil;
 import com.alibaba.ageiport.common.utils.NetUtils;
 import com.alibaba.ageiport.ext.file.store.FileStoreOptions;
 import com.alibaba.ageiport.processor.core.api.http.HttpApiServerOptions;
@@ -11,6 +12,7 @@ import com.alibaba.ageiport.processor.core.dispatcher.http.HttpDispatcherOptions
 import com.alibaba.ageiport.processor.core.dispatcher.local.LocalDispatcherOptions;
 import com.alibaba.ageiport.processor.core.eventbus.http.HttpEventBusOptions;
 import com.alibaba.ageiport.processor.core.eventbus.local.LocalEventBusOptions;
+import com.alibaba.ageiport.processor.core.file.excel.ExcelWriteHandlerProviderSpiConfig;
 import com.alibaba.ageiport.processor.core.file.store.LocalFileStoreOptions;
 import com.alibaba.ageiport.processor.core.spi.api.ApiServerOptions;
 import com.alibaba.ageiport.processor.core.spi.client.TaskServerClientOptions;
@@ -83,9 +85,8 @@ public class AgeiPortOptions {
         fileTypeWriterSpiMappings.put("xlsx", "ExcelFileWriterFactory");
         fileTypeReaderSpiMappings.put("xlsx", "ExcelFileReaderFactory");
 
-        Map<String, String> excelWriteHandlerProviderConfigs = new HashMap<>();
-        excelWriteHandlerProviderConfigs.put("extensionNames", "DefaultExcelWriteHandlerProvider");
-        spiConfigs.put("ExcelWriteHandlerProvider", excelWriteHandlerProviderConfigs);
+        ExcelWriteHandlerProviderSpiConfig excelWriteHandlerProviderSpiConfig = new ExcelWriteHandlerProviderSpiConfig();
+        spiConfigs.put("ExcelWriteHandlerProvider", JsonUtil.toMap(excelWriteHandlerProviderSpiConfig));
     }
 
     @Getter

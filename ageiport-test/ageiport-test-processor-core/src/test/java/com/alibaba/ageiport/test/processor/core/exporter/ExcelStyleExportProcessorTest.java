@@ -7,6 +7,7 @@ import com.alibaba.ageiport.processor.core.file.excel.ExcelWriteHandlerProviderS
 import com.alibaba.ageiport.processor.core.spi.service.TaskExecuteParam;
 import com.alibaba.ageiport.processor.core.spi.service.TaskExecuteResult;
 import com.alibaba.ageiport.test.processor.core.TestHelper;
+import com.alibaba.ageiport.test.processor.core.excel.UDFExcelWriteHandlerProvider;
 import com.alibaba.ageiport.test.processor.core.model.Query;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Assertions;
@@ -24,7 +25,7 @@ public class ExcelStyleExportProcessorTest {
         Map<String, Map<String, String>> spiConfigs = options.getSpiConfigs();
         Map<String, String> handlerProvider = spiConfigs.get("ExcelWriteHandlerProvider");
         ExcelWriteHandlerProviderSpiConfig config = JsonUtil.toObject(handlerProvider, ExcelWriteHandlerProviderSpiConfig.class);
-        config.getExtensionNames().add("UDFExcelWriteHandlerProvider");
+        config.setExtensionName(UDFExcelWriteHandlerProvider.class.getSimpleName());
         spiConfigs.put("ExcelWriteHandlerProvider", JsonUtil.toMap(config));
 
         AgeiPort ageiPort = AgeiPort.ageiPort(options);
