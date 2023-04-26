@@ -4,8 +4,10 @@ ClusterExportProcessor=com.alibaba.ageiport.test.processor.core.exporter.Cluster
 ExcelStyleExportProcessor=com.alibaba.ageiport.test.processor.core.exporter.ExcelStyleExportProcessor
 MultiSheetExportProcessor=com.alibaba.ageiport.test.processor.core.exporter.MultiSheetExportProcessor
 UdfSliceStrategyExportProcessor=com.alibaba.ageiport.test.processor.core.exporter.UdfSliceStrategyExportProcessor
+CSVExportProcessor=com.alibaba.ageiport.test.processor.core.exporter.CSVExportProcessor
 
 StandaloneImportProcessor=com.alibaba.ageiport.test.processor.core.importer.StandaloneImportProcessor
 ClusterImportProcessor=com.alibaba.ageiport.test.processor.core.importer.ClusterImportProcessor
 MultiSheetImportProcessor=com.alibaba.ageiport.test.processor.core.importer.MultiSheetImportProcessor
+CSVImportProcessor=com.alibaba.ageiport.test.processor.core.importer.CSVImportProcessor
 

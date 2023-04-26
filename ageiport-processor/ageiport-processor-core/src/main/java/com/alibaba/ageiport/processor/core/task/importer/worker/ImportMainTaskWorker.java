@@ -89,6 +89,8 @@ public class ImportMainTaskWorker<QUERY, DATA, VIEW> extends AbstractMainTaskWor
             context.goNextStageEventNew();
             BizImportTaskRuntimeConfig runtimeConfig = adapter.taskRuntimeConfig(bizUser, query, processor, context);
             context.load(runtimeConfig);
+            context.save();
+
             context.goNextStageEventNew();
             ImportTaskRuntimeConfig importTaskRuntimeConfig = context.getImportTaskRuntimeConfig();
             String fileType = importTaskRuntimeConfig.getFileType();

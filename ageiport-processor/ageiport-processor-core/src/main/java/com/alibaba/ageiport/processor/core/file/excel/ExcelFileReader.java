@@ -15,6 +15,7 @@ import com.alibaba.excel.ExcelReader;
 import com.alibaba.excel.context.AnalysisContext;
 import com.alibaba.excel.event.AnalysisEventListener;
 import com.alibaba.excel.read.metadata.ReadSheet;
+import com.alibaba.excel.support.ExcelTypeEnum;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -49,15 +50,17 @@ public class ExcelFileReader implements FileReader {
 
     @Override
     public void read(InputStream inputStream) {
-        ExcelReader excelReader = EasyExcel.read(inputStream).build();
+        ExcelTypeEnum excelTypeEnum = ExcelWriteHandlerProvider.getExcelTypeEnum(fileContext);
+        ExcelReader excelReader = EasyExcel.read(inputStream).excelType(excelTypeEnum).build();
         List<ReadSheet> readSheets = excelReader.excelExecutor().sheetList();
 
         List<ReadSheet> sheetsNeedRead = new ArrayList<>();
 
         int sheetIndex = 0;
         for (ReadSheet readSheet : readSheets) {
-            if (readSheet.getSheetName().startsWith("hidden_")) {
-                logger.warn("ignore sheet, main:{}, sheetNo:{}, sheetName:{}", fileContext.getMainTask(), readSheet.getSheetNo(), readSheet.getSheetName());
+            String sheetName = readSheet.getSheetName();
+            if (sheetName != null && sheetName.startsWith("hidden_")) {
+                logger.warn("ignore sheet, main:{}, sheetNo:{}, sheetName:{}", fileContext.getMainTask(), readSheet.getSheetNo(), sheetName);
                 continue;
             }
             EasyExcelReadListener readListener = new EasyExcelReadListener(ageiPort, fileContext, columnHeaders);
