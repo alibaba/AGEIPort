@@ -14,12 +14,16 @@ public class Query {
 
     private List<View> checkErrorData;
 
+    private List<String> checkErrorDataWhenIdIn;
+
     private List<View> writeErrorData;
 
     private Integer dynamicHeaderCount;
 
     private String sliceKey;
+
     private Integer sliceOffset;
+
 
 
     public Integer getErrorCount() {

@@ -85,6 +85,12 @@ public class AgeiPortOptions {
         fileTypeWriterSpiMappings.put("xlsx", "ExcelFileWriterFactory");
         fileTypeReaderSpiMappings.put("xlsx", "ExcelFileReaderFactory");
 
+        fileTypeWriterSpiMappings.put("xls", "ExcelFileWriterFactory");
+        fileTypeReaderSpiMappings.put("xls", "ExcelFileReaderFactory");
+
+        fileTypeWriterSpiMappings.put("xlsm", "ExcelFileWriterFactory");
+        fileTypeReaderSpiMappings.put("xlsm", "ExcelFileReaderFactory");
+
         ExcelWriteHandlerProviderSpiConfig excelWriteHandlerProviderSpiConfig = new ExcelWriteHandlerProviderSpiConfig();
         spiConfigs.put("ExcelWriteHandlerProvider", JsonUtil.toMap(excelWriteHandlerProviderSpiConfig));
     }

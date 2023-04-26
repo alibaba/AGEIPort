@@ -3,6 +3,7 @@ package com.alibaba.ageiport.processor.core.task.importer.worker;
 import com.alibaba.ageiport.common.feature.FeatureUtils;
 import com.alibaba.ageiport.common.logger.Logger;
 import com.alibaba.ageiport.common.logger.LoggerFactory;
+import com.alibaba.ageiport.common.utils.CollectionUtils;
 import com.alibaba.ageiport.common.utils.IOUtils;
 import com.alibaba.ageiport.common.utils.JsonUtil;
 import com.alibaba.ageiport.common.utils.TaskIdUtil;
@@ -199,13 +200,15 @@ public class ImportMainTaskWorker<QUERY, DATA, VIEW> extends AbstractMainTaskWor
 
             ImportTaskRuntimeConfig runtimeConfig = context.getImportTaskRuntimeConfig();
 
-            boolean existView = false;
+            List<String> subTaskExistView = new ArrayList<>();
             BigDataCache cache = ageiPort.getBigDataCacheManager().getBigDataCacheCache(mainTask.getExecuteType());
             for (int i = 1; i <= mainTask.getSubTotalCount(); i++) {
                 String subTaskId = TaskIdUtil.genSubTaskId(mainTask.getMainTaskId(), i);
-                existView = cache.exist(subTaskId);
+                if (cache.exist(subTaskId)) {
+                    subTaskExistView.add(subTaskId);
+                }
             }
-            if (existView) {
+            if (CollectionUtils.isNotEmpty(subTaskExistView)) {
                 String fileWriterFactoryName = ageiPort.getOptions().getFileTypeWriterSpiMappings().get(runtimeConfig.getFileType());
                 FileWriterFactory fileWriterFactory = ExtensionLoader.getExtensionLoader(FileWriterFactory.class).getExtension(fileWriterFactoryName);
                 ColumnHeaders columnHeaders = context.getColumnHeaders();
@@ -215,18 +218,18 @@ public class ImportMainTaskWorker<QUERY, DATA, VIEW> extends AbstractMainTaskWor
                 fileContext.setMainTask(mainTask);
                 fileWriter = fileWriterFactory.create(ageiPort, columnHeaders, fileContext);
 
-                for (int i = 1; i <= mainTask.getSubTotalCount(); i++) {
-                    String subTaskId = TaskIdUtil.genSubTaskId(mainTask.getMainTaskId(), i);
+                for (String subTaskId : subTaskExistView) {
                     DataGroup dataGroup = cache.remove(subTaskId, DataGroup.class);
                     fileWriter.write(dataGroup);
                 }
+
                 fileStream = fileWriter.finish();
             }
             context.goNextStageEventNew();
 
             context.goNextStageEventNew();
             String key = mainTask.getMainTaskId() + "." + runtimeConfig.getFileType();
-            if (existView) {
+            if (CollectionUtils.isNotEmpty(subTaskExistView)) {
                 FileStore fileStore = ageiPort.getFileStore();
                 fileStore.save(key, fileStream, new HashMap<>());
             }

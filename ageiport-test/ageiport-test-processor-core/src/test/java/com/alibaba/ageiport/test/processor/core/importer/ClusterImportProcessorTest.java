@@ -63,12 +63,15 @@ public class ClusterImportProcessorTest {
         TaskExecuteParam request = new TaskExecuteParam();
         Query query = new Query();
 
+
         View view = new View();
         view.setId(1);
         view.setName("name1");
 
         query.setCheckErrorData(Lists.newArrayList(view));
         query.setTotalCount(100);
+        query.setCheckErrorDataWhenIdIn(Lists.newArrayList("1"));
+
         request.setTaskSpecificationCode(taskCode);
         request.setBizUserId("userId");
         request.setBizQuery(JsonUtil.toJsonString(query));

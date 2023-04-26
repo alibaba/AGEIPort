@@ -50,11 +50,8 @@ public class HttpEventBusAgent extends AbstractVerticle {
         logger.info("AGEIPort HttpEventBus Agent start");
         HttpServer httpServer = vertx.createHttpServer();
         httpServer.requestHandler(serverRequest -> {
-            logger.info("server request");
             if (HttpEventBus.URL.equals(serverRequest.uri())) {
-                logger.info("server uri:{}", serverRequest.uri());
                 serverRequest.body(event -> {
-                    logger.info("server event result:{}", event.succeeded());
                     if (event.succeeded()) {
                         String requestJson = event.result().toString();
                         logger.info("server receive:{}", requestJson);

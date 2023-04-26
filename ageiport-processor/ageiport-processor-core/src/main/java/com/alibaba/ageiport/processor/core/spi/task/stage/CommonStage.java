@@ -11,9 +11,9 @@ public class CommonStage {
 
     public static Stage ERROR = new StageImpl("GROUP", Integer.MAX_VALUE, "ERROR", "执行失败", 1.00, 1.00, "", true, false, true);
 
-    public static Stage FINISHED = new StageImpl("GROUP", Integer.MAX_VALUE, "FINISHED", "执行完成", 1.00, 1.00, "", true, false, true);
+    public static Stage FINISHED = new StageImpl("GROUP", Integer.MAX_VALUE, "FINISHED", "执行完成", 1.00, 1.00, "", true, true, false);
 
-    public static Stage of(String code){
+    public static Stage of(String code) {
         if (code == null) {
             return null;
         }

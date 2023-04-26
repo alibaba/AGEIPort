@@ -60,7 +60,6 @@ public class HttpEventBus implements EventBus {
 
     @Override
     public void post(EventObject eventObject) {
-        logger.info("http post event:{}", eventObject);
         String body = JsonUtil.toJsonString(eventObject);
         logger.info("http event bus send:{}", body);
 

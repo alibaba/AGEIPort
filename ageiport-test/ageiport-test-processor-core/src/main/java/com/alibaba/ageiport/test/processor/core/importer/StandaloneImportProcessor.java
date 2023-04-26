@@ -2,6 +2,7 @@ package com.alibaba.ageiport.test.processor.core.importer;
 
 import com.alibaba.ageiport.common.logger.Logger;
 import com.alibaba.ageiport.common.logger.LoggerFactory;
+import com.alibaba.ageiport.common.utils.CollectionUtils;
 import com.alibaba.ageiport.common.utils.JsonUtil;
 import com.alibaba.ageiport.processor.core.annotation.ImportSpecification;
 import com.alibaba.ageiport.processor.core.exception.BizException;
@@ -36,11 +37,17 @@ public class StandaloneImportProcessor implements ImportProcessor<Query, Data, V
             datum.setId(view.getId());
             datum.setName(view.getName());
             datum.setGender(view.getGender());
+            if (CollectionUtils.isNotEmpty(query.getCheckErrorDataWhenIdIn())) {
+                if (query.getCheckErrorDataWhenIdIn().contains(view.getId().toString())) {
+                    result.setView(query.getCheckErrorData());
+                }
+            }
+
             data.add(datum);
         }
 
         result.setData(data);
-        result.setView(query.getCheckErrorData());
+
         return result;
     }
 
