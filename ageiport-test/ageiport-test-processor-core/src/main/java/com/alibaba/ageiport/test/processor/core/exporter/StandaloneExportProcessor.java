@@ -12,6 +12,7 @@ import com.alibaba.ageiport.test.processor.core.model.Data;
 import com.alibaba.ageiport.test.processor.core.model.Query;
 import com.alibaba.ageiport.test.processor.core.model.View;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -47,6 +48,7 @@ public class StandaloneExportProcessor implements ExportProcessor<Query, Data, V
             if (index % 3 == 2) {
                 data.setGender("其他");
             }
+            data.setAge(new BigDecimal(10));
             dataList.add(data);
         }
         return dataList;

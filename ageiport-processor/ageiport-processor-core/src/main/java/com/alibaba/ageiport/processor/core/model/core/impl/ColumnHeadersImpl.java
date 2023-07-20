@@ -4,9 +4,7 @@ import com.alibaba.ageiport.common.utils.JsonUtil;
 import com.alibaba.ageiport.processor.core.model.core.ColumnHeader;
 import com.alibaba.ageiport.processor.core.model.core.ColumnHeaders;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author lingyi
@@ -25,8 +23,11 @@ public class ColumnHeadersImpl implements ColumnHeaders {
 
     private Map<List<String>, ColumnHeader> headerNameIndexMap;
 
+    private Map<Integer, Map<Integer, ColumnHeader>> groupIndexMap;
+
     public ColumnHeadersImpl() {
     }
+
 
     public ColumnHeadersImpl(List<ColumnHeader> columnHeaders) {
         loadColumnHeaders(columnHeaders);
@@ -39,11 +40,37 @@ public class ColumnHeadersImpl implements ColumnHeaders {
         this.headerNameIndexMap = new HashMap<>(columnHeaders.size() * 2);
         this.headerNameKeyIndexMap = new HashMap<>(columnHeaders.size() * 2);
 
+        List<Integer> groupIndex = new ArrayList<>();
         for (ColumnHeader columnHeader : columnHeaders) {
             this.fieldNameIndexMap.put(columnHeader.getFieldName(), columnHeader);
             this.columnIndexIndexMap.put(columnHeader.getIndex(), columnHeader);
             this.headerNameIndexMap.put(columnHeader.getHeaderName(), columnHeader);
             this.headerNameKeyIndexMap.put(columnHeader.getHeaderNameKey(), columnHeader);
+
+            if (!groupIndex.contains(columnHeader.getGroupIndex())) {
+                groupIndex.add(columnHeader.getGroupIndex());
+            }
+        }
+
+        groupIndex.sort(Comparator.comparingInt(o -> o));
+        this.groupIndexMap = new HashMap<>(4);
+        if (groupIndex.size() == 1 && groupIndex.get(0) == -1) {
+            Map<Integer, ColumnHeader> headerMap = groupIndexMap.computeIfAbsent(0, k -> new HashMap<>());
+            for (ColumnHeader columnHeader : columnHeaders) {
+                headerMap.put(headerMap.size(), columnHeader);
+            }
+        } else {
+            for (Integer index : groupIndex) {
+                if (index == -1) {
+                    continue;
+                }
+                Map<Integer, ColumnHeader> headerMap = groupIndexMap.computeIfAbsent(index, k -> new HashMap<>());
+                for (ColumnHeader columnHeader : columnHeaders) {
+                    if (columnHeader.getGroupIndex() == -1 || columnHeader.getGroupIndex().equals(index)) {
+                        headerMap.put(headerMap.size(), columnHeader);
+                    }
+                }
+            }
         }
     }
 
@@ -80,11 +107,24 @@ public class ColumnHeadersImpl implements ColumnHeaders {
             if ((columnHeader.getGroupIndex() != -1) && !columnHeader.getGroupIndex().equals(groupIndex)) {
                 continue;
             }
-            if (columnHeader.getHeaderRowCount() > max) {
-                max = columnHeader.getHeaderRowCount();
+            Integer headerRowCount = columnHeader.maxHeaderRowCount();
+            if (headerRowCount > max) {
+                max = headerRowCount;
             }
         }
         return max;
+    }
+
+    @Override
+    public List<ColumnHeader> getHeadersByGroup(Integer groupIndex) {
+        Map<Integer, ColumnHeader> headerMap = this.groupIndexMap.get(groupIndex);
+        Collection<ColumnHeader> values = headerMap.values();
+        return new ArrayList<>(values);
+    }
+
+    @Override
+    public ColumnHeader getHeaderByGroupAndColumn(Integer groupIndex, Integer columnIndex) {
+        return this.groupIndexMap.get(groupIndex).get(columnIndex);
     }
 
     @Override

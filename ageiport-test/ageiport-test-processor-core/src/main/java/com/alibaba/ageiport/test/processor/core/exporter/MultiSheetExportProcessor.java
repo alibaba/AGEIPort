@@ -11,9 +11,11 @@ import com.alibaba.ageiport.processor.core.task.exporter.ExportProcessor;
 import com.alibaba.ageiport.processor.core.task.exporter.api.BizExportTaskRuntimeConfig;
 import com.alibaba.ageiport.processor.core.task.exporter.api.BizExportTaskRuntimeConfigImpl;
 import com.alibaba.ageiport.test.processor.core.model.Data;
+import com.alibaba.ageiport.test.processor.core.model.MultiSheetView;
 import com.alibaba.ageiport.test.processor.core.model.Query;
 import com.alibaba.ageiport.test.processor.core.model.View;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -21,7 +23,7 @@ import java.util.Map;
 
 //1.实现ExportProcessor接口
 @ExportSpecification(code = "MultiSheetExportProcessor", name = "MultiSheetExportProcessor")
-public class MultiSheetExportProcessor implements ExportProcessor<Query, Data, View> {
+public class MultiSheetExportProcessor implements ExportProcessor<Query, Data, MultiSheetView> {
 
     //2.实现ExportProcessor接口的TotalCount方法
     @Override
@@ -50,6 +52,7 @@ public class MultiSheetExportProcessor implements ExportProcessor<Query, Data, V
             if (index % 3 == 2) {
                 data.setGender("其他");
             }
+            data.setAge(new BigDecimal(i % 100));
             data.setManQuestion1("男性问题回答1");
             data.setManQuestion2("男性问题回答2");
             data.setWomenQuestion1("女性问题回答1");
@@ -59,27 +62,26 @@ public class MultiSheetExportProcessor implements ExportProcessor<Query, Data, V
 
             dataList.add(data);
         }
-
         return dataList;
     }
 
     //4.实现ExportProcessor接口的convert方法
     @Override
-    public List<View> convert(BizUser user, Query query, List<Data> data) throws BizException {
-        List<View> dataList = new ArrayList<>();
+    public List<MultiSheetView> convert(BizUser user, Query query, List<Data> data) throws BizException {
+        List<MultiSheetView> dataList = new ArrayList<>();
         for (Data datum : data) {
-            View view = BeanUtils.cloneProp(datum, View.class);
+            MultiSheetView view = BeanUtils.cloneProp(datum, MultiSheetView.class);
             dataList.add(view);
         }
         return dataList;
     }
 
     @Override
-    public BizDataGroup<View> group(BizUser user, Query query, List<View> views) {
-        BizDataGroupImpl<View> group = new BizDataGroupImpl<>();
+    public BizDataGroup<MultiSheetView> group(BizUser user, Query query, List<MultiSheetView> views) {
+        BizDataGroupImpl<MultiSheetView> group = new BizDataGroupImpl<>();
 
-        BizDataGroupImpl.Data<View> dataMan = new BizDataGroupImpl.Data<>();
-        List<BizDataItem<View>> itemsMain = new ArrayList<>();
+        BizDataGroupImpl.Data<MultiSheetView> dataMan = new BizDataGroupImpl.Data<>();
+        List<BizDataItem<MultiSheetView>> itemsMain = new ArrayList<>();
         dataMan.setItems(itemsMain);
         Map<String, String> metaMan = new HashMap<>();
         metaMan.put(ExcelConstants.sheetNameKey, "男");
@@ -87,8 +89,8 @@ public class MultiSheetExportProcessor implements ExportProcessor<Query, Data, V
         dataMan.setMeta(metaMan);
         dataMan.setCode(JsonUtil.toJsonString(metaMan));
 
-        BizDataGroupImpl.Data<View> dataWomen = new BizDataGroupImpl.Data<>();
-        List<BizDataItem<View>> itemsWomen = new ArrayList<>();
+        BizDataGroupImpl.Data<MultiSheetView> dataWomen = new BizDataGroupImpl.Data<>();
+        List<BizDataItem<MultiSheetView>> itemsWomen = new ArrayList<>();
         dataWomen.setItems(itemsWomen);
         Map<String, String> metaWomen = new HashMap<>();
         metaWomen.put(ExcelConstants.sheetNameKey, "女");
@@ -96,8 +98,8 @@ public class MultiSheetExportProcessor implements ExportProcessor<Query, Data, V
         dataWomen.setMeta(metaWomen);
         dataWomen.setCode(JsonUtil.toJsonString(metaWomen));
 
-        BizDataGroupImpl.Data<View> dataOther = new BizDataGroupImpl.Data<>();
-        List<BizDataItem<View>> itemsOther = new ArrayList<>();
+        BizDataGroupImpl.Data<MultiSheetView> dataOther = new BizDataGroupImpl.Data<>();
+        List<BizDataItem<MultiSheetView>> itemsOther = new ArrayList<>();
         dataOther.setItems(itemsOther);
         Map<String, String> metaOther = new HashMap<>();
         metaOther.put(ExcelConstants.sheetNameKey, "其他");
@@ -105,14 +107,14 @@ public class MultiSheetExportProcessor implements ExportProcessor<Query, Data, V
         dataOther.setMeta(metaOther);
         dataWomen.setCode(JsonUtil.toJsonString(metaOther));
 
-        List<BizData<View>> dataList = new ArrayList<>();
+        List<BizData<MultiSheetView>> dataList = new ArrayList<>();
         dataList.add(dataMan);
         dataList.add(dataWomen);
         dataList.add(dataOther);
 
         group.setData(dataList);
-        for (View view : views) {
-            BizDataGroupImpl.Item<View> item = new BizDataGroupImpl.Item<>();
+        for (MultiSheetView view : views) {
+            BizDataGroupImpl.Item<MultiSheetView> item = new BizDataGroupImpl.Item<>();
             item.setData(view);
             if (view.getGender().equals("男")) {
                 itemsMain.add(item);

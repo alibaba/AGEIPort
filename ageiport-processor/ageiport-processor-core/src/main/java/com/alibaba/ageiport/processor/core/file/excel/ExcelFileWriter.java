@@ -7,6 +7,7 @@ import com.alibaba.ageiport.ext.arch.ExtensionLoader;
 import com.alibaba.ageiport.processor.core.AgeiPort;
 import com.alibaba.ageiport.processor.core.AgeiPortOptions;
 import com.alibaba.ageiport.processor.core.constants.ConstValues;
+import com.alibaba.ageiport.processor.core.exception.BizException;
 import com.alibaba.ageiport.processor.core.model.core.ColumnHeader;
 import com.alibaba.ageiport.processor.core.model.core.ColumnHeaders;
 import com.alibaba.ageiport.processor.core.spi.file.DataGroup;
@@ -21,10 +22,7 @@ import com.alibaba.excel.write.handler.WriteHandler;
 import com.alibaba.excel.write.metadata.WriteSheet;
 
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -63,19 +61,67 @@ public class ExcelFileWriter implements FileWriter {
         ExtensionLoader<ExcelWriteHandlerProvider> extensionLoader = ExtensionLoader.getExtensionLoader(ExcelWriteHandlerProvider.class);
         ExcelWriteHandlerProvider handlerProvider = extensionLoader.getExtension(providerSpiConfig.getExtensionName());
         this.excelWriter = handlerProvider.provideExcelWriter(ageiPort, columnHeaders, fileContext);
+
+    }
+
+    private void initSheetsByHeaders() {
+        List<Map.Entry<Integer, String>> collect = columnHeaders.getColumnHeaders()
+                .stream()
+                .filter(s -> !s.getGroupIndex().equals(-1))
+                .map(s -> new AbstractMap.SimpleEntry<>(s.getGroupIndex(), s.getGroupName()))
+                .collect(Collectors.toList());
+
+        for (Map.Entry<Integer, String> indexName : collect) {
+            Integer sheetNo = indexName.getKey() < 0 ? 0 : indexName.getKey();
+            String sheetName = indexName.getValue();
+
+            if (!this.sheetNameNoMap.containsKey(sheetName)) {
+                List<List<String>> head = columnHeaders.getColumnHeaders().stream()
+                        .filter(s -> !s.getIgnoreHeader())
+                        .filter(s -> s.getGroupIndex().equals(sheetNo) || s.getGroupIndex().equals(-1))
+                        .map(ColumnHeader::getHeaderName)
+                        .collect(Collectors.toList());
+
+                ExcelWriterSheetBuilder sheetBuilder = EasyExcel.writerSheet()
+                        .sheetNo(sheetNo)
+                        .sheetName(sheetName)
+                        .needHead(true)
+                        .head(head);
+                ExtensionLoader<ExcelWriteHandlerProvider> extensionLoader = ExtensionLoader.getExtensionLoader(ExcelWriteHandlerProvider.class);
+                ExcelWriteHandlerProvider handlerProvider = extensionLoader.getExtension(providerSpiConfig.getExtensionName());
+
+                DataGroup.Data data = new DataGroup.Data();
+                Map<String, String> meta = new HashMap<>();
+                meta.put(ExcelConstants.sheetNoKey, sheetNo.toString());
+                meta.put(ExcelConstants.sheetNameKey, sheetName);
+                data.setCode(sheetName);
+                data.setMeta(meta);
+                data.setItems(Collections.emptyList());
+
+                List<WriteHandler> writeHandlerList = handlerProvider.provide(ageiPort, columnHeaders, fileContext, data);
+                for (WriteHandler writeHandler : writeHandlerList) {
+                    sheetBuilder.registerWriteHandler(writeHandler);
+                }
+
+                WriteSheet writeSheet = sheetBuilder.build();
+                writeSheetMap.put(sheetNo, writeSheet);
+                sheetNameNoMap.put(sheetName, sheetNo);
+                excelWriter.writeContext().currentSheet(writeSheet, WriteTypeEnum.ADD);
+            }
+        }
     }
 
     @Override
     public void write(DataGroup fileData) {
-
-
         for (DataGroup.Data data : fileData.getData()) {
             Integer sheetNo;
             String sheetName = ConstValues.DEFAULT_SHEET_NAME;
 
             Map<String, String> meta = data.getMeta();
             if (meta == null || !meta.containsKey(ExcelConstants.sheetNameKey)) {
-                sheetName = data.getCode() == null ? sheetName : data.getCode();
+                if (data.getCode() != null) {
+                    sheetName = data.getCode();
+                }
             } else {
                 sheetName = meta.get(ExcelConstants.sheetNameKey);
             }
@@ -125,6 +171,8 @@ public class ExcelFileWriter implements FileWriter {
 
     @Override
     public InputStream finish() {
+        initSheetsByHeaders();
+
         WriteContext writeContext = excelWriter.writeContext();
         FastByteArrayOutputStream outputStream = (FastByteArrayOutputStream) writeContext.writeWorkbookHolder().getOutputStream();
         excelWriter.finish();

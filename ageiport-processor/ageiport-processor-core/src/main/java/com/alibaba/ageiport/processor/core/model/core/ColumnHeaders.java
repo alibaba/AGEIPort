@@ -20,6 +20,10 @@ public interface ColumnHeaders extends Serializable {
 
     Integer getHeaderRowCount(Integer groupIndex);
 
+    List<ColumnHeader> getHeadersByGroup(Integer groupIndex);
+
+    ColumnHeader getHeaderByGroupAndColumn(Integer groupIndex,Integer columnIndex);
+
     void fromJson(String json);
 
     String toJson();

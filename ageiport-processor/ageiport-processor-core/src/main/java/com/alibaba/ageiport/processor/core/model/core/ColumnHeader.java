@@ -22,7 +22,7 @@ public interface ColumnHeader extends Comparable<ColumnHeader> {
     void setHeaderName(List<String> headerName);
 
 
-    Integer getHeaderRowCount();
+    Integer maxHeaderRowCount();
 
     String getFieldName();
 

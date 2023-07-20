@@ -5,6 +5,7 @@ import com.alibaba.ageiport.common.utils.JsonUtil;
 import com.alibaba.ageiport.processor.core.AgeiPort;
 import com.alibaba.ageiport.processor.core.model.api.impl.BizUserImpl;
 import com.alibaba.ageiport.processor.core.model.core.ColumnHeader;
+import com.alibaba.ageiport.processor.core.model.core.impl.ColumnHeaderImpl;
 import com.alibaba.ageiport.processor.core.model.core.impl.ColumnHeadersImpl;
 import com.alibaba.ageiport.processor.core.model.core.impl.MainTask;
 import com.alibaba.ageiport.processor.core.spi.task.factory.MainTaskContext;
@@ -13,6 +14,7 @@ import com.alibaba.ageiport.processor.core.spi.task.specification.TaskSpecificat
 import com.alibaba.ageiport.processor.core.task.exporter.model.ExportTaskRuntimeConfigImpl;
 import com.alibaba.ageiport.processor.core.task.exporter.model.ExportTaskSpecHolder;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -43,7 +45,13 @@ public class ExportMainTaskContextFactory<QUERY, DATA, VIEW> implements MainTask
         if (JsonUtil.isJson(runtimeParamString)) {
             ExportTaskRuntimeConfigImpl runtimeConfig = JsonUtil.toObject(runtimeParamString, ExportTaskRuntimeConfigImpl.class);
             context.setExportTaskRuntimeConfig(runtimeConfig);
-            List<ColumnHeader> columnHeaderList = runtimeConfig.getColumnHeaders();
+            List<ColumnHeaderImpl> columnHeaderImplList = JsonUtil.toArrayObject(JsonUtil.toJsonString(runtimeConfig.getColumnHeaders()), ColumnHeaderImpl.class);
+
+            List<ColumnHeader> columnHeaderList = new ArrayList<>();
+            for (ColumnHeaderImpl columnHeader : columnHeaderImplList) {
+                columnHeaderList.add(columnHeader);
+            }
+
             ColumnHeadersImpl columnHeaders = new ColumnHeadersImpl(columnHeaderList);
             context.setColumnHeaders(columnHeaders);
         }

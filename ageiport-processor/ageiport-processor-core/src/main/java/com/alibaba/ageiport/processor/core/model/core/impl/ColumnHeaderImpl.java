@@ -43,7 +43,7 @@ public class ColumnHeaderImpl implements ColumnHeader {
     private List<String> values;
 
     @Override
-    public Integer getHeaderRowCount() {
+    public Integer maxHeaderRowCount() {
         return this.headerName.size();
     }
 

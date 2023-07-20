@@ -18,6 +18,7 @@ import com.alibaba.ageiport.processor.core.model.core.ColumnHeader;
 import com.alibaba.ageiport.processor.core.model.core.ColumnHeaders;
 import com.alibaba.ageiport.processor.core.model.core.impl.MainTask;
 import com.alibaba.ageiport.processor.core.spi.cache.BigDataCache;
+import com.alibaba.ageiport.processor.core.spi.cache.BigDataCacheManager;
 import com.alibaba.ageiport.processor.core.spi.client.CreateSubTasksRequest;
 import com.alibaba.ageiport.processor.core.spi.convertor.Model;
 import com.alibaba.ageiport.processor.core.spi.file.DataGroup;
@@ -123,6 +124,12 @@ public class ExportMainTaskWorker<QUERY, DATA, VIEW> extends AbstractMainTaskWor
             context.save();
 
             context.goNextStageEventNew();
+
+            if (totalCount == 0) {
+                doReduce();
+                return;
+            }
+
             List<CreateSubTasksRequest.SubTaskInstance> subTaskInstances = new ArrayList<>();
             for (ExportSlice slice : slices) {
                 CreateSubTasksRequest.SubTaskInstance subTaskInstance = new CreateSubTasksRequest.SubTaskInstance();
@@ -189,10 +196,12 @@ public class ExportMainTaskWorker<QUERY, DATA, VIEW> extends AbstractMainTaskWor
 
             for (int i = 1; i <= mainTask.getSubTotalCount(); i++) {
                 String subTaskId = TaskIdUtil.genSubTaskId(mainTask.getMainTaskId(), i);
-                BigDataCache cache = ageiPort.getBigDataCacheManager().getBigDataCacheCache(mainTask.getExecuteType());
+                BigDataCacheManager bigDataCacheManager = ageiPort.getBigDataCacheManager();
+                BigDataCache cache = bigDataCacheManager.getBigDataCacheCache(mainTask.getExecuteType());
                 DataGroup dataGroup = cache.remove(subTaskId, DataGroup.class);
                 fileWriter.write(dataGroup);
             }
+
             fileStream = fileWriter.finish();
             context.goNextStageEventNew();
 

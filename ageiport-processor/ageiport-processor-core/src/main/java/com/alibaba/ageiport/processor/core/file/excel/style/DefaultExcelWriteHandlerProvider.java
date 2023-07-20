@@ -23,7 +23,7 @@ public class DefaultExcelWriteHandlerProvider implements ExcelWriteHandlerProvid
             return Collections.emptyList();
         }
         return Lists.newArrayList(
-                new CellSelectorWriteHandler(columnHeaders),
+                new CellSelectorWriteHandler(columnHeaders, data),
                 new ColumnWidthStyleStrategy(columnHeaders)
         );
     }

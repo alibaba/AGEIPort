@@ -29,12 +29,8 @@ public class ExcelStyleWriteHandler implements RowWriteHandler {
             //can be cached
             newCellStyle = workbook.createCellStyle();
             newCellStyle.setWrapText(true);
-            newCellStyle.setVerticalAlignment(VerticalAlignment.CENTER);
-            newCellStyle.setAlignment(HorizontalAlignment.LEFT);
-            newCellStyle.setBorderTop(BorderStyle.THIN);
-            newCellStyle.setBorderBottom(BorderStyle.THIN);
-            newCellStyle.setBorderLeft(BorderStyle.THIN);
-            newCellStyle.setBorderRight(BorderStyle.THIN);
+            newCellStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+            newCellStyle.setFillForegroundColor(IndexedColors.GREY_25_PERCENT.getIndex());
         }
 
         final Row row = context.getRow();

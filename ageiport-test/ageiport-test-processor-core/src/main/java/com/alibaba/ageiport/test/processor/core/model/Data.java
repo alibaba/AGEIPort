@@ -5,6 +5,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.math.BigDecimal;
+
 @ToString
 @Getter
 @Setter
@@ -15,6 +17,8 @@ public class Data {
     private String name;
 
     private String gender;
+
+    private BigDecimal age;
 
     private Integer groupIndex;
 
