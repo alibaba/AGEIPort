@@ -7,7 +7,6 @@ import com.alibaba.ageiport.ext.arch.ExtensionLoader;
 import com.alibaba.ageiport.processor.core.AgeiPort;
 import com.alibaba.ageiport.processor.core.AgeiPortOptions;
 import com.alibaba.ageiport.processor.core.constants.ConstValues;
-import com.alibaba.ageiport.processor.core.exception.BizException;
 import com.alibaba.ageiport.processor.core.model.core.ColumnHeader;
 import com.alibaba.ageiport.processor.core.model.core.ColumnHeaders;
 import com.alibaba.ageiport.processor.core.spi.file.DataGroup;

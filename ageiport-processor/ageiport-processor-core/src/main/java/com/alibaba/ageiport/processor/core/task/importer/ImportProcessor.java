@@ -51,6 +51,10 @@ public interface ImportProcessor<QUERY, DATA, VIEW> extends Processor {
         return null;
     }
 
+    default DataGroup checkHeaders(BizUser user, QUERY query, DataGroup group) throws BizException {
+        return group;
+    }
+
     default BizDataGroup<VIEW> getBizDataGroup(BizUser user, QUERY query, DataGroup group) throws BizException {
         List<Type> genericParamType = TypeUtils.getGenericParamType(this.getClass(), ImportProcessor.class);
         Class<VIEW> viewClass = genericParamType.size() > 2 ? (Class<VIEW>) genericParamType.get(2) : null;

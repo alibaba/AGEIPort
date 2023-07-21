@@ -76,6 +76,21 @@ public interface ImportProcessorAdapter<QUERY, DATA, VIEW> extends Adapter {
         }
     }
 
+    default DataGroup checkHeaders(BizUser bizUser, QUERY query, DataGroup group,
+                                   ImportProcessor<QUERY, DATA, VIEW> processor,
+                                   ImportSubTaskContext<QUERY, DATA, VIEW> context) throws BizException {
+        try {
+            processor.setContext(context);
+            DataGroup dataGroup = processor.checkHeaders(bizUser, query, group);
+            return dataGroup;
+        } catch (Throwable e) {
+            throw e;
+        } finally {
+            processor.clearContext();
+        }
+    }
+
+
     default BizDataGroup<VIEW> getBizDataGroup(BizUser bizUser, QUERY query, DataGroup group,
                                                ImportProcessor<QUERY, DATA, VIEW> processor,
                                                ImportSubTaskContext<QUERY, DATA, VIEW> context) throws BizException {

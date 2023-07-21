@@ -13,4 +13,6 @@ public class FileContext {
 
     private String bizQuery;
 
+    private boolean onlyReadHeader;
+
 }

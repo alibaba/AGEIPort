@@ -35,7 +35,6 @@ public class MultiSheetExportProcessorTest {
         request.setBizQuery(JsonUtil.toJsonString(query));
         System.out.println(JsonUtil.toJsonString(request));
 
-
         TaskExecuteResult response = ageiPort.getTaskService().executeTask(request);
         Assertions.assertTrue(response.getSuccess());
 

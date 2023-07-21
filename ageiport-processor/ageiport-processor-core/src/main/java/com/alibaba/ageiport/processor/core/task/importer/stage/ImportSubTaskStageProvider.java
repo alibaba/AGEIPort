@@ -24,46 +24,51 @@ public class ImportSubTaskStageProvider implements SubTaskStageProvider {
 
     Stage S03_EXECUTE_START = new StageImpl(GROUP, 300, "S03_EXECUTE_START", "子任务执行-开始", 0.20, 0.20, "");
 
-    Stage S04_EXECUTE_GET_SLICE_DATA_START = new StageImpl(GROUP, 400, "S04_EXECUTE_GET_SLICE_DATA_START", "转换BizDataGroup-开始", 0.21, 0.21, "");
+    Stage S04_EXECUTE_GET_SLICE_DATA_START = new StageImpl(GROUP, 400, "S04_EXECUTE_GET_SLICE_DATA_START", "获取分片数据-开始", 0.21, 0.21, "");
 
 
-    Stage S05_EXECUTE_GET_SLICE_DATA_END = new StageImpl(GROUP, 500, "S05_EXECUTE_GET_SLICE_DATA_END", "转换BizDataGroup-结束", 0.22, 0.22, "");
+    Stage S05_EXECUTE_GET_SLICE_DATA_END = new StageImpl(GROUP, 500, "S05_EXECUTE_GET_SLICE_DATA_END", "获取分片数据-结束", 0.22, 0.22, "");
 
-    Stage S06_EXECUTE_BIZ_DATA_GROUP_START = new StageImpl(GROUP, 600, "S06_EXECUTE_BIZ_DATA_GROUP_START", "转换BizDataGroup-开始", 0.21, 0.21, "");
-
-
-    Stage S07_EXECUTE_BIZ_DATA_GROUP_END = new StageImpl(GROUP, 700, "S07_EXECUTE_BIZ_DATA_GROUP_END", "转换BizDataGroup-结束", 0.22, 0.22, "");
-
-    Stage S08_EXECUTE_FLAT_START = new StageImpl(GROUP, 800, "S08_EXECUTE_FLAT_START", "BizDataGroup打平-开始", 0.23, 0.23, "");
-
-    Stage S09_EXECUTE_FLAT_END = new StageImpl(GROUP, 900, "S09_EXECUTE_FLAT_END", "BizDataGroup打平-结束", 0.24, 0.24, "");
-
-    Stage S10_EXECUTE_CONVERT_AND_CHECK_START = new StageImpl(GROUP, 1000, "S10_EXECUTE_CONVERT_AND_CHECK_START", "convertAndCheck-开始", 0.25, 0.25, "");
-
-    Stage S11_EXECUTE_CONVERT_AND_CHECK_END = new StageImpl(GROUP, 1100, "S11_EXECUTE_CONVERT_AND_CHECK_END", "convertAndCheck-结束", 0.50, 0.50, "");
-
-    Stage S12_EXECUTE_WRITE_START = new StageImpl(GROUP, 1200, "S12_EXECUTE_WRITE_START", "write-开始", 0.51, 0.51, "");
-
-    Stage S13_EXECUTE_WRITE_END = new StageImpl(GROUP, 1300, "S13_EXECUTE_WRITE_END", "write-结束", 0.91, 0.91, "");
-
-    Stage S14_EXECUTE_GROUP_START = new StageImpl(GROUP, 1400, "S14_EXECUTE_GROUP_START", "group-开始", 0.90, 0.90, "");
-
-    Stage S15_EXECUTE_GROUP_END = new StageImpl(GROUP, 1500, "S15_EXECUTE_GROUP_END", "group-结束", 0.91, 0.91, "");
-
-    Stage S16_EXECUTE_DATA_GROUP_START = new StageImpl(GROUP, 1600, "S16_EXECUTE_DATA_GROUP_START", "转换为DataGroup-开始", 0.92, 0.92, "");
-
-    Stage S17_EXECUTE_DATA_GROUP_END = new StageImpl(GROUP, 1700, "S17_EXECUTE_DATA_GROUP_END", "转换为DataGroup-结束", 0.93, 0.93, "");
-
-    Stage S18_SAVE_DATA_START = new StageImpl(GROUP, 1800, "S18_SAVE_DATA_START", "存储数据-开始", 0.94, 0.94, "");
+    Stage S06_CHECK_HEADERS_START = new StageImpl(GROUP, 550, "S06_CHECK_HEADERS_START", "检查表头-开始", 0.21, 0.21, "");
 
 
-    Stage S19_SAVE_DATA_END = new StageImpl(GROUP, 1900, "S19_SAVE_DATA_END", "存储数据-结束", 0.99, 0.99, "");
+    Stage S07_CHECK_HEADERS_END = new StageImpl(GROUP, 551, "S07_CHECK_HEADERS_END", "检查表头-结束", 0.22, 0.22, "");
+
+    Stage S08_EXECUTE_BIZ_DATA_GROUP_START = new StageImpl(GROUP, 600, "S08_EXECUTE_BIZ_DATA_GROUP_START", "转换BizDataGroup-开始", 0.21, 0.21, "");
 
 
-    Stage S20_FINISHED = new StageImpl(GROUP, 2000, CommonStage.FINISHED.getCode(), "子任务已完成", 1.00, 1.00, "", true, true, false);
+    Stage S09_EXECUTE_BIZ_DATA_GROUP_END = new StageImpl(GROUP, 700, "S07_EXECUTE_BIZ_DATA_GROUP_END", "转换BizDataGroup-结束", 0.22, 0.22, "");
+
+    Stage S10_EXECUTE_FLAT_START = new StageImpl(GROUP, 800, "S08_EXECUTE_FLAT_START", "BizDataGroup打平-开始", 0.23, 0.23, "");
+
+    Stage S11_EXECUTE_FLAT_END = new StageImpl(GROUP, 900, "S09_EXECUTE_FLAT_END", "BizDataGroup打平-结束", 0.24, 0.24, "");
+
+    Stage S12_EXECUTE_CONVERT_AND_CHECK_START = new StageImpl(GROUP, 1000, "S10_EXECUTE_CONVERT_AND_CHECK_START", "convertAndCheck-开始", 0.25, 0.25, "");
+
+    Stage S13_EXECUTE_CONVERT_AND_CHECK_END = new StageImpl(GROUP, 1100, "S11_EXECUTE_CONVERT_AND_CHECK_END", "convertAndCheck-结束", 0.50, 0.50, "");
+
+    Stage S14_EXECUTE_WRITE_START = new StageImpl(GROUP, 1200, "S12_EXECUTE_WRITE_START", "write-开始", 0.51, 0.51, "");
+
+    Stage S15_EXECUTE_WRITE_END = new StageImpl(GROUP, 1300, "S13_EXECUTE_WRITE_END", "write-结束", 0.91, 0.91, "");
+
+    Stage S16_EXECUTE_GROUP_START = new StageImpl(GROUP, 1400, "S14_EXECUTE_GROUP_START", "group-开始", 0.90, 0.90, "");
+
+    Stage S17_EXECUTE_GROUP_END = new StageImpl(GROUP, 1500, "S15_EXECUTE_GROUP_END", "group-结束", 0.91, 0.91, "");
+
+    Stage S18_EXECUTE_DATA_GROUP_START = new StageImpl(GROUP, 1600, "S16_EXECUTE_DATA_GROUP_START", "转换为DataGroup-开始", 0.92, 0.92, "");
+
+    Stage S19_EXECUTE_DATA_GROUP_END = new StageImpl(GROUP, 1700, "S17_EXECUTE_DATA_GROUP_END", "转换为DataGroup-结束", 0.93, 0.93, "");
+
+    Stage S20_SAVE_DATA_START = new StageImpl(GROUP, 1800, "S18_SAVE_DATA_START", "存储数据-开始", 0.94, 0.94, "");
 
 
-    Stage S21_ERROR = new StageImpl(GROUP, 2100, CommonStage.ERROR.getCode(), "子任务失败", 1.00, 1.00, "", true, false, true);
+    Stage S21_SAVE_DATA_END = new StageImpl(GROUP, 1900, "S19_SAVE_DATA_END", "存储数据-结束", 0.99, 0.99, "");
+
+
+    Stage S22_FINISHED = new StageImpl(GROUP, 2000, CommonStage.FINISHED.getCode(), "子任务已完成", 1.00, 1.00, "", true, true, false);
+
+
+    Stage S23_ERROR = new StageImpl(GROUP, 2100, CommonStage.ERROR.getCode(), "子任务失败", 1.00, 1.00, "", true, false, true);
 
 
     List<Stage> TASK_STAGES = Lists.newArrayList(
@@ -72,22 +77,24 @@ public class ImportSubTaskStageProvider implements SubTaskStageProvider {
             , S03_EXECUTE_START
             , S04_EXECUTE_GET_SLICE_DATA_START
             , S05_EXECUTE_GET_SLICE_DATA_END
-            , S06_EXECUTE_BIZ_DATA_GROUP_START
-            , S07_EXECUTE_BIZ_DATA_GROUP_END
-            , S08_EXECUTE_FLAT_START
-            , S09_EXECUTE_FLAT_END
-            , S10_EXECUTE_CONVERT_AND_CHECK_START
-            , S11_EXECUTE_CONVERT_AND_CHECK_END
-            , S12_EXECUTE_WRITE_START
-            , S13_EXECUTE_WRITE_END
-            , S14_EXECUTE_GROUP_START
-            , S15_EXECUTE_GROUP_END
-            , S16_EXECUTE_DATA_GROUP_START
-            , S17_EXECUTE_DATA_GROUP_END
-            , S18_SAVE_DATA_START
-            , S19_SAVE_DATA_END
-            , S20_FINISHED
-            , S21_ERROR
+            , S06_CHECK_HEADERS_START
+            , S07_CHECK_HEADERS_END
+            , S08_EXECUTE_BIZ_DATA_GROUP_START
+            , S09_EXECUTE_BIZ_DATA_GROUP_END
+            , S10_EXECUTE_FLAT_START
+            , S11_EXECUTE_FLAT_END
+            , S12_EXECUTE_CONVERT_AND_CHECK_START
+            , S13_EXECUTE_CONVERT_AND_CHECK_END
+            , S14_EXECUTE_WRITE_START
+            , S15_EXECUTE_WRITE_END
+            , S16_EXECUTE_GROUP_START
+            , S17_EXECUTE_GROUP_END
+            , S18_EXECUTE_DATA_GROUP_START
+            , S19_EXECUTE_DATA_GROUP_END
+            , S20_SAVE_DATA_START
+            , S21_SAVE_DATA_END
+            , S22_FINISHED
+            , S23_ERROR
 
     );
 
@@ -137,11 +144,11 @@ public class ImportSubTaskStageProvider implements SubTaskStageProvider {
 
     @Override
     public Stage subTaskFinished() {
-        return S20_FINISHED;
+        return S22_FINISHED;
     }
 
     @Override
     public Stage subTaskError() {
-        return S21_ERROR;
+        return S23_ERROR;
     }
 }

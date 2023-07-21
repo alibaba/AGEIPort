@@ -71,7 +71,10 @@ public class ImportSubTaskWorker<QUERY, DATA, VIEW> extends AbstractSubTaskWorke
             context.goNextStageEventNew();
 
             context.goNextStageEventNew();
-            BizDataGroup<VIEW> bizDataGroup = adapter.getBizDataGroup(bizUser, query, dataGroup, processor, context);
+            DataGroup group = adapter.checkHeaders(bizUser, query, dataGroup, processor, context);
+            context.goNextStageEventNew();
+            context.goNextStageEventNew();
+            BizDataGroup<VIEW> bizDataGroup = adapter.getBizDataGroup(bizUser, query, group, processor, context);
             context.goNextStageEventNew();
 
             context.goNextStageEventNew();

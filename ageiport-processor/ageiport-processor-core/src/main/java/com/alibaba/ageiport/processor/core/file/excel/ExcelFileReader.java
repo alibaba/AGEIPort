@@ -3,6 +3,7 @@ package com.alibaba.ageiport.processor.core.file.excel;
 import com.alibaba.ageiport.common.collections.Lists;
 import com.alibaba.ageiport.common.logger.Logger;
 import com.alibaba.ageiport.common.logger.LoggerFactory;
+import com.alibaba.ageiport.common.utils.JsonUtil;
 import com.alibaba.ageiport.processor.core.AgeiPort;
 import com.alibaba.ageiport.processor.core.model.core.ColumnHeader;
 import com.alibaba.ageiport.processor.core.model.core.ColumnHeaders;
@@ -37,7 +38,7 @@ public class ExcelFileReader implements FileReader {
 
     private ColumnHeaders columnHeaders;
 
-    private List<EasyExcelReadListener> readListeners;
+    private List<ExcelReadListener> readListeners;
 
     private FileContext fileContext;
 
@@ -54,7 +55,7 @@ public class ExcelFileReader implements FileReader {
         ExcelReader excelReader = EasyExcel.read(inputStream).excelType(excelTypeEnum).build();
         List<ReadSheet> readSheets = excelReader.excelExecutor().sheetList();
 
-        List<ReadSheet> sheetsNeedRead = new ArrayList<>();
+        List<ReadSheet> sheetsNeedReads = new ArrayList<>();
 
         int sheetIndex = 0;
         for (ReadSheet readSheet : readSheets) {
@@ -63,22 +64,23 @@ public class ExcelFileReader implements FileReader {
                 logger.warn("ignore sheet, main:{}, sheetNo:{}, sheetName:{}", fileContext.getMainTask(), readSheet.getSheetNo(), sheetName);
                 continue;
             }
-            EasyExcelReadListener readListener = new EasyExcelReadListener(ageiPort, fileContext, columnHeaders);
+            ExcelReadListener readListener = new ExcelReadListener(ageiPort, fileContext, columnHeaders);
             readListeners.add(readListener);
             readSheet.setCustomReadListenerList(Lists.newArrayList(readListener));
-            readSheet.setHeadRowNumber(columnHeaders.getHeaderRowCount(sheetIndex));
-            sheetsNeedRead.add(readSheet);
+            Integer headerRowCount = columnHeaders.getHeaderRowCount(sheetIndex);
+            readSheet.setHeadRowNumber(headerRowCount);
+            sheetsNeedReads.add(readSheet);
             sheetIndex++;
         }
 
-        excelReader.read(sheetsNeedRead);
+        excelReader.read(sheetsNeedReads);
     }
 
     @Override
     public DataGroup finish() {
         DataGroup dataGroup = new DataGroup();
         List<DataGroup.Data> data = new ArrayList<>();
-        for (EasyExcelReadListener listener : readListeners) {
+        for (ExcelReadListener listener : readListeners) {
             DataGroup.Data uploadData = listener.getData();
             if (uploadData != null) {
                 data.add(uploadData);
@@ -95,7 +97,7 @@ public class ExcelFileReader implements FileReader {
 
     @Getter
     @Setter
-    public static class EasyExcelReadListener extends AnalysisEventListener<Map<Integer, Object>> {
+    public static class ExcelReadListener extends AnalysisEventListener<Map<Integer, Object>> {
 
         Logger log = LoggerFactory.getLogger(TaskContext.class);
 
@@ -105,13 +107,13 @@ public class ExcelFileReader implements FileReader {
 
         private ColumnHeaders columnHeaders;
 
-        private Map<Integer, String> uploadHeaderNameKeys = new HashMap<>(4);
+        private Map<Integer, List<String>> uploadHeaderNameKeys = new HashMap<>(4);
 
         private DataGroup.Data uploadData;
 
         private CountDownLatch countDownLatch;
 
-        public EasyExcelReadListener(AgeiPort ageiPort, FileContext fileContext, ColumnHeaders columnHeaders) {
+        public ExcelReadListener(AgeiPort ageiPort, FileContext fileContext, ColumnHeaders columnHeaders) {
             this.ageiPort = ageiPort;
             this.columnHeaders = columnHeaders;
             this.fileContext = fileContext;
@@ -124,8 +126,8 @@ public class ExcelFileReader implements FileReader {
 
             for (Map.Entry<Integer, Object> entry : data.entrySet()) {
                 Integer column = entry.getKey();
-                String headerNameKey = uploadHeaderNameKeys.get(column);
-                ColumnHeader columnHeader = columnHeaders.getColumnHeaderByHeaderNameKey(headerNameKey);
+                List<String> headers = uploadHeaderNameKeys.get(column);
+                ColumnHeader columnHeader = columnHeaders.getColumnHeaderByHeaderName(headers);
                 if (columnHeader != null) {
                     String fieldName = columnHeader.getFieldName();
                     if (columnHeader.getDynamicColumn()) {
@@ -144,6 +146,10 @@ public class ExcelFileReader implements FileReader {
                     }
                 }
             }
+            for (Map.Entry<Integer, Object> entry : data.entrySet()) {
+                line.put(entry.getKey().toString(), entry.getValue());
+            }
+
             DataGroup.Item item = new DataGroup.Item();
             String sheetName = context.readSheetHolder().getSheetName();
             String sheetNo = context.readSheetHolder().getSheetNo().toString();
@@ -153,7 +159,15 @@ public class ExcelFileReader implements FileReader {
             item.setCode(code);
             item.setValues(line);
 
+            this.uploadData.getItems().add(item);
+        }
+
+        @Override
+        public void invokeHeadMap(Map<Integer, String> headMap, AnalysisContext context) {
             if (this.uploadData == null) {
+                String sheetName = context.readSheetHolder().getSheetName();
+                String sheetNo = context.readSheetHolder().getSheetNo().toString();
+                String groupName = sheetName + "@" + sheetNo;
                 this.uploadData = new DataGroup.Data();
                 this.uploadData.setCode(groupName);
                 this.uploadData.setItems(new ArrayList<>());
@@ -163,25 +177,23 @@ public class ExcelFileReader implements FileReader {
                 this.uploadData.setMeta(meta);
             }
 
-            this.uploadData.getItems().add(item);
-        }
-
-        @Override
-        public void invokeHeadMap(Map<Integer, String> headMap, AnalysisContext context) {
             for (Map.Entry<Integer, String> entry : headMap.entrySet()) {
                 Integer key = entry.getKey();
-                String headerNameKey = uploadHeaderNameKeys.get(key);
-                if (headerNameKey == null) {
-                    headerNameKey = entry.getValue();
+                List<String> headers = uploadHeaderNameKeys.get(key);
+                if (headers == null) {
+                    headers = new ArrayList<>();
+                    headers.add(entry.getValue());
                 } else {
-                    headerNameKey = headerNameKey + ColumnHeader.headerSplit + entry.getValue();
+                    headers.add(entry.getValue());
                 }
-                uploadHeaderNameKeys.put(key, headerNameKey);
+                uploadHeaderNameKeys.put(key, headers);
             }
         }
 
         @Override
         public void doAfterAllAnalysed(AnalysisContext context) {
+            Map<String, String> meta = this.uploadData.getMeta();
+            meta.put(ExcelConstants.sheetUploadHeaders, JsonUtil.toJsonString(this.uploadHeaderNameKeys));
             countDownLatch.countDown();
         }
 
