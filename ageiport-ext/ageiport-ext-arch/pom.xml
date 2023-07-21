@@ -5,11 +5,11 @@
     <parent>
         <artifactId>ageiport-ext</artifactId>
         <groupId>com.alibaba</groupId>
-        <version>0.2.4</version>
+        <version>0.2.5</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <version>0.2.4</version>
+    <version>0.2.5</version>
     <artifactId>ageiport-ext-arch</artifactId>
 
     <properties>
@@ -28,7 +28,7 @@
         <dependency>
             <groupId>com.alibaba</groupId>
             <artifactId>ageiport-common</artifactId>
-            <version>0.2.4</version>
+            <version>0.2.5</version>
         </dependency>
         <dependency>
             <groupId>org.javassist</groupId>
