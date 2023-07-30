@@ -5,6 +5,7 @@ import com.alibaba.ageiport.common.utils.JsonUtil;
 import com.alibaba.ageiport.processor.core.AgeiPort;
 import com.alibaba.ageiport.processor.core.model.api.impl.BizUserImpl;
 import com.alibaba.ageiport.processor.core.model.core.ColumnHeader;
+import com.alibaba.ageiport.processor.core.model.core.impl.ColumnHeaderImpl;
 import com.alibaba.ageiport.processor.core.model.core.impl.ColumnHeadersImpl;
 import com.alibaba.ageiport.processor.core.model.core.impl.MainTask;
 import com.alibaba.ageiport.processor.core.spi.task.factory.MainTaskContext;
@@ -13,6 +14,7 @@ import com.alibaba.ageiport.processor.core.spi.task.specification.TaskSpecificat
 import com.alibaba.ageiport.processor.core.task.importer.model.ImportTaskRuntimeConfigImpl;
 import com.alibaba.ageiport.processor.core.task.importer.model.ImportTaskSpecHolder;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -43,9 +45,17 @@ public class ImportMainTaskContextFactory<QUERY, DATA, VIEW> implements MainTask
         if (JsonUtil.isJson(runtimeParamString)) {
             ImportTaskRuntimeConfigImpl runtimeConfig = JsonUtil.toObject(runtimeParamString, ImportTaskRuntimeConfigImpl.class);
             context.setImportTaskRuntimeConfig(runtimeConfig);
-            List<ColumnHeader> columnHeaderList = runtimeConfig.getColumnHeaders();
-            ColumnHeadersImpl columnHeaders = new ColumnHeadersImpl(columnHeaderList);
-            context.setColumnHeaders(columnHeaders);
+            List<ColumnHeader> columnHeaders = runtimeConfig.getColumnHeaders();
+            List<ColumnHeaderImpl> headers = JsonUtil.toArrayObject(JsonUtil.toJsonString(runtimeConfig.getColumnHeaders()), ColumnHeaderImpl.class);
+
+            List<ColumnHeader> columnHeaderList = new ArrayList<>();
+            for (ColumnHeaderImpl columnHeader : headers) {
+                columnHeaderList.add(columnHeader);
+            }
+            runtimeConfig.setColumnHeaders(columnHeaderList);
+
+            ColumnHeadersImpl columnHeadersImpl = new ColumnHeadersImpl(columnHeaderList);
+            context.setColumnHeaders(columnHeadersImpl);
         }
         return context;
     }
