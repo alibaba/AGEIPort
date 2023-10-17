@@ -14,10 +14,10 @@ import com.alibaba.ageiport.task.server.repository.MainTaskInstanceRepository;
 import com.alibaba.ageiport.task.server.repository.query.TenantAppQuery;
 import io.quarkus.hibernate.reactive.panache.Panache;
 import io.smallrye.mutiny.Uni;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.ws.rs.*;
 import lombok.extern.slf4j.Slf4j;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.ws.rs.*;
 import java.util.Date;
 
 /**
@@ -88,19 +88,19 @@ public class MainTaskInstanceApiV1 {
         TenantAppQuery filter = new TenantAppQuery(request.getTenant(), request.getNamespace(), request.getApp(), config.getEnv());
 
         return repository.findByMainTaskId(filter, request.getMainTaskId())
-                .onItem().ifNotNull().transform(entity -> {
+                         .onItem().ifNotNull().transform(entity -> {
                     GetMainTaskInstanceResponse response = new GetMainTaskInstanceResponse();
                     response.setSuccess(true);
                     GetMainTaskInstanceResponse.Data data = BeanUtils.cloneProp(entity, GetMainTaskInstanceResponse.Data.class);
                     response.setData(data);
                     return response;
                 })
-                .onItem().ifNull().continueWith(() -> {
+                         .onItem().ifNull().continueWith(() -> {
                     GetMainTaskInstanceResponse response = new GetMainTaskInstanceResponse();
                     response.setSuccess(true);
                     return response;
                 })
-                .onFailure(Throwable.class).recoverWithItem(throwable -> {
+                         .onFailure(Throwable.class).recoverWithItem(throwable -> {
                     log.error("MainTaskInstanceApiV1#getMainTaskInstance failed, request:{}", request, throwable);
                     GetMainTaskInstanceResponse response = new GetMainTaskInstanceResponse();
                     response.setSuccess(false);
@@ -120,19 +120,19 @@ public class MainTaskInstanceApiV1 {
         TenantAppQuery filter = new TenantAppQuery(request.getTenant(), request.getNamespace(), request.getApp(), config.getEnv());
 
         return Panache.withTransaction(() -> repository.findByMainTaskId(filter, request.getMainTaskId())
-                        .onItem().ifNotNull().invoke(entity -> modifyEntity(request, entity)))
-                .onItem().ifNotNull().transform(entity -> {
+                                                       .onItem().ifNotNull().invoke(entity -> modifyEntity(request, entity)))
+                      .onItem().ifNotNull().transform(entity -> {
                     UpdateMainTaskInstanceResponse response = new UpdateMainTaskInstanceResponse();
                     response.setSuccess(true);
                     return response;
                 })
-                .onItem().ifNull().continueWith(() -> {
+                      .onItem().ifNull().continueWith(() -> {
                     UpdateMainTaskInstanceResponse response = new UpdateMainTaskInstanceResponse();
                     response.setSuccess(false);
                     response.setCode("NOT_FOUND");
                     return response;
                 })
-                .onFailure(Throwable.class).recoverWithItem(throwable -> {
+                      .onFailure(Throwable.class).recoverWithItem(throwable -> {
                     log.error("MainTaskInstanceApiV1#updateMainTaskInstance failed, request:{}", request, throwable);
                     UpdateMainTaskInstanceResponse response = new UpdateMainTaskInstanceResponse();
                     response.setSuccess(false);

@@ -2,12 +2,11 @@ package com.alibaba.ageiport.task.server.oauth;
 
 import com.alibaba.ageiport.sdk.core.Request;
 import com.alibaba.ageiport.task.server.config.TaskServerConfig;
-import io.quarkus.arc.Priority;
 import io.quarkus.logging.Log;
-
-import javax.interceptor.AroundInvoke;
-import javax.interceptor.Interceptor;
-import javax.interceptor.InvocationContext;
+import jakarta.annotation.Priority;
+import jakarta.interceptor.AroundInvoke;
+import jakarta.interceptor.Interceptor;
+import jakarta.interceptor.InvocationContext;
 
 @Oauth
 @Interceptor

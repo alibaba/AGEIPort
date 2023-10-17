@@ -1,10 +1,10 @@
 package com.alibaba.ageiport.task.server.entity;
 
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.DynamicUpdate;
 
-import javax.persistence.*;
 import java.util.Date;
 
 /**
@@ -14,15 +14,7 @@ import java.util.Date;
  */
 @Entity
 @DynamicUpdate
-@Table(name = "agei_main_task_instance",
-        indexes = {
-                @Index(name = "uk_mainTaskId", columnList = "mainTaskId", unique = true),
-                @Index(name = "idx_main_task", columnList = "tenant,namespace,app,env,code"),
-                @Index(name = "idx_bizUser", columnList = "bizUserTenant,bizUserOrg,bizUserId,bizUserKey"),
-                @Index(name = "idx_gmt_create", columnList = "gmtCreate"),
-                @Index(name = "idx_flowTaskId", columnList = "flowTaskId")
-        }
-)
+@Table(name = "agei_main_task_instance", indexes = {@Index(name = "uk_mainTaskId", columnList = "mainTaskId", unique = true), @Index(name = "idx_main_task", columnList = "tenant,namespace,app,env,code"), @Index(name = "idx_bizUser", columnList = "bizUserTenant,bizUserOrg,bizUserId,bizUserKey"), @Index(name = "idx_gmt_create", columnList = "gmtCreate"), @Index(name = "idx_flowTaskId", columnList = "flowTaskId")})
 @Getter
 @Setter
 public class MainTaskInstanceEntity {

@@ -1,9 +1,11 @@
 package com.alibaba.ageiport.task.server.http;
 
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.core.MediaType;
 import lombok.extern.slf4j.Slf4j;
 
-import javax.ws.rs.*;
-import javax.ws.rs.core.MediaType;
 
 /**
  * @author lingyi

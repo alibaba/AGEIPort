@@ -1,13 +1,14 @@
 package com.alibaba.ageiport.task.server.entity;
 
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.DynamicUpdate;
-import org.hibernate.annotations.FetchProfiles;
 
-import javax.persistence.*;
 import java.util.Date;
+
+import static jakarta.persistence.GenerationType.IDENTITY;
 
 /**
  * @author lingyi
@@ -25,7 +26,7 @@ import java.util.Date;
 public class SubTaskInstanceEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = IDENTITY)
     public Long id;
 
     /**

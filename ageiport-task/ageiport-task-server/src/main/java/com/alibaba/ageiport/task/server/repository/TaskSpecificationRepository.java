@@ -5,8 +5,8 @@ import com.alibaba.ageiport.task.server.repository.query.BaseQuery;
 import com.alibaba.ageiport.task.server.repository.query.TenantAppQuery;
 import io.quarkus.hibernate.reactive.panache.PanacheRepository;
 import io.smallrye.mutiny.Uni;
+import jakarta.enterprise.context.ApplicationScoped;
 
-import javax.enterprise.context.ApplicationScoped;
 
 /**
  * @author lingyi

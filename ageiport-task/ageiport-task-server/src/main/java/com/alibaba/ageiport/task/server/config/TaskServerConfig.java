@@ -1,9 +1,9 @@
 package com.alibaba.ageiport.task.server.config;
 
+import jakarta.enterprise.context.ApplicationScoped;
 import lombok.Data;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 
-import javax.enterprise.context.ApplicationScoped;
 
 
 /**

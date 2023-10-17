@@ -14,10 +14,10 @@ import com.alibaba.ageiport.task.server.repository.TaskSpecificationRepository;
 import com.alibaba.ageiport.task.server.repository.query.TenantAppQuery;
 import io.quarkus.hibernate.reactive.panache.Panache;
 import io.smallrye.mutiny.Uni;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.ws.rs.*;
 import lombok.extern.slf4j.Slf4j;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.ws.rs.*;
 import java.util.Date;
 
 /**
