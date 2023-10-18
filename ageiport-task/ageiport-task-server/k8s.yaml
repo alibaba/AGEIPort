@@ -40,7 +40,7 @@ spec:
       volumes:
         - name: volume
           hostPath:
-            path: /Users/lingyi/k8s-volumes/ageiport-task-server
+            path: /usr/local/k8s-volumes/ageiport-task-server
 ---
 apiVersion: v1
 kind: Service

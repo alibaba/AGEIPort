@@ -13,6 +13,7 @@ public class BizException extends RuntimeException {
     private String errorMessage;
 
     public BizException(String errorCode, String errorMessage) {
+        super(errorMessage);
         this.errorCode = errorCode;
         this.errorMessage = errorMessage;
     }

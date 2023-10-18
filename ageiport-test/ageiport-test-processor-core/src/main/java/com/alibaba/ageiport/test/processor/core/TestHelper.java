@@ -36,8 +36,36 @@ public class TestHelper {
     }
 
     public String file(String fileName) {
+
         return "." + File.separator + "import-xlsx" + File.separator + fileName;
     }
+
+
+    public void assertError(String mainTaskId) throws InterruptedException {
+        //1.创建进度查询请求参数GetTaskProgressParam
+        TaskProgressParam progressRequest = new TaskProgressParam();
+        progressRequest.setMainTaskId(mainTaskId);
+        //2.调用本地方法，查询任务进度。
+        TaskProgressResult taskProgress = ageiPort.getTaskService().getTaskProgress(progressRequest);
+        int sleepTime = 0;
+        log.info("getTaskProgress, taskProgress:{}", taskProgress);
+        //3.轮询任务进度，直至任务完成或出错
+        while (taskProgress == null || !taskProgress.getIsFinished() && !taskProgress.getIsError()) {
+            Thread.sleep(1000);
+            if (sleepTime++ > 100) {
+                Assertions.assertTrue(taskProgress.getIsFinished() || taskProgress.getIsError());
+            }
+            taskProgress = ageiPort.getTaskService().getTaskProgress(progressRequest);
+            if (taskProgress != null) {
+                log.info("getTaskProgress, percent:{}, stageName:{}", taskProgress.getPercent(), taskProgress.getStageName());
+            } else {
+                log.info("no progress...");
+            }
+        }
+        Assertions.assertTrue(taskProgress.getIsError());
+        Assertions.assertEquals(1, taskProgress.getPercent());
+    }
+
 
     public void assertWithoutFile(String mainTaskId) throws InterruptedException {
         //1.创建进度查询请求参数GetTaskProgressParam

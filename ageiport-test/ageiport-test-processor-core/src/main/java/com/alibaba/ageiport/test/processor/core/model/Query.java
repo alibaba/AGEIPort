@@ -24,6 +24,8 @@ public class Query {
 
     private Integer sliceOffset;
 
+    private boolean errorWhenQueryData;
+
 
 
     public Integer getErrorCount() {

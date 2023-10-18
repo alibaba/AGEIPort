@@ -175,7 +175,7 @@ public class ImportMainTaskWorker<QUERY, DATA, VIEW> extends AbstractMainTaskWor
 
         } catch (Throwable e) {
             log.error("doPrepare failed, main:{}", mainTaskId, e);
-            ageiPort.onError(mainTask, e);
+            ageiPort.onMainError(mainTask, e);
         } finally {
             IOUtils.closeQuietly(fileReader);
         }
@@ -246,7 +246,7 @@ public class ImportMainTaskWorker<QUERY, DATA, VIEW> extends AbstractMainTaskWor
             context.assertCurrentStage(stageProvider.mainTaskFinished());
         } catch (Throwable e) {
             log.error("StandaloneExportMainTaskWorker#doReduce failed, main:{}", mainTask.getMainTaskId(), e);
-            ageiPort.onError(mainTask, e);
+            ageiPort.onMainError(mainTask, e);
         } finally {
             IOUtils.closeQuietly(fileWriter);
             IOUtils.closeQuietly(fileStream);

@@ -3,20 +3,17 @@ package com.alibaba.ageiport.processor.core.task.exporter.worker;
 import com.alibaba.ageiport.common.logger.Logger;
 import com.alibaba.ageiport.common.logger.LoggerFactory;
 import com.alibaba.ageiport.processor.core.AgeiPort;
-import com.alibaba.ageiport.processor.core.constants.TaskStatus;
 import com.alibaba.ageiport.processor.core.model.api.BizDataGroup;
 import com.alibaba.ageiport.processor.core.model.api.BizUser;
 import com.alibaba.ageiport.processor.core.model.api.impl.BizExportPageImpl;
-import com.alibaba.ageiport.processor.core.model.core.impl.MainTask;
 import com.alibaba.ageiport.processor.core.model.core.impl.SubTask;
 import com.alibaba.ageiport.processor.core.spi.cache.BigDataCache;
 import com.alibaba.ageiport.processor.core.spi.eventbus.EventBus;
 import com.alibaba.ageiport.processor.core.spi.file.DataGroup;
 import com.alibaba.ageiport.processor.core.spi.task.factory.SubTaskContextFactory;
 import com.alibaba.ageiport.processor.core.spi.task.monitor.TaskStageEvent;
-import com.alibaba.ageiport.processor.core.spi.task.stage.CommonStage;
-import com.alibaba.ageiport.processor.core.spi.task.stage.SubTaskStageProvider;
 import com.alibaba.ageiport.processor.core.spi.task.selector.TaskSpiSelector;
+import com.alibaba.ageiport.processor.core.spi.task.stage.SubTaskStageProvider;
 import com.alibaba.ageiport.processor.core.task.AbstractSubTaskWorker;
 import com.alibaba.ageiport.processor.core.task.exporter.ExportProcessor;
 import com.alibaba.ageiport.processor.core.task.exporter.adapter.ExportProcessorAdapter;
@@ -24,7 +21,6 @@ import com.alibaba.ageiport.processor.core.task.exporter.context.ExportSubTaskCo
 import com.alibaba.ageiport.processor.core.task.exporter.model.ExportTaskRuntimeConfig;
 import com.alibaba.ageiport.processor.core.task.exporter.model.ExportTaskSpecification;
 
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -93,16 +89,8 @@ public class ExportSubTaskWorker<QUERY, DATA, VIEW> extends AbstractSubTaskWorke
             context.assertCurrentStage(stageProvider.subTaskFinished());
         } catch (Throwable e) {
             log.info("doMappingProcess failed, main:{}, sub:{}", subTask.getMainTaskId(), subTask.getSubTaskId(), e);
-            subTask.setStatus(TaskStatus.ERROR).setResultMessage(e.getMessage()).setGmtFinished(new Date());
-            ageiPort.getTaskServerClient().updateSubTask(subTask);
-            MainTask mainTask = new MainTask().setMainTaskId(subTask.getMainTaskId())
-                    .setStatus(TaskStatus.ERROR).setGmtFinished(new Date()).setResultMessage(e.getMessage());
-            ageiPort.getTaskServerClient().updateMainTask(mainTask);
-
-            EventBus eventBus = ageiPort.getEventBusManager().getEventBus(subTask.getExecuteType());
-            eventBus.post(TaskStageEvent.subTaskEvent(subTask.getSubTaskId(), CommonStage.ERROR));
-            eventBus.post(TaskStageEvent.mainTaskEvent(mainTask.getMainTaskId(), CommonStage.ERROR));
+            ageiPort.onMainError(subTask.getMainTaskId(), e);
+            ageiPort.onSubError(subTask, e);
         }
-
     }
 }

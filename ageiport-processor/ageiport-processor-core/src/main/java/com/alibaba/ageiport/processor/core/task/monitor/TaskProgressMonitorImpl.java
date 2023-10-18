@@ -5,6 +5,7 @@ import com.alibaba.ageiport.common.constants.ConstValues;
 import com.alibaba.ageiport.common.logger.Logger;
 import com.alibaba.ageiport.common.logger.LoggerFactory;
 import com.alibaba.ageiport.processor.core.AgeiPort;
+import com.alibaba.ageiport.processor.core.model.core.impl.MainTask;
 import com.alibaba.ageiport.processor.core.spi.publisher.ManageablePublisher;
 import com.alibaba.ageiport.processor.core.spi.publisher.PublishPayload;
 import com.alibaba.ageiport.processor.core.spi.publisher.PublisherManager;
@@ -17,6 +18,7 @@ import com.alibaba.ageiport.processor.core.task.event.TaskStageChangedEvent;
 
 import java.util.EventObject;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -81,19 +83,33 @@ public class TaskProgressMonitorImpl implements TaskProgressMonitor {
 
         Integer totalSubTaskCount = mainTaskProgress.getTotalSubTaskCount();
         if (totalSubTaskCount != null) {
-            Integer currentFinishedSubTaskCount = 0;
+            Integer currentSuccessSubTaskCount = 0;
             Integer currentErrorSubTaskCount = 0;
             Double currentSubTaskPercentSum = 0D;
 
             for (SubTaskProgress value : subTaskProgressMap.values()) {
                 if (value.getIsFinished()) {
-                    currentFinishedSubTaskCount += 1;
+                    currentSuccessSubTaskCount += 1;
                 } else if (value.getIsError()) {
                     currentErrorSubTaskCount += 1;
                 }
                 currentSubTaskPercentSum += value.getPercent();
             }
+            Integer currentFinishedSubTaskCount = currentSuccessSubTaskCount + currentErrorSubTaskCount;
+
+            Integer oldErrorSubTaskCount = mainTaskProgress.getErrorSubTaskCount();
+            Integer oldSuccessSubTaskCount = mainTaskProgress.getSuccessSubTaskCount();
+            Integer oldFinishedSubTaskCount = mainTaskProgress.getFinishedSubTaskCount();
+            if (!Objects.equals(oldErrorSubTaskCount, currentErrorSubTaskCount) || !Objects.equals(oldSuccessSubTaskCount, currentSuccessSubTaskCount) || !currentFinishedSubTaskCount.equals(oldFinishedSubTaskCount)) {
+                MainTask mainTask = ageiPort.getTaskServerClient().getMainTask(mainTaskProgress.getMainTaskId());
+                mainTask.setSubFinishedCount(currentFinishedSubTaskCount);
+                mainTask.setSubFailedCount(currentErrorSubTaskCount);
+                mainTask.setSubSuccessCount(currentSuccessSubTaskCount);
+                ageiPort.getTaskServerClient().updateMainTask(mainTask);
+            }
+            
             mainTaskProgress.setFinishedSubTaskCount(currentFinishedSubTaskCount);
+            mainTaskProgress.setSuccessSubTaskCount(currentSuccessSubTaskCount);
             mainTaskProgress.setErrorSubTaskCount(currentErrorSubTaskCount);
 
             Double subTaskExecuteWeight = subTaskExecuteEnd.getMaxPercent() - subTaskExecuteStart.getMinPercent();
@@ -104,9 +120,9 @@ public class TaskProgressMonitorImpl implements TaskProgressMonitor {
                 mainTaskProgress.setPercent(mainTaskPercent);
             }
 
-            logger.info("onSubTaskChanged, main:{}, sub:{}, total:{}, finished:{}, error:{}", mainTaskProgress.getMainTaskId(), subTaskProgress.getSubTaskId(), totalSubTaskCount, currentFinishedSubTaskCount, currentErrorSubTaskCount);
+            logger.info("onSubTaskChanged, main:{}, sub:{}, total:{}, finished:{}, error:{}", mainTaskProgress.getMainTaskId(), subTaskProgress.getSubTaskId(), totalSubTaskCount, currentSuccessSubTaskCount, currentErrorSubTaskCount);
 
-            if (totalSubTaskCount.equals(currentFinishedSubTaskCount + currentErrorSubTaskCount)) {
+            if (totalSubTaskCount.equals(currentSuccessSubTaskCount + currentErrorSubTaskCount)) {
                 Class<? extends EventObject> triggerEvent = subTaskExecuteEnd.getTriggerEvent();
                 ManageablePublisher<? extends EventObject> publisher = ageiPort.getPublisherManager().getPublisher(triggerEvent);
                 PublishPayload payload = new PublishPayload();

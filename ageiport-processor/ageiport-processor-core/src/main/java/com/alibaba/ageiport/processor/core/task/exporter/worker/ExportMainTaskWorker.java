@@ -160,7 +160,7 @@ public class ExportMainTaskWorker<QUERY, DATA, VIEW> extends AbstractMainTaskWor
             context.assertCurrentStage(stageProvider.mainTaskSaveSliceEnd());
         } catch (Throwable e) {
             log.error("StandaloneExportMainTaskWorker#doPrepare failed, main:{}", mainTaskId, e);
-            ageiPort.onError(mainTask, e);
+            ageiPort.onMainError(mainTask, e);
         }
 
     }
@@ -171,6 +171,10 @@ public class ExportMainTaskWorker<QUERY, DATA, VIEW> extends AbstractMainTaskWor
         InputStream fileStream = null;
         MainTask mainTask = getMainTask();
         try {
+            if (mainTask.getStatus().equals(TaskStatus.ERROR)) {
+                return;
+            }
+
             String executeType = mainTask.getExecuteType();
             String taskType = mainTask.getType();
             String taskCode = mainTask.getCode();
@@ -221,7 +225,7 @@ public class ExportMainTaskWorker<QUERY, DATA, VIEW> extends AbstractMainTaskWor
             context.assertCurrentStage(stageProvider.mainTaskFinished());
         } catch (Throwable e) {
             log.error("StandaloneExportMainTaskWorker#doReduce failed, main:{}", mainTask.getMainTaskId(), e);
-            ageiPort.onError(mainTask, e);
+            ageiPort.onMainError(mainTask, e);
         } finally {
             IOUtils.closeQuietly(fileWriter);
             IOUtils.closeQuietly(fileStream);

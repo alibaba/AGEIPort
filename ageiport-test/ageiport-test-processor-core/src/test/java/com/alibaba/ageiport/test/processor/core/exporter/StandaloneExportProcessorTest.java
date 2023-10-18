@@ -41,4 +41,31 @@ public class StandaloneExportProcessorTest {
         testHelper.assertWithFile(response.getMainTaskId(), query.getTotalCount());
     }
 
+
+    @SneakyThrows
+    @Test
+    public void testSliceError() {
+        //1.初始化AgeiPort实例
+        AgeiPortOptions options = AgeiPortOptions.debug();
+        options.setMainTaskCallback("TestMainTaskCallback");
+
+        AgeiPort ageiPort = AgeiPort.ageiPort(options);
+
+        //2.构造查询参数TaskExecuteParam
+        Query query = new Query();
+        query.setTotalCount(1);
+        query.setErrorWhenQueryData(true);
+
+        //3.调用本地方法executeTask，开始执行任务，并获取任务实例ID。
+        TaskExecuteParam request = new TaskExecuteParam();
+        request.setTaskSpecificationCode(StandaloneExportProcessor.class.getSimpleName());
+        request.setBizUserId("userId");
+        request.setBizQuery(JsonUtil.toJsonString(query));
+        TaskExecuteResult response = ageiPort.getTaskService().executeTask(request);
+        Assertions.assertTrue(response.getSuccess());
+
+        //4.使用内部封装的TaskHelp方法判断任务是否执行成功
+        TestHelper testHelper = new TestHelper(ageiPort);
+        testHelper.assertError(response.getMainTaskId());
+    }
 }

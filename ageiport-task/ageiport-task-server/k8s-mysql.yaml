@@ -31,7 +31,7 @@ spec:
       volumes:
         - name: mysql-persistent-storage
           hostPath:
-            path: /Users/lingyi/k8s-volumes/data/mysql-persistent-storage
+            path: /usr/local/k8s-volumes/data/mysql-persistent-storage
 ---
 apiVersion: v1
 kind: Service

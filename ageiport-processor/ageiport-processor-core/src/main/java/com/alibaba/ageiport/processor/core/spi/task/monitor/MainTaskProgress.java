@@ -34,6 +34,8 @@ public class MainTaskProgress implements Serializable {
 
     private Integer finishedSubTaskCount;
 
+    private Integer successSubTaskCount;
+
     private Integer errorSubTaskCount;
 
     private List<TaskProgressLog> logs;

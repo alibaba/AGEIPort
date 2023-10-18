@@ -30,6 +30,10 @@ public class StandaloneExportProcessor implements ExportProcessor<Query, Data, V
     //3.实现ExportProcessor接口的queryData方法
     @Override
     public List<Data> queryData(BizUser user, Query query, BizExportPage bizExportPage) throws BizException {
+        if (query.isErrorWhenQueryData()) {
+            throw new BizException("BIZ_EXC_001", "Error when query");
+        }
+
         List<Data> dataList = new ArrayList<>();
 
         Integer offset = bizExportPage.getOffset();
