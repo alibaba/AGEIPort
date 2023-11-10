@@ -53,7 +53,7 @@ public class StandaloneExportProcessorTest {
 
         //2.构造查询参数TaskExecuteParam
         Query query = new Query();
-        query.setTotalCount(1);
+        query.setTotalCount(3000);
         query.setErrorWhenQueryData(true);
 
         //3.调用本地方法executeTask，开始执行任务，并获取任务实例ID。

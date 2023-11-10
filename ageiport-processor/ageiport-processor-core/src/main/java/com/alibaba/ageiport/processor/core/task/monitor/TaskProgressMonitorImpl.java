@@ -78,8 +78,8 @@ public class TaskProgressMonitorImpl implements TaskProgressMonitor {
         Map<String, SubTaskProgress> subTaskProgressMap = mainTaskProgress.getSubTaskProgressMap();
 
         MainTaskStageProvider mainStageProvider = (MainTaskStageProvider) mainTaskStage.getStageProvider();
-        Stage subTaskExecuteStart = mainStageProvider.subTaskExecuteStart();
-        Stage subTaskExecuteEnd = mainStageProvider.subTaskExecuteEnd();
+        Stage allSubTaskExecuteStart = mainStageProvider.subTaskExecuteStart();
+        Stage allSubTaskExecuteEnd = mainStageProvider.subTaskExecuteEnd();
 
         Integer totalSubTaskCount = mainTaskProgress.getTotalSubTaskCount();
         if (totalSubTaskCount != null) {
@@ -112,10 +112,10 @@ public class TaskProgressMonitorImpl implements TaskProgressMonitor {
             mainTaskProgress.setSuccessSubTaskCount(currentSuccessSubTaskCount);
             mainTaskProgress.setErrorSubTaskCount(currentErrorSubTaskCount);
 
-            Double subTaskExecuteWeight = subTaskExecuteEnd.getMaxPercent() - subTaskExecuteStart.getMinPercent();
+            Double subTaskExecuteWeight = allSubTaskExecuteEnd.getMaxPercent() - allSubTaskExecuteStart.getMinPercent();
             Double avgSubTaskPercent = currentSubTaskPercentSum / totalSubTaskCount;
             Double subTaskExecutePercentOfMain = avgSubTaskPercent * subTaskExecuteWeight;
-            Double mainTaskPercent = subTaskExecuteStart.getMinPercent() + subTaskExecutePercentOfMain;
+            Double mainTaskPercent = allSubTaskExecuteStart.getMinPercent() + subTaskExecutePercentOfMain;
             if (mainTaskProgress.getPercent() < mainTaskPercent) {
                 mainTaskProgress.setPercent(mainTaskPercent);
             }
@@ -123,7 +123,7 @@ public class TaskProgressMonitorImpl implements TaskProgressMonitor {
             logger.info("onSubTaskChanged, main:{}, sub:{}, total:{}, finished:{}, error:{}", mainTaskProgress.getMainTaskId(), subTaskProgress.getSubTaskId(), totalSubTaskCount, currentSuccessSubTaskCount, currentErrorSubTaskCount);
 
             if (totalSubTaskCount.equals(currentSuccessSubTaskCount + currentErrorSubTaskCount)) {
-                Class<? extends EventObject> triggerEvent = subTaskExecuteEnd.getTriggerEvent();
+                Class<? extends EventObject> triggerEvent = allSubTaskExecuteEnd.getTriggerEvent();
                 ManageablePublisher<? extends EventObject> publisher = ageiPort.getPublisherManager().getPublisher(triggerEvent);
                 PublishPayload payload = new PublishPayload();
                 payload.setMainTaskId(mainTaskProgress.getMainTaskId());

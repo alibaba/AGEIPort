@@ -88,7 +88,7 @@ public class ExportSubTaskWorker<QUERY, DATA, VIEW> extends AbstractSubTaskWorke
             context.goNextStageEventNew();
             context.assertCurrentStage(stageProvider.subTaskFinished());
         } catch (Throwable e) {
-            log.info("doMappingProcess failed, main:{}, sub:{}", subTask.getMainTaskId(), subTask.getSubTaskId(), e);
+            log.error("doMappingProcess failed, main:{}, sub:{}", subTask.getMainTaskId(), subTask.getSubTaskId(), e);
             ageiPort.onMainError(subTask.getMainTaskId(), e);
             ageiPort.onSubError(subTask, e);
         }

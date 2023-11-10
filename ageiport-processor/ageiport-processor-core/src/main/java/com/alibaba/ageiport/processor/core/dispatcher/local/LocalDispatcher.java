@@ -7,6 +7,7 @@ import com.alibaba.ageiport.processor.core.executor.MainWorkerExecutor;
 import com.alibaba.ageiport.processor.core.executor.SubWorkerExecutor;
 import com.alibaba.ageiport.processor.core.model.core.impl.MainTask;
 import com.alibaba.ageiport.processor.core.model.core.impl.SubTask;
+import com.alibaba.ageiport.processor.core.spi.client.TaskServerClient;
 import com.alibaba.ageiport.processor.core.spi.dispatcher.Dispatcher;
 import com.alibaba.ageiport.processor.core.spi.dispatcher.RootDispatcherContext;
 import com.alibaba.ageiport.processor.core.spi.dispatcher.SubDispatcherContext;
@@ -74,7 +75,8 @@ public class LocalDispatcher implements Dispatcher {
     @Override
     public void dispatchMainTaskReduce(RootDispatcherContext context) {
         String mainTaskId = context.getMainTaskId();
-        MainTask mainTask = ageiPort.getTaskServerClient().getMainTask(mainTaskId);
+        TaskServerClient taskServerClient = ageiPort.getTaskServerClient();
+        MainTask mainTask = taskServerClient.getMainTask(mainTaskId);
         TaskSpecificationRegistry taskSpecificationRegistry = ageiPort.getSpecificationRegistry();
         TaskSpec taskSpec = taskSpecificationRegistry.get(mainTask.getCode());
 

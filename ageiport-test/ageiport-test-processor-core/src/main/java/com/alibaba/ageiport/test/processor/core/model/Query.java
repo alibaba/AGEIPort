@@ -26,6 +26,7 @@ public class Query {
 
     private boolean errorWhenQueryData;
 
+    private boolean errorWhenWriteData;
 
 
     public Integer getErrorCount() {

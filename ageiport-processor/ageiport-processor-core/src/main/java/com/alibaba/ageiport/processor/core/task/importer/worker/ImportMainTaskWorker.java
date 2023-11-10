@@ -188,6 +188,10 @@ public class ImportMainTaskWorker<QUERY, DATA, VIEW> extends AbstractMainTaskWor
         InputStream fileStream = null;
         MainTask mainTask = getMainTask();
         try {
+            if (mainTask.getStatus().equals(TaskStatus.ERROR)) {
+                return;
+            }
+
             String executeType = mainTask.getExecuteType();
             String taskType = mainTask.getType();
             String taskCode = mainTask.getCode();

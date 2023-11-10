@@ -57,6 +57,9 @@ public class StandaloneImportProcessor implements ImportProcessor<Query, Data, V
         BizImportResultImpl<View, Data> result = new BizImportResultImpl<>();
         logger.info(JsonUtil.toJsonString(data));
         result.setView(query.getWriteErrorData());
+        if (query.isErrorWhenWriteData()) {
+            throw new IllegalStateException("Error when write");
+        }
         return result;
     }
 
