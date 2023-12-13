@@ -7,7 +7,7 @@
     <groupId>com.alibaba</groupId>
     <artifactId>ageiport-parent</artifactId>
     <packaging>pom</packaging>
-    <version>0.3.0</version>
+    <version>0.3.1</version>
     <name>AGEIPort</name>
     <description>AGEIPort is alibaba generic export import framework in Java</description>
     <url>https://github.com/alibaba/AGEIPort</url>
