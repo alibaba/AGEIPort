@@ -39,6 +39,7 @@ public class StandaloneExportProcessorTest {
         //4.使用内部封装的TaskHelp方法判断任务是否执行成功
         TestHelper testHelper = new TestHelper(ageiPort);
         testHelper.assertWithFile(response.getMainTaskId(), query.getTotalCount());
+        Thread.sleep(5000);
     }
 
 

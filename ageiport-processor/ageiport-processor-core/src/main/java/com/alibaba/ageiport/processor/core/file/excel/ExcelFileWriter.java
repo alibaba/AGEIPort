@@ -3,6 +3,7 @@ package com.alibaba.ageiport.processor.core.file.excel;
 import com.alibaba.ageiport.common.io.FastByteArrayOutputStream;
 import com.alibaba.ageiport.common.utils.IOUtils;
 import com.alibaba.ageiport.common.utils.JsonUtil;
+import com.alibaba.ageiport.common.utils.StringUtils;
 import com.alibaba.ageiport.ext.arch.ExtensionLoader;
 import com.alibaba.ageiport.processor.core.AgeiPort;
 import com.alibaba.ageiport.processor.core.AgeiPortOptions;
@@ -64,24 +65,30 @@ public class ExcelFileWriter implements FileWriter {
     }
 
     private void initSheetsByHeaders() {
-        List<Map.Entry<Integer, String>> collect = columnHeaders.getColumnHeaders()
+        List<Map.Entry<Integer, String>> groups = columnHeaders
+                .getColumnHeaders()
                 .stream()
-                .filter(s -> !s.getGroupIndex().equals(-1))
                 .map(s -> new AbstractMap.SimpleEntry<>(s.getGroupIndex(), s.getGroupName()))
+                .distinct()
                 .collect(Collectors.toList());
 
-        for (Map.Entry<Integer, String> indexName : collect) {
+        for (Map.Entry<Integer, String> indexName : groups) {
             Integer sheetNo = indexName.getKey() < 0 ? 0 : indexName.getKey();
             String sheetName = indexName.getValue();
+            if (StringUtils.isEmpty(sheetName)) {
+                sheetName = "sheet" + (sheetNo + 1);
+            }
 
             if (!this.sheetNameNoMap.containsKey(sheetName)) {
-                List<List<String>> head = columnHeaders.getColumnHeaders().stream()
+                List<List<String>> head = columnHeaders
+                        .getColumnHeaders().stream()
                         .filter(s -> !s.getIgnoreHeader())
                         .filter(s -> s.getGroupIndex().equals(sheetNo) || s.getGroupIndex().equals(-1))
                         .map(ColumnHeader::getHeaderName)
                         .collect(Collectors.toList());
 
-                ExcelWriterSheetBuilder sheetBuilder = EasyExcel.writerSheet()
+                ExcelWriterSheetBuilder sheetBuilder = EasyExcel
+                        .writerSheet()
                         .sheetNo(sheetNo)
                         .sheetName(sheetName)
                         .needHead(true)
@@ -137,16 +144,16 @@ public class ExcelFileWriter implements FileWriter {
 
             if (!this.writeSheetMap.containsKey(sheetNo)) {
                 List<List<String>> head = columnHeaders.getColumnHeaders().stream()
-                        .filter(s -> !s.getIgnoreHeader())
-                        .filter(s -> s.getGroupIndex().equals(sheetNo) || s.getGroupIndex().equals(-1))
-                        .map(ColumnHeader::getHeaderName)
-                        .collect(Collectors.toList());
+                                                       .filter(s -> !s.getIgnoreHeader())
+                                                       .filter(s -> s.getGroupIndex().equals(sheetNo) || s.getGroupIndex().equals(-1))
+                                                       .map(ColumnHeader::getHeaderName)
+                                                       .collect(Collectors.toList());
 
                 ExcelWriterSheetBuilder sheetBuilder = EasyExcel.writerSheet()
-                        .sheetNo(sheetNo)
-                        .sheetName(sheetName)
-                        .needHead(true)
-                        .head(head);
+                                                                .sheetNo(sheetNo)
+                                                                .sheetName(sheetName)
+                                                                .needHead(true)
+                                                                .head(head);
 
 
                 ExtensionLoader<ExcelWriteHandlerProvider> extensionLoader = ExtensionLoader.getExtensionLoader(ExcelWriteHandlerProvider.class);
