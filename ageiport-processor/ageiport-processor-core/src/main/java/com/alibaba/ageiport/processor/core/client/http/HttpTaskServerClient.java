@@ -10,12 +10,13 @@ import com.alibaba.ageiport.processor.core.model.core.impl.MainTask;
 import com.alibaba.ageiport.processor.core.model.core.impl.SubTask;
 import com.alibaba.ageiport.processor.core.model.core.impl.TaskSpecification;
 import com.alibaba.ageiport.processor.core.spi.client.CreateMainTaskRequest;
-import com.alibaba.ageiport.processor.core.spi.client.CreateSubTasksRequest;
 import com.alibaba.ageiport.processor.core.spi.client.CreateSpecificationRequest;
+import com.alibaba.ageiport.processor.core.spi.client.CreateSubTasksRequest;
 import com.alibaba.ageiport.processor.core.spi.client.TaskServerClient;
 import com.alibaba.ageiport.task.server.model.*;
 import okhttp3.*;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -35,15 +36,14 @@ public class HttpTaskServerClient implements TaskServerClient {
 
     private OkHttpClient client;
 
+    HttpTaskServerClientOptions httpTaskServerClientOptions;
+
     public HttpTaskServerClient(AgeiPort ageiPort, HttpTaskServerClientOptions options) {
         this.ageiPort = ageiPort;
         this.domain = options.getSchema() + "://" + options.getEndpoint() + ":" + options.getPort();
         this.timeoutMs = options.getTimeoutMs();
-        this.client = new OkHttpClient().newBuilder()
-                .callTimeout(timeoutMs, TimeUnit.MILLISECONDS)
-                .connectTimeout(timeoutMs, TimeUnit.MILLISECONDS)
-                .readTimeout(timeoutMs, TimeUnit.MILLISECONDS)
-                .writeTimeout(timeoutMs, TimeUnit.MILLISECONDS).build();
+        this.client = new OkHttpClient().newBuilder().callTimeout(timeoutMs, TimeUnit.MILLISECONDS).connectTimeout(timeoutMs, TimeUnit.MILLISECONDS).readTimeout(timeoutMs, TimeUnit.MILLISECONDS).writeTimeout(timeoutMs, TimeUnit.MILLISECONDS).retryOnConnectionFailure(true).build();
+        this.httpTaskServerClientOptions = options;
     }
 
     @Override
@@ -151,17 +151,37 @@ public class HttpTaskServerClient implements TaskServerClient {
         String requestAction = request.getAction();
 
         String url = requestDomain + "/" + requestVersion + "/" + requestAction;
-        Request httpRequest = new Request.Builder()
-                .url(url)
-                .post(body)
-                .build();
+        Request httpRequest = new Request.Builder().url(url).post(body).build();
         try (Response httpResponse = client.newCall(httpRequest).execute()) {
             ResponseBody responseBody = httpResponse.body();
             String bodyAsString = responseBody.string();
             return JsonUtil.toObject(bodyAsString, request.getResponseClass());
         } catch (Throwable e) {
+            LOGGER.error("http request failed, but will retry:{} times", httpTaskServerClientOptions.getRetryTimes(), e);
+
+            int retryTimes = 1;
+            while (retryTimes <= httpTaskServerClientOptions.getRetryTimes()) {
+                try {
+                    String retryResult = retryRequest(httpRequest);
+                    LOGGER.info("http request failed, but retry success, already retry {} times", retryTimes);
+                    return JsonUtil.toObject(retryResult, request.getResponseClass());
+                } catch (Throwable retryException) {
+                    LOGGER.error("http request retry failed, already retry {} times", retryTimes, retryException);
+                }
+                retryTimes++;
+            }
+            throw new IllegalStateException(e);
+        }
+    }
+
+    public String retryRequest(Request httpRequest) throws IOException {
+        try (Response httpResponse = client.newCall(httpRequest).execute()) {
+            ResponseBody responseBody = httpResponse.body();
+            String bodyAsString = responseBody.string();
+            return bodyAsString;
+        } catch (Throwable e) {
             LOGGER.error("http request failed, ", e);
-            throw new IllegalArgumentException(e);
+            throw new IllegalStateException(e);
         }
     }
 

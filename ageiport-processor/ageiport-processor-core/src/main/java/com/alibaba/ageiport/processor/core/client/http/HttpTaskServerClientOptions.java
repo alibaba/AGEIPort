@@ -27,4 +27,6 @@ public class HttpTaskServerClientOptions implements TaskServerClientOptions {
     private Integer port = 9821;
 
     private Integer timeoutMs = 3000;
+
+    private Integer retryTimes = 3;
 }
