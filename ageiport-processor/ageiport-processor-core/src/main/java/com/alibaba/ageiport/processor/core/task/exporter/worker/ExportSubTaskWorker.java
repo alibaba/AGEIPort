@@ -20,6 +20,7 @@ import com.alibaba.ageiport.processor.core.task.exporter.adapter.ExportProcessor
 import com.alibaba.ageiport.processor.core.task.exporter.context.ExportSubTaskContext;
 import com.alibaba.ageiport.processor.core.task.exporter.model.ExportTaskRuntimeConfig;
 import com.alibaba.ageiport.processor.core.task.exporter.model.ExportTaskSpecification;
+import com.alibaba.ageiport.processor.core.task.exporter.stage.ExportSubTaskStageProvider;
 
 import java.util.List;
 
@@ -50,6 +51,7 @@ public class ExportSubTaskWorker<QUERY, DATA, VIEW> extends AbstractSubTaskWorke
 
             ExportSubTaskContext<QUERY, DATA, VIEW> context = (ExportSubTaskContext) contextFactory.create(ageiPort, subTaskId);
             context.setStage(stageProvider.subTaskStart());
+            context.eventCurrentStage();
 
             ExportTaskSpecification<QUERY, DATA, VIEW> exportTaskSpec = context.getExportTaskSpec();
             ExportProcessor<QUERY, DATA, VIEW> processor = exportTaskSpec.getProcessor();
@@ -58,7 +60,7 @@ public class ExportSubTaskWorker<QUERY, DATA, VIEW> extends AbstractSubTaskWorke
             BizUser bizUser = context.getBizUser();
             QUERY query = context.getQuery();
 
-            context.goNextStageEventNew();
+            context.goNextStageEventNew(ExportSubTaskStageProvider.S04_EXECUTE_QUERY_DATA_START);
             ExportTaskRuntimeConfig runtimeConfig = context.getExportTaskRuntimeConfig();
             BizExportPageImpl page = new BizExportPageImpl();
             page.setNo(runtimeConfig.getNo());
@@ -66,26 +68,26 @@ public class ExportSubTaskWorker<QUERY, DATA, VIEW> extends AbstractSubTaskWorke
             page.setSize(runtimeConfig.getPageSize());
             page.setAttributes(runtimeConfig.getAttributes());
             List<DATA> dataList = adapter.queryData(bizUser, query, page, exportTaskSpec.getProcessor(), context);
-            context.goNextStageEventNew();
+            context.goNextStageEventNew(ExportSubTaskStageProvider.S05_EXECUTE_QUERY_DATA_END);
 
-            context.goNextStageEventNew();
+            context.goNextStageEventNew(ExportSubTaskStageProvider.S06_EXECUTE_CONVERT_START);
             List<VIEW> viewList = adapter.convert(bizUser, query, dataList, exportTaskSpec.getProcessor(), context);
-            context.goNextStageEventNew();
+            context.goNextStageEventNew(ExportSubTaskStageProvider.S07_EXECUTE_CONVERT_END);
 
-            context.goNextStageEventNew();
+            context.goNextStageEventNew(ExportSubTaskStageProvider.S08_EXECUTE_GROUP_START);
             BizDataGroup<VIEW> group = adapter.group(bizUser, query, viewList, exportTaskSpec.getProcessor(), context);
-            context.goNextStageEventNew();
+            context.goNextStageEventNew(ExportSubTaskStageProvider.S09_EXECUTE_GROUP_END);
 
-            context.goNextStageEventNew();
+            context.goNextStageEventNew(ExportSubTaskStageProvider.S10_EXECUTE_TO_MAP_START);
             DataGroup dataGroup = adapter.getDataGroup(bizUser, query, group, exportTaskSpec.getProcessor(), context);
-            context.goNextStageEventNew();
+            context.goNextStageEventNew(ExportSubTaskStageProvider.S11_EXECUTE_TO_MAP_END);
 
-            context.goNextStageEventNew();
+            context.goNextStageEventNew(ExportSubTaskStageProvider.S12_SAVE_DATA_START);
             BigDataCache cache = ageiPort.getBigDataCacheManager().getBigDataCacheCache(subTask.getExecuteType());
             cache.put(subTaskId, dataGroup);
-            context.goNextStageEventNew();
+            context.goNextStageEventNew(ExportSubTaskStageProvider.S13_SAVE_DATA_END);
 
-            context.goNextStageEventNew();
+            context.goNextStageEventNew(ExportSubTaskStageProvider.S14_FINISHED);
             context.assertCurrentStage(stageProvider.subTaskFinished());
         } catch (Throwable e) {
             log.error("doMappingProcess failed, main:{}, sub:{}", subTask.getMainTaskId(), subTask.getSubTaskId(), e);

@@ -20,6 +20,7 @@ import com.alibaba.ageiport.processor.core.model.core.impl.MainTask;
 import com.alibaba.ageiport.processor.core.spi.cache.BigDataCache;
 import com.alibaba.ageiport.processor.core.spi.cache.BigDataCacheManager;
 import com.alibaba.ageiport.processor.core.spi.client.CreateSubTasksRequest;
+import com.alibaba.ageiport.processor.core.spi.client.TaskServerClient;
 import com.alibaba.ageiport.processor.core.spi.convertor.Model;
 import com.alibaba.ageiport.processor.core.spi.file.DataGroup;
 import com.alibaba.ageiport.processor.core.spi.file.FileContext;
@@ -42,6 +43,7 @@ import com.alibaba.ageiport.processor.core.task.exporter.model.ExportTaskRuntime
 import com.alibaba.ageiport.processor.core.task.exporter.model.ExportTaskSpecification;
 import com.alibaba.ageiport.processor.core.task.exporter.slice.ExportSlice;
 import com.alibaba.ageiport.processor.core.task.exporter.slice.ExportSliceStrategy;
+import com.alibaba.ageiport.processor.core.task.exporter.stage.ExportMainTaskStageProvider;
 import com.alibaba.ageiport.processor.core.utils.HeadersUtil;
 
 import java.io.InputStream;
@@ -77,6 +79,7 @@ public class ExportMainTaskWorker<QUERY, DATA, VIEW> extends AbstractMainTaskWor
             context.getMainTask().setGmtStart(new Date());
             context.save();
             context.setStage(stageProvider.mainTaskStart());
+            context.eventCurrentStage();
 
             ExportTaskSpecification<QUERY, DATA, VIEW> taskSpec = context.getExportTaskSpec();
             ExportProcessor<QUERY, DATA, VIEW> processor = taskSpec.getProcessor();
@@ -85,27 +88,31 @@ public class ExportMainTaskWorker<QUERY, DATA, VIEW> extends AbstractMainTaskWor
             BizUser bizUser = context.getBizUser();
             QUERY query = context.getQuery();
 
-            context.goNextStageEventNew();
+            context.goNextStageEventNew(ExportMainTaskStageProvider.S05_TASK_RUNTIME_CONFIG_START);
             BizExportTaskRuntimeConfig bizExportTaskRuntimeConfig = adapter.taskRuntimeConfig(bizUser, query, processor, context);
             context.load(bizExportTaskRuntimeConfig);
-            context.goNextStageEventNew();
+            context.goNextStageEventNew(ExportMainTaskStageProvider.S06_TASK_RUNTIME_CONFIG_END);
 
-            context.goNextStageEventNew();
+
+            context.goNextStageEventNew(ExportMainTaskStageProvider.S07_RESET_QUERY_START);
             QUERY resetQuery = adapter.resetQuery(bizUser, query, processor, context);
             context.load(resetQuery);
-            context.goNextStageEventNew();
+            context.goNextStageEventNew(ExportMainTaskStageProvider.S08_RESET_QUERY_END);
 
-            context.goNextStageEventNew();
+            context.goNextStageEventNew(ExportMainTaskStageProvider.S09_TOTAL_COUNT_START);
             Integer totalCount = adapter.totalCount(bizUser, query, processor, context);
             context.load(totalCount);
-            context.goNextStageEventNew();
+            context.goNextStageEventNew(ExportMainTaskStageProvider.S10_TOTAL_COUNT_END);
 
-            context.goNextStageEventNew();
+
+            context.goNextStageEventNew(ExportMainTaskStageProvider.S11_GET_HEADERS_START);
             BizColumnHeaders bizColumnHeaders = adapter.getHeaders(bizUser, query, processor, context);
-            context.goNextStageEventNew();
-            context.goNextStageEventNew();
+            context.goNextStageEventNew(ExportMainTaskStageProvider.S12_GET_HEADERS_END);
+
+            context.goNextStageEventNew(ExportMainTaskStageProvider.S13_GET_DYNAMIC_HEADERS_START);
             BizDynamicColumnHeaders bizDynamicColumnHeaders = adapter.getDynamicHeaders(bizUser, query, processor, context);
-            context.goNextStageEventNew();
+            context.goNextStageEventNew(ExportMainTaskStageProvider.S14_GET_DYNAMIC_HEADERS_END);
+
             ColumnHeaders columnHeaders = HeadersUtil.buildHeaders(bizColumnHeaders, taskSpec.getViewClass(), bizDynamicColumnHeaders);
             for (ColumnHeader columnHeader : columnHeaders.getColumnHeaders()) {
                 if (columnHeader.getIgnoreHeader() == null) {
@@ -114,22 +121,21 @@ public class ExportMainTaskWorker<QUERY, DATA, VIEW> extends AbstractMainTaskWor
             }
             context.load(columnHeaders);
 
-            context.goNextStageEventNew();
+            context.goNextStageEventNew(ExportMainTaskStageProvider.S15_TASK_SLICE_START);
             String sliceStrategyName = context.getExportTaskRuntimeConfig().getTaskSliceStrategy();
             ExportSliceStrategy<QUERY, DATA, VIEW> sliceStrategy = (ExportSliceStrategy) ExtensionLoader.getExtensionLoader(SliceStrategy.class).getExtension(sliceStrategyName);
             List<ExportSlice> slices = sliceStrategy.slice(context);
             context.load(slices);
-            context.goNextStageEventNew();
+            context.goNextStageEventNew(ExportMainTaskStageProvider.S16_TASK_SLICE_END);
 
             context.save();
-
-            context.goNextStageEventNew();
 
             if (totalCount == 0) {
                 doReduce();
                 return;
             }
 
+            context.goNextStageEventNew(ExportMainTaskStageProvider.S17_SAVE_SUB_TASK_START);
             List<CreateSubTasksRequest.SubTaskInstance> subTaskInstances = new ArrayList<>();
             for (ExportSlice slice : slices) {
                 CreateSubTasksRequest.SubTaskInstance subTaskInstance = new CreateSubTasksRequest.SubTaskInstance();
@@ -147,16 +153,17 @@ public class ExportMainTaskWorker<QUERY, DATA, VIEW> extends AbstractMainTaskWor
             CreateSubTasksRequest createSubTasksRequest = new CreateSubTasksRequest();
             createSubTasksRequest.setMainTaskId(mainTaskId);
             createSubTasksRequest.setSubTaskInstances(subTaskInstances);
-            ageiPort.getTaskServerClient().createSubTask(createSubTasksRequest);
+            TaskServerClient taskServerClient = ageiPort.getTaskServerClient();
+            taskServerClient.createSubTask(createSubTasksRequest);
 
             SubTaskStageProvider subTaskStageProvider = spiSelector.selectExtension(executeType, taskType, taskCode, SubTaskStageProvider.class);
             Stage subTaskCreated = subTaskStageProvider.subTaskCreated();
             for (ExportSlice slice : slices) {
                 String subTaskId = TaskIdUtil.genSubTaskId(mainTaskId, slice.getNo());
-                ageiPort.getEventBusManager().getEventBus(executeType).post(TaskStageEvent.subTaskEvent(subTaskId, subTaskCreated));
+                TaskStageEvent event = TaskStageEvent.subTaskEvent(subTaskId, subTaskCreated);
+                ageiPort.getEventBusManager().getEventBus(executeType).post(event);
             }
-
-            context.goNextStageEventNew();
+            context.goNextStageEventNew(ExportMainTaskStageProvider.S18_SAVE_SUB_TASK_END);
             context.assertCurrentStage(stageProvider.mainTaskSaveSliceEnd());
         } catch (Throwable e) {
             log.error("StandaloneExportMainTaskWorker#doPrepare failed, main:{}", mainTaskId, e);
@@ -207,9 +214,9 @@ public class ExportMainTaskWorker<QUERY, DATA, VIEW> extends AbstractMainTaskWor
             }
 
             fileStream = fileWriter.finish();
-            context.goNextStageEventNew();
+            context.goNextStageEventNew(ExportMainTaskStageProvider.S24_WRITE_FILE_END);
 
-            context.goNextStageEventNew();
+            context.goNextStageEventNew(ExportMainTaskStageProvider.S25_SAVE_FILE_START);
             FileStore fileStore = ageiPort.getFileStore();
             String key = mainTask.getMainTaskId() + "." + runtimeConfig.getFileType();
             fileStore.save(key, fileStream, new HashMap<>());
@@ -217,11 +224,11 @@ public class ExportMainTaskWorker<QUERY, DATA, VIEW> extends AbstractMainTaskWor
 
             String feature = FeatureUtils.putFeature(contextMainTask.getFeature(), MainTaskFeatureKeys.OUTPUT_FILE_KEY, key);
             contextMainTask.setFeature(feature);
-            context.goNextStageEventNew();
+            context.goNextStageEventNew(ExportMainTaskStageProvider.S26_SAVE_FILE_END);
 
             onFinished(context);
 
-            context.goNextStageEventNew();
+            context.goNextStageEventNew(ExportMainTaskStageProvider.S27_FINISHED);
             context.assertCurrentStage(stageProvider.mainTaskFinished());
         } catch (Throwable e) {
             log.error("StandaloneExportMainTaskWorker#doReduce failed, main:{}", mainTask.getMainTaskId(), e);

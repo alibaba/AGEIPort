@@ -10,7 +10,7 @@ import com.alibaba.ageiport.processor.core.task.mapreduce.adpter.StandardMapRedu
 
 import java.util.List;
 
-public interface MapReduceProcessor<QUERY, DATA, RESULT> extends Processor {
+public interface MapReduceProcessor<INPUT, SUB_INPUT, SUB_OUTPUT, OUTPUT> extends Processor {
     default String resolver() {
         return "MapReduceSpecificationResolver";
     }
@@ -20,15 +20,15 @@ public interface MapReduceProcessor<QUERY, DATA, RESULT> extends Processor {
         return ExtensionLoader.getExtensionLoader(Adapter.class).getExtension(name);
     }
 
-    default BizExportTaskRuntimeConfig taskRuntimeConfig(BizUser user, QUERY query) throws BizException {
+    default BizExportTaskRuntimeConfig taskRuntimeConfig(BizUser user, INPUT INPUT) throws BizException {
         return null;
     }
 
-    QUERY resetQuery(BizUser bizUser, QUERY query);
+    INPUT resetInput(BizUser bizUser, INPUT INPUT);
 
-    List<QUERY> map(BizUser bizUser, QUERY query);
+    List<SUB_INPUT> map(BizUser bizUser, INPUT INPUT);
 
-    List<DATA> execute(BizUser bizUser, QUERY query);
+    List<SUB_OUTPUT> execute(BizUser bizUser, INPUT SUB_INPUT);
 
-    List<RESULT> reduce(BizUser bizUser, QUERY query, List<DATA> executeResults);
+    List<OUTPUT> reduce(BizUser bizUser, INPUT INPUT, List<SUB_OUTPUT> executeResults);
 }

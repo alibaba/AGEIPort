@@ -46,62 +46,62 @@ public class ExportMainTaskStageProvider implements MainTaskStageProvider {
     public static String S25_SAVE_FILE_START_CODE = "S25_SAVE_FILE_START";
     public static String S26_SAVE_FILE_END_CODE = "S26_SAVE_FILE_END";
 
-    private static String GROUP = "ExportMainTaskStage";
-    Stage S01_CREATED = new StageImpl(GROUP, 100, S01_CREATED_CODE, "主任务已创建", 0.01, 0.01, "", WaitDispatchMainTaskPrepareEvent.class);
+    public static String GROUP = "ExportMainTaskStage";
+    public static Stage S01_CREATED = new StageImpl(GROUP, 100, S01_CREATED_CODE, "主任务已创建", 0.01, 0.01, "", WaitDispatchMainTaskPrepareEvent.class);
 
-    Stage S02_DISPATCH_MAIN_TASK_START = new StageImpl(GROUP, 200, S02_DISPATCH_MAIN_TASK_START_CODE, "分发主任务-开始", 0.02, 0.02, "");
+    public static Stage S02_DISPATCH_MAIN_TASK_START = new StageImpl(GROUP, 200, S02_DISPATCH_MAIN_TASK_START_CODE, "分发主任务-开始", 0.02, 0.02, "");
 
-    Stage S03_DISPATCH_MAIN_TASK_END = new StageImpl(GROUP, 300, S03_DISPATCH_MAIN_TASK_END_CODE, "分发主任务-结束", 0.03, 0.03, "");
+    public static Stage S03_DISPATCH_MAIN_TASK_END = new StageImpl(GROUP, 300, S03_DISPATCH_MAIN_TASK_END_CODE, "分发主任务-结束", 0.03, 0.03, "");
 
-    Stage S04_EXECUTE_START = new StageImpl(GROUP, 400, S04_EXECUTE_START_CODE, "主任务开始执行", 0.04, 0.04, "");
+    public static Stage S04_EXECUTE_START = new StageImpl(GROUP, 400, S04_EXECUTE_START_CODE, "主任务开始执行", 0.04, 0.04, "");
 
-    Stage S05_TASK_RUNTIME_CONFIG_START = new StageImpl(GROUP, 500, S05_TASK_RUNTIME_CONFIG_START_CODE, "获取运行时配置-开始", 0.05, 0.05, "");
+    public static Stage S05_TASK_RUNTIME_CONFIG_START = new StageImpl(GROUP, 500, S05_TASK_RUNTIME_CONFIG_START_CODE, "获取运行时配置-开始", 0.05, 0.05, "");
 
-    Stage S06_TASK_RUNTIME_CONFIG_END = new StageImpl(GROUP, 600, S06_TASK_RUNTIME_CONFIG_END_CODE, "获取运行时配置-结束", 0.06, 0.06, "");
+    public static Stage S06_TASK_RUNTIME_CONFIG_END = new StageImpl(GROUP, 600, S06_TASK_RUNTIME_CONFIG_END_CODE, "获取运行时配置-结束", 0.06, 0.06, "");
 
-    Stage S07_RESET_QUERY_START = new StageImpl(GROUP, 700, S07_RESET_QUERY_START_CODE, "重置Query-开始", 0.07, 0.07, "");
+    public static Stage S07_RESET_QUERY_START = new StageImpl(GROUP, 700, S07_RESET_QUERY_START_CODE, "重置Query-开始", 0.07, 0.07, "");
 
-    Stage S08_RESET_QUERY_END = new StageImpl(GROUP, 800, S08_RESET_QUERY_END_CODE, "重置Query-结束", 0.08, 0.08, "");
+    public static Stage S08_RESET_QUERY_END = new StageImpl(GROUP, 800, S08_RESET_QUERY_END_CODE, "重置Query-结束", 0.08, 0.08, "");
 
-    Stage S09_TOTAL_COUNT_START = new StageImpl(GROUP, 900, S09_TOTAL_COUNT_START_CODE, "获取数据总量-开始", 0.09, 0.09, "");
+    public static Stage S09_TOTAL_COUNT_START = new StageImpl(GROUP, 900, S09_TOTAL_COUNT_START_CODE, "获取数据总量-开始", 0.09, 0.09, "");
 
-    Stage S10_TOTAL_COUNT_END = new StageImpl(GROUP, 1000, S10_TOTAL_COUNT_END_CODE, "获取数据总量-结束", 0.10, 0.10, "");
+    public static Stage S10_TOTAL_COUNT_END = new StageImpl(GROUP, 1000, S10_TOTAL_COUNT_END_CODE, "获取数据总量-结束", 0.10, 0.10, "");
 
-    Stage S11_GET_HEADERS_START = new StageImpl(GROUP, 1100, S11_GET_HEADERS_START_CODE, "获取表头-开始", 0.11, 0.11, "");
+    public static Stage S11_GET_HEADERS_START = new StageImpl(GROUP, 1100, S11_GET_HEADERS_START_CODE, "获取表头-开始", 0.11, 0.11, "");
 
-    Stage S12_GET_HEADERS_END = new StageImpl(GROUP, 1200, S12_GET_HEADERS_END_CODE, "获取表头-结束", 0.12, 0.12, "");
+    public static Stage S12_GET_HEADERS_END = new StageImpl(GROUP, 1200, S12_GET_HEADERS_END_CODE, "获取表头-结束", 0.12, 0.12, "");
 
-    Stage S13_GET_DYNAMIC_HEADERS_START = new StageImpl(GROUP, 1300, S13_GET_DYNAMIC_HEADERS_START_CODE, "获取动态表头-开始", 0.13, 0.13, "");
+    public static Stage S13_GET_DYNAMIC_HEADERS_START = new StageImpl(GROUP, 1300, S13_GET_DYNAMIC_HEADERS_START_CODE, "获取动态表头-开始", 0.13, 0.13, "");
 
-    Stage S14_GET_DYNAMIC_HEADERS_END = new StageImpl(GROUP, 1400, S14_GET_DYNAMIC_HEADERS_END_CODE, "获取动态表头-结束", 0.14, 0.14, "");
+    public static Stage S14_GET_DYNAMIC_HEADERS_END = new StageImpl(GROUP, 1400, S14_GET_DYNAMIC_HEADERS_END_CODE, "获取动态表头-结束", 0.14, 0.14, "");
 
-    Stage S15_TASK_SLICE_START = new StageImpl(GROUP, 1500, S15_TASK_SLICE_START_CODE, "执行分片策略-开始", 0.15, 0.15, "");
+    public static Stage S15_TASK_SLICE_START = new StageImpl(GROUP, 1500, S15_TASK_SLICE_START_CODE, "执行分片策略-开始", 0.15, 0.15, "");
 
-    Stage S16_TASK_SLICE_END = new StageImpl(GROUP, 1600, S16_TASK_SLICE_END_CODE, "执行分片策略-结束", 0.16, 0.16, "");
+    public static Stage S16_TASK_SLICE_END = new StageImpl(GROUP, 1600, S16_TASK_SLICE_END_CODE, "执行分片策略-结束", 0.16, 0.16, "");
 
-    Stage S17_SAVE_SUB_TASK_START = new StageImpl(GROUP, 1700, S17_SAVE_SUB_TASK_START_CODE, "持久化子任务-开始", 0.17, 0.17, "");
+    public static Stage S17_SAVE_SUB_TASK_START = new StageImpl(GROUP, 1700, S17_SAVE_SUB_TASK_START_CODE, "持久化子任务-开始", 0.17, 0.17, "");
 
-    Stage S18_SAVE_SUB_TASK_END = new StageImpl(GROUP, 1800, S18_SAVE_SUB_TASK_END_CODE, "持久化子任务-结束", 0.18, 0.18, "", WaitDispatchSubTaskEvent.class);
+    public static Stage S18_SAVE_SUB_TASK_END = new StageImpl(GROUP, 1800, S18_SAVE_SUB_TASK_END_CODE, "持久化子任务-结束", 0.18, 0.18, "", WaitDispatchSubTaskEvent.class);
 
-    Stage S19_DISPATCH_SUB_TASK_START = new StageImpl(GROUP, 1900, S19_DISPATCH_SUB_TASK_START_CODE, "分发子任务-开始", 0.19, 0.19, "");
+    public static Stage S19_DISPATCH_SUB_TASK_START = new StageImpl(GROUP, 1900, S19_DISPATCH_SUB_TASK_START_CODE, "分发子任务-开始", 0.19, 0.19, "");
 
-    Stage S20_DISPATCH_SUB_TASK_END = new StageImpl(GROUP, 2000, S20_DISPATCH_SUB_TASK_END_CODE, "分发子任务-结束", 0.20, 0.20, "");
+    public static Stage S20_DISPATCH_SUB_TASK_END = new StageImpl(GROUP, 2000, S20_DISPATCH_SUB_TASK_END_CODE, "分发子任务-结束", 0.20, 0.20, "");
 
-    Stage S21_EXECUTE_SUB_TASKS_START = new StageImpl(GROUP, 2100, S21_EXECUTE_SUB_TASKS_START_CODE, "执行子任务-开始", 0.21, 0.21, "");
+    public static Stage S21_EXECUTE_SUB_TASKS_START = new StageImpl(GROUP, 2100, S21_EXECUTE_SUB_TASKS_START_CODE, "执行子任务-开始", 0.21, 0.21, "");
 
-    Stage S22_EXECUTE_SUB_TASKS_END = new StageImpl(GROUP, 2200, S22_EXECUTE_SUB_TASKS_END_CODE, "执行子任务-结束", 0.90, 0.90, "", WaitDispatchMainTaskReduceEvent.class);
+    public static Stage S22_EXECUTE_SUB_TASKS_END = new StageImpl(GROUP, 2200, S22_EXECUTE_SUB_TASKS_END_CODE, "执行子任务-结束", 0.90, 0.90, "", WaitDispatchMainTaskReduceEvent.class);
 
-    Stage S23_WRITE_FILE_START = new StageImpl(GROUP, 2300, S23_WRITE_FILE_START_CODE, "执行合并数据写文件-开始", 0.91, 0.91, "");
+    public static Stage S23_WRITE_FILE_START = new StageImpl(GROUP, 2300, S23_WRITE_FILE_START_CODE, "执行合并数据写文件-开始", 0.91, 0.91, "");
 
-    Stage S24_WRITE_FILE_END = new StageImpl(GROUP, 2400, S24_WRITE_FILE_END_CODE, "执行合并数据写文件-结束", 0.95, 0.95, "");
+    public static Stage S24_WRITE_FILE_END = new StageImpl(GROUP, 2400, S24_WRITE_FILE_END_CODE, "执行合并数据写文件-结束", 0.95, 0.95, "");
 
-    Stage S25_SAVE_FILE_START = new StageImpl(GROUP, 2500, S25_SAVE_FILE_START_CODE, "执行存储文件-开始", 0.96, 0.96, "");
+    public static Stage S25_SAVE_FILE_START = new StageImpl(GROUP, 2500, S25_SAVE_FILE_START_CODE, "执行存储文件-开始", 0.96, 0.96, "");
 
-    Stage S26_SAVE_FILE_END = new StageImpl(GROUP, 2600, S26_SAVE_FILE_END_CODE, "执行存储文件-结束", 0.99, 0.99, "");
+    public static Stage S26_SAVE_FILE_END = new StageImpl(GROUP, 2600, S26_SAVE_FILE_END_CODE, "执行存储文件-结束", 0.99, 0.99, "");
 
-    Stage S27_FINISHED = new StageImpl(GROUP, 2700, CommonStage.FINISHED.getCode(), "主任务执行完成", 1.00, 1.00, "", true, true, false);
+    public static Stage S27_FINISHED = new StageImpl(GROUP, 2700, CommonStage.FINISHED.getCode(), "主任务执行完成", 1.00, 1.00, "", true, true, false);
 
-    Stage S28_ERROR = new StageImpl(GROUP, 2700, CommonStage.ERROR.getCode(), "主任务执行失败", 1.00, 1.00, "", true, false, true);
+    public static Stage S28_ERROR = new StageImpl(GROUP, 2700, CommonStage.ERROR.getCode(), "主任务执行失败", 1.00, 1.00, "", true, false, true);
 
     List<Stage> TASK_STAGES = Lists.newArrayList(
             S01_CREATED

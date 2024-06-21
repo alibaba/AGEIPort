@@ -22,6 +22,7 @@ import com.alibaba.ageiport.processor.core.task.importer.context.ImportSubTaskCo
 import com.alibaba.ageiport.processor.core.task.importer.model.BizImportResult;
 import com.alibaba.ageiport.processor.core.task.importer.model.BizImportResultImpl;
 import com.alibaba.ageiport.processor.core.task.importer.model.ImportTaskSpecification;
+import com.alibaba.ageiport.processor.core.task.importer.stage.ImportSubTaskStageProvider;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -60,31 +61,32 @@ public class ImportSubTaskWorker<QUERY, DATA, VIEW> extends AbstractSubTaskWorke
             BizUser bizUser = context.getBizUser();
             QUERY query = context.getQuery();
 
-            context.goNextStageEventNew();
+            context.goNextStageEventNew(ImportSubTaskStageProvider.S04_EXECUTE_GET_SLICE_DATA_START);
             BigDataCache cache = ageiPort.getBigDataCacheManager().getBigDataCacheCache(executeType);
             String key = subTaskId + ConstValues.CACHE_SUFFIX_INPUT_DATA_SLICE;
             DataGroup dataGroup = cache.get(key, DataGroup.class);
-            context.goNextStageEventNew();
+            context.goNextStageEventNew(ImportSubTaskStageProvider.S05_EXECUTE_GET_SLICE_DATA_END);
 
-            context.goNextStageEventNew();
+            context.goNextStageEventNew(ImportSubTaskStageProvider.S06_CHECK_HEADERS_START);
             DataGroup group = adapter.checkHeaders(bizUser, query, dataGroup, processor, context);
-            context.goNextStageEventNew();
-            context.goNextStageEventNew();
+            context.goNextStageEventNew(ImportSubTaskStageProvider.S07_CHECK_HEADERS_END);
+
+            context.goNextStageEventNew(ImportSubTaskStageProvider.S08_EXECUTE_BIZ_DATA_GROUP_START);
             BizDataGroup<VIEW> bizDataGroup = adapter.getBizDataGroup(bizUser, query, group, processor, context);
-            context.goNextStageEventNew();
+            context.goNextStageEventNew(ImportSubTaskStageProvider.S09_EXECUTE_BIZ_DATA_GROUP_END);
 
-            context.goNextStageEventNew();
+            context.goNextStageEventNew(ImportSubTaskStageProvider.S10_EXECUTE_FLAT_START);
             List<VIEW> views = adapter.flat(bizUser, query, bizDataGroup, processor, context);
-            context.goNextStageEventNew();
+            context.goNextStageEventNew(ImportSubTaskStageProvider.S11_EXECUTE_FLAT_END);
 
-            context.goNextStageEventNew();
+            context.goNextStageEventNew(ImportSubTaskStageProvider.S12_EXECUTE_CONVERT_AND_CHECK_START);
             BizImportResult<VIEW, DATA> convertAndCheckResult = adapter.convertAndCheck(bizUser, query, views, processor, context);
-            context.goNextStageEventNew();
+            context.goNextStageEventNew(ImportSubTaskStageProvider.S13_EXECUTE_CONVERT_AND_CHECK_END);
 
-            context.goNextStageEventNew();
+            context.goNextStageEventNew(ImportSubTaskStageProvider.S14_EXECUTE_WRITE_START);
             List<DATA> data = convertAndCheckResult.getData();
             BizImportResult<VIEW, DATA> writeResult = adapter.write(bizUser, query, data, processor, context);
-            context.goNextStageEventNew();
+            context.goNextStageEventNew(ImportSubTaskStageProvider.S15_EXECUTE_WRITE_END);
 
             BizImportResultImpl<VIEW, DATA> importResult = new BizImportResultImpl<>();
             List<VIEW> resultView = new ArrayList<>();
@@ -96,15 +98,15 @@ public class ImportSubTaskWorker<QUERY, DATA, VIEW> extends AbstractSubTaskWorke
             }
             importResult.setView(resultView);
 
-            context.goNextStageEventNew();
+            context.goNextStageEventNew(ImportSubTaskStageProvider.S16_EXECUTE_GROUP_START);
             BizDataGroup<VIEW> viewBizDataGroup = adapter.group(bizUser, query, resultView, processor, context);
-            context.goNextStageEventNew();
+            context.goNextStageEventNew(ImportSubTaskStageProvider.S17_EXECUTE_GROUP_END);
 
-            context.goNextStageEventNew();
+            context.goNextStageEventNew(ImportSubTaskStageProvider.S18_EXECUTE_DATA_GROUP_START);
             DataGroup outputDataGroup = adapter.getDataGroup(bizUser, query, viewBizDataGroup, processor, context);
-            context.goNextStageEventNew();
+            context.goNextStageEventNew(ImportSubTaskStageProvider.S19_EXECUTE_DATA_GROUP_END);
 
-            context.goNextStageEventNew();
+            context.goNextStageEventNew(ImportSubTaskStageProvider.S20_SAVE_DATA_START);
             List<DataGroup.Data> groupData = outputDataGroup.getData();
             if (CollectionUtils.isNotEmpty(groupData)) {
                 boolean hasItems = false;
@@ -117,9 +119,9 @@ public class ImportSubTaskWorker<QUERY, DATA, VIEW> extends AbstractSubTaskWorke
                     cache.put(subTaskId, outputDataGroup);
                 }
             }
-            context.goNextStageEventNew();
+            context.goNextStageEventNew(ImportSubTaskStageProvider.S21_SAVE_DATA_END);
 
-            context.goNextStageEventNew();
+            context.goNextStageEventNew(ImportSubTaskStageProvider.S22_FINISHED);
             context.assertCurrentStage(stageProvider.subTaskFinished());
         } catch (Throwable e) {
             log.info("doMappingProcess failed, main:{}, sub:{}", subTask.getMainTaskId(), subTask.getSubTaskId(), e);

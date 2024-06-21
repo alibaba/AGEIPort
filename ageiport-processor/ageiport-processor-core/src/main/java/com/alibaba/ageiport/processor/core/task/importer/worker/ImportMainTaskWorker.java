@@ -40,6 +40,7 @@ import com.alibaba.ageiport.processor.core.task.importer.model.ImportTaskRuntime
 import com.alibaba.ageiport.processor.core.task.importer.model.ImportTaskSpecification;
 import com.alibaba.ageiport.processor.core.task.importer.slice.ImportSlice;
 import com.alibaba.ageiport.processor.core.task.importer.slice.ImportSliceStrategy;
+import com.alibaba.ageiport.processor.core.task.importer.stage.ImportMainTaskStageProvider;
 import com.alibaba.ageiport.processor.core.utils.HeadersUtil;
 
 import java.io.InputStream;
@@ -77,6 +78,7 @@ public class ImportMainTaskWorker<QUERY, DATA, VIEW> extends AbstractMainTaskWor
             context.getMainTask().setGmtStart(new Date());
             context.save();
             context.setStage(stageProvider.mainTaskStart());
+            context.eventCurrentStage();
 
             ImportTaskSpecification<QUERY, DATA, VIEW> taskSpec = context.getImportTaskSpec();
             ImportProcessor<QUERY, DATA, VIEW> processor = taskSpec.getImportProcessor();
@@ -86,26 +88,28 @@ public class ImportMainTaskWorker<QUERY, DATA, VIEW> extends AbstractMainTaskWor
             QUERY query = context.getQuery();
 
 
-            context.goNextStageEventNew();
+            context.goNextStageEventNew(ImportMainTaskStageProvider.S05_TASK_RUNTIME_CONFIG_START);
             BizImportTaskRuntimeConfig runtimeConfig = adapter.taskRuntimeConfig(bizUser, query, processor, context);
             context.load(runtimeConfig);
             context.save();
+            context.goNextStageEventNew(ImportMainTaskStageProvider.S06_TASK_RUNTIME_CONFIG_END);
 
-            context.goNextStageEventNew();
             ImportTaskRuntimeConfig importTaskRuntimeConfig = context.getImportTaskRuntimeConfig();
             String fileType = importTaskRuntimeConfig.getFileType();
 
-            context.goNextStageEventNew();
+            context.goNextStageEventNew(ImportMainTaskStageProvider.S07_RESET_QUERY_START);
             QUERY resetQuery = adapter.resetQuery(bizUser, query, processor, context);
             context.load(resetQuery);
-            context.goNextStageEventNew();
+            context.goNextStageEventNew(ImportMainTaskStageProvider.S08_RESET_QUERY_END);
 
-            context.goNextStageEventNew();
+            context.goNextStageEventNew(ImportMainTaskStageProvider.S09_GET_HEADERS_START);
             BizColumnHeaders bizColumnHeaders = adapter.getHeaders(bizUser, query, processor, context);
-            context.goNextStageEventNew();
-            context.goNextStageEventNew();
+            context.goNextStageEventNew(ImportMainTaskStageProvider.S10_GET_HEADERS_END);
+
+            context.goNextStageEventNew(ImportMainTaskStageProvider.S11_GET_DYNAMIC_HEADERS_START);
             BizDynamicColumnHeaders bizDynamicColumnHeaders = adapter.getDynamicHeaders(bizUser, query, processor, context);
-            context.goNextStageEventNew();
+            context.goNextStageEventNew(ImportMainTaskStageProvider.S12_GET_DYNAMIC_HEADERS_END);
+
             ColumnHeaders columnHeaders = HeadersUtil.buildHeaders(bizColumnHeaders, taskSpec.getViewClass(), bizDynamicColumnHeaders);
             for (ColumnHeader columnHeader : columnHeaders.getColumnHeaders()) {
                 if (columnHeader.getIgnoreHeader() == null) {
@@ -114,7 +118,7 @@ public class ImportMainTaskWorker<QUERY, DATA, VIEW> extends AbstractMainTaskWor
             }
             context.load(columnHeaders);
 
-            context.goNextStageEventNew();
+            context.goNextStageEventNew(ImportMainTaskStageProvider.S13_READ_FILE_START);
             String inputFileKey = FeatureUtils.getFeature(mainTask.getFeature(), MainTaskFeatureKeys.INPUT_FILE_KEY);
             InputStream inputStream = ageiPort.getFileStore().get(inputFileKey, new HashMap<>());
             String fileReaderFactoryName = ageiPort.getOptions().getFileTypeReaderSpiMappings().get(fileType);
@@ -128,18 +132,18 @@ public class ImportMainTaskWorker<QUERY, DATA, VIEW> extends AbstractMainTaskWor
             fileReader.read(inputStream);
             DataGroup dataGroup = fileReader.finish();
             context.load(dataGroup);
-            context.goNextStageEventNew();
+            context.goNextStageEventNew(ImportMainTaskStageProvider.S14_READ_FILE_END);
 
-            context.goNextStageEventNew();
+            context.goNextStageEventNew(ImportMainTaskStageProvider.S15_TASK_SLICE_START);
             String sliceStrategyName = importTaskRuntimeConfig.getTaskSliceStrategy();
             ImportSliceStrategy<QUERY, DATA, VIEW> sliceStrategy = (ImportSliceStrategy) ExtensionLoader.getExtensionLoader(SliceStrategy.class).getExtension(sliceStrategyName);
             List<ImportSlice> slices = sliceStrategy.slice(context);
             context.load(slices);
-            context.goNextStageEventNew();
+            context.goNextStageEventNew(ImportMainTaskStageProvider.S16_TASK_SLICE_END);
 
             context.save();
 
-            context.goNextStageEventNew();
+            context.goNextStageEventNew(ImportMainTaskStageProvider.S17_SAVE_SUB_TASK_START);
             BigDataCache cache = ageiPort.getBigDataCacheManager().getBigDataCacheCache(mainTask.getExecuteType());
             List<CreateSubTasksRequest.SubTaskInstance> subTaskInstances = new ArrayList<>();
             for (ImportSlice slice : slices) {
@@ -162,7 +166,7 @@ public class ImportMainTaskWorker<QUERY, DATA, VIEW> extends AbstractMainTaskWor
             createSubTasksRequest.setMainTaskId(mainTaskId);
             createSubTasksRequest.setSubTaskInstances(subTaskInstances);
             ageiPort.getTaskServerClient().createSubTask(createSubTasksRequest);
-            context.goNextStageEventNew();
+            context.goNextStageEventNew(ImportMainTaskStageProvider.S18_SAVE_SUB_TASK_END);
 
             context.assertCurrentStage(stageProvider.mainTaskSaveSliceEnd());
 
@@ -201,7 +205,7 @@ public class ImportMainTaskWorker<QUERY, DATA, VIEW> extends AbstractMainTaskWor
             MainTaskStageProvider stageProvider = spiSelector.selectExtension(executeType, taskType, taskCode, MainTaskStageProvider.class);
 
             ImportMainTaskContext<QUERY, DATA, VIEW> context = (ImportMainTaskContext) contextFactory.create(ageiPort, mainTask);
-            context.setStage(stageProvider.mainTaskReduceStart());
+            context.setStage(ImportMainTaskStageProvider.S23_WRITE_FILE_START);
             context.eventCurrentStage();
 
             ImportTaskRuntimeConfig runtimeConfig = context.getImportTaskRuntimeConfig();
@@ -231,9 +235,9 @@ public class ImportMainTaskWorker<QUERY, DATA, VIEW> extends AbstractMainTaskWor
 
                 fileStream = fileWriter.finish();
             }
-            context.goNextStageEventNew();
+            context.goNextStageEventNew(ImportMainTaskStageProvider.S24_WRITE_FILE_END);
 
-            context.goNextStageEventNew();
+            context.goNextStageEventNew(ImportMainTaskStageProvider.S25_SAVE_FILE_START);
             String key = mainTask.getMainTaskId() + "." + runtimeConfig.getFileType();
             if (CollectionUtils.isNotEmpty(subTaskExistView)) {
                 FileStore fileStore = ageiPort.getFileStore();
@@ -242,11 +246,11 @@ public class ImportMainTaskWorker<QUERY, DATA, VIEW> extends AbstractMainTaskWor
             MainTask contextMainTask = context.getMainTask();
             String feature = FeatureUtils.putFeature(contextMainTask.getFeature(), MainTaskFeatureKeys.OUTPUT_FILE_KEY, key);
             contextMainTask.setFeature(feature);
-            context.goNextStageEventNew();
+            context.goNextStageEventNew(ImportMainTaskStageProvider.S26_SAVE_FILE_END);
 
             onFinished(context);
 
-            context.goNextStageEventNew();
+            context.goNextStageEventNew(ImportMainTaskStageProvider.S27_FINISHED);
             context.assertCurrentStage(stageProvider.mainTaskFinished());
         } catch (Throwable e) {
             log.error("StandaloneExportMainTaskWorker#doReduce failed, main:{}", mainTask.getMainTaskId(), e);

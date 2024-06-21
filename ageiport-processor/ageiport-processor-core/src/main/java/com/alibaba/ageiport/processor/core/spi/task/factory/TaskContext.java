@@ -11,7 +11,8 @@ import com.alibaba.ageiport.processor.core.model.core.impl.SubTask;
 import com.alibaba.ageiport.processor.core.spi.eventbus.EventBus;
 import com.alibaba.ageiport.processor.core.spi.task.monitor.TaskStageEvent;
 import com.alibaba.ageiport.processor.core.spi.task.stage.Stage;
-import com.alibaba.ageiport.processor.core.spi.task.stage.StageProvider;
+
+import java.util.Objects;
 
 public interface TaskContext extends Context {
 
@@ -47,24 +48,29 @@ public interface TaskContext extends Context {
 
     Long getStageTimestamp(String code);
 
-    default void goNextStageEventNew() {
+    default void goNextStageEventNew(Stage targetStage) {
         MainTask mainTask = getMainTask();
         String executeType = mainTask.getExecuteType();
         EventBus eventBus = getAgeiPort().getEventBusManager().getEventBus(executeType);
 
         Stage oldStage = goNextStage();
-        Stage newStage = getStage();
+        Stage actualStage = getStage();
+        if (!Objects.equals(targetStage.getCode(), actualStage.getCode())) {
+            String error = StringUtils.format("error task stage, context:{}, targetStage:{}, targetStage:{}", this.getStage().getCode(), targetStage, actualStage);
+            throw new IllegalStateException(error);
+        }
+
         Long oldStageTimestamp = getStageTimestamp(oldStage.getCode());
-        Long newStageTimestamp = getStageTimestamp(newStage.getCode());
+        Long newStageTimestamp = getStageTimestamp(actualStage.getCode());
         Long cost = null;
         if (oldStageTimestamp != null && newStageTimestamp != null) {
             cost = System.currentTimeMillis() - oldStageTimestamp;
         }
         SubTask subTask = getSubTask();
         if (subTask == null) {
-            eventBus.post(TaskStageEvent.mainTaskEvent(mainTask.getMainTaskId(), newStage, cost, mainTask.getSubTotalCount()));
+            eventBus.post(TaskStageEvent.mainTaskEvent(mainTask.getMainTaskId(), actualStage, cost, mainTask.getSubTotalCount()));
         } else {
-            eventBus.post(TaskStageEvent.subTaskEvent(subTask.getSubTaskId(), newStage, cost));
+            eventBus.post(TaskStageEvent.subTaskEvent(subTask.getSubTaskId(), actualStage, cost));
         }
     }
 
