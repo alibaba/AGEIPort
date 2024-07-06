@@ -13,7 +13,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 @Slf4j
-public class DynamicExportProcessorTest {
+public class DynamicColumnExportProcessorTest {
 
     @SneakyThrows
     @Test

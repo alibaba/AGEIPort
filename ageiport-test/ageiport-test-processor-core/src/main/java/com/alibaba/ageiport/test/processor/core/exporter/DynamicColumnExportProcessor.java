@@ -31,7 +31,7 @@ public class DynamicColumnExportProcessor implements ExportProcessor<Query, Data
 
     @Override
     public BizDynamicColumnHeaders getDynamicHeaders(BizUser user, Query query) throws BizException {
-
+        //一般此接口返回值是由query查询数据库or接口获取到的，此处仅为示例，直接由入参传入并构造动态列
 
         Integer dynamicHeaderCount = query.getDynamicHeaderCount();
         List<BizColumnHeader> flatColumnHeadersForQuery = new ArrayList<>();

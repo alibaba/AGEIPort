@@ -6,6 +6,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 import java.math.BigDecimal;
+import java.util.Map;
 
 @ToString
 @Getter
@@ -35,4 +36,6 @@ public class Data {
     private String otherQuestion1;
 
     private String otherQuestion2;
+
+    private Map<String, Object> dynamicColumns;
 }

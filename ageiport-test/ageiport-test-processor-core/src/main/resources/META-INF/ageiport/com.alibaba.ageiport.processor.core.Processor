@@ -10,4 +10,5 @@ StandaloneImportProcessor=com.alibaba.ageiport.test.processor.core.importer.Stan
 ClusterImportProcessor=com.alibaba.ageiport.test.processor.core.importer.ClusterImportProcessor
 MultiSheetImportProcessor=com.alibaba.ageiport.test.processor.core.importer.MultiSheetImportProcessor
 CSVImportProcessor=com.alibaba.ageiport.test.processor.core.importer.CSVImportProcessor
+DynamicColumnImportProcessor=com.alibaba.ageiport.test.processor.core.importer.DynamicColumnImportProcessor
 
